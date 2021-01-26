@@ -15,7 +15,7 @@ const AttendeesListItem = (props) => {
         </div>
         <div className={styles.nameWrapper}>
           <div className={styles.name}>
-            {attendee.full_name} - {attendee.email} - {props.item.attendee_ip} - {props.item.current_url}
+            {attendee.full_name} - {attendee.email} - {props.item.attendee_ip} - {props.item.current_url} - {props.item.updated_at}
           </div>
         </div>
       </div>

@@ -24,7 +24,7 @@
     "deploy": "gh-pages -d test-bench/build"
   },
   "peerDependencies": {
-    "react": "^16.0.0"
+    "react": "^16.6.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",

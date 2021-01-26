@@ -31,6 +31,12 @@ CREATE TABLE public.access_tracking (
 
 comment on table public.access_tracking is 'Access tracking history';
 
+--updated_at auto refresh
+create extension if not exists moddatetime schema extensions;
+
+create trigger handle_updated_at before update on accesses 
+  for each row execute procedure moddatetime (updated_at);
+
 -- alter table public.attendees enable row level security;
 -- alter table public.accesses enable row level security;
 -- alter table public.access_tracking enable row level security;
