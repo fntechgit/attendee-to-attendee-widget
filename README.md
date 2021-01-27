@@ -32,7 +32,6 @@ const App = () => {
 import React from 'react'
 
 import { RealTimeAttendeesList } from 'attendee-to-attendee-widget'
-import 'attendee-to-attendee-widget/dist/index.css'
 
 const App = () => {
   return <RealTimeAttendeesList />
