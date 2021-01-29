@@ -13,7 +13,6 @@ const widgetProps = {
     email: '',
     picUrl: 'https://i1.wp.com/dayinlab.com/wp-content/uploads/2018/04/iron-man.jpg?resize=470%2C260'
   },
-  onAttendeeClick: console.log,
   summitId: 8,
 };
 
@@ -21,6 +20,11 @@ const App = () => {
   const rnd = Math.floor(Math.random() * 10) + 1
   widgetProps.user.fullName = `Test User ${rnd}`
   widgetProps.user.email = `test${rnd}@nomail.com`
+
+  const handleItemClick = (itemInfo) => {
+    console.log(itemInfo)
+  }
+
   return (
     <Router>
         <Switch>
@@ -28,7 +32,9 @@ const App = () => {
              <Tracker {...widgetProps} />
           </Route>
           <Route path="/attendance">
-            <RealTimeAttendeesList />
+            <div style={{width: '500px', margin: '20px auto'}}>
+              <RealTimeAttendeesList className="widget-container" onItemClick={handleItemClick} />
+            </div>
           </Route>
         </Switch>
     </Router>

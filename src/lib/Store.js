@@ -92,7 +92,7 @@ const fetchCurrentPageAttendees = async (url) => {
     let { data, error } = await supabase
       .from('accesses')
       .select(`*, attendees(*)`)
-      .eq('current_url', url)
+      //.eq('current_url', url)
     if (error) {
       throw new Error(error)
     }

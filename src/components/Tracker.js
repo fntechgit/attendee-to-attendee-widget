@@ -41,7 +41,11 @@ const Tracker = (props) => {
 
 Tracker.propTypes = {
   summitId: PropTypes.number.isRequired,
-  user: PropTypes.any.isRequired
+  user: PropTypes.shape({
+    fullName: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    picUrl: PropTypes.string
+  }).isRequired
 }
 
 export default Tracker
