@@ -46,3 +46,5 @@ const App = () => {
   return <RealTimeAttendeesList onItemClick={handleItemClick} />
 }
 ```
+
+##### For further information go to test-bench\src\App.js
