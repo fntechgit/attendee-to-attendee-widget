@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { signIn, signUp } from './Auth'
 
 export default class AccessRepository {
-  constructor(supabaseUrl, supabaseKey, attendeePwd) {
+  constructor(supabaseUrl, supabaseKey) {
     this._client = createClient(supabaseUrl, supabaseKey)
     this._sbUser = null
   }
