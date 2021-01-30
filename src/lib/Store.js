@@ -11,14 +11,14 @@ let sbUser
 
 export const useStore = (props) => {
   const [accessList, setAccessList] = useState([])
-  const [newAccess, handleNewAccess] = useState()
+  const [accessNews, handleAccessNews] = useState()
   const [accessListener, setAccessListener] = useState(null)
 
   useEffect(() => {
+    setAccessList(null)
     fetchCurrentPageAttendees(props.url)
       .then((response) => {
         //console.log(response)
-        //setAccessList(response.accessList.sort((a, b) => b.id - a.id))
         setAccessList(response)
       })
       .catch(console.error)
@@ -26,26 +26,24 @@ export const useStore = (props) => {
 
   useEffect(() => {
     const handleAsync = async () => {
-      if (newAccess) {
-        fetchCurrentPageAttendees(newAccess.current_url)
+      if (accessNews) {
+        fetchCurrentPageAttendees(props.url)
           .then((response) => {
             setAccessList(response)
           })
-          .catch(console.error)
-        //console.log('access news', newAccess)
+        .catch(console.error)
       }
     }
     handleAsync()
-  }, [newAccess])
+  }, [accessNews, props.url])
 
   useEffect(() => {
     if (!accessListener) {
       setAccessListener(
         supabase
-          //.from(`accesses:list_id=eq.${list.id}`)
           .from(`accesses`)
-          .on('INSERT', (payload) => handleNewAccess(payload.new))
-          .on('UPDATE', (payload) => handleNewAccess(payload.new))
+          .on('INSERT', (payload) => handleAccessNews(payload.new))
+          .on('UPDATE', (payload) => handleAccessNews(payload.new))
           .subscribe()
       )
     }
@@ -92,11 +90,10 @@ const fetchCurrentPageAttendees = async (url) => {
     let { data, error } = await supabase
       .from('accesses')
       .select(`*, attendees(*)`)
-      //.eq('current_url', url)
+      .eq('current_url', url)
     if (error) {
       throw new Error(error)
     }
-    //console.log(data)
     return data
   } catch (error) {
     console.log('error', error)
@@ -127,7 +124,6 @@ export const trackAccess = async (attendeeProfile, summitId, url, fromIP) => {
     if (!sbUser) {
       throw new Error('User not found')
     }
-
     //check existing access entry
     const fetchRes = await supabase
       .from('accesses')
@@ -152,8 +148,6 @@ export const trackAccess = async (attendeeProfile, summitId, url, fromIP) => {
       if (error) {
         throw new Error(error)
       }
-      console.log('updated access', data)
-
       logAccess(data[0])
       return
     }
@@ -170,7 +164,6 @@ export const trackAccess = async (attendeeProfile, summitId, url, fromIP) => {
     if (insRes.error) {
       throw new Error(insRes.error)
     }
-    console.log('inserted data: ', insRes.data)
     logAccess(insRes.data[0])
   } catch (error) {
     console.log('error', error)

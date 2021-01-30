@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from "../../styles/styles.module.scss"
 
 const List = (props) => {
     const ComponentToRender = props.component;
+    const style = props.style;
     let content = <div />;
   
     // If we have items, render them
@@ -17,8 +17,8 @@ const List = (props) => {
     }
   
     return (
-        <div className={styles.outerWrapper}>
-            <ul className={styles.attendeesList}>{content}</ul>
+        <div className={style.outerWrapper}>
+            <ul className={style.attendeesList}>{content}</ul>
         </div>
     );
   }

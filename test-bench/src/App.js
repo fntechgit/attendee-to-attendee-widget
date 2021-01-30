@@ -1,11 +1,23 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
-import { Tracker, RealTimeAttendeesList } from 'attendee-to-attendee-widget'
+import Modal from 'react-modal'
+import { Tracker, RealTimeAttendeesList, AttendeeDetail } from 'attendee-to-attendee-widget'
 import 'attendee-to-attendee-widget/dist/index.css'
+
+const customStyles = {
+  content : {
+    top                   : '20%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+};
 
 const widgetProps = {
   user: {
@@ -16,12 +28,32 @@ const widgetProps = {
   summitId: 8,
 };
 
+Modal.setAppElement('#root')
+
 const App = () => {
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [accessInfo, setAccessInfo] = useState({});
+
   const rnd = Math.floor(Math.random() * 10) + 1
   widgetProps.user.fullName = `Test User ${rnd}`
   widgetProps.user.email = `test${rnd}@nomail.com`
 
+  const openModal = () => {
+    setIsOpen(true);
+  }
+ 
+  const closeModal = () => {
+    setIsOpen(false);
+  }
+
   const handleItemClick = (itemInfo) => {
+    setAccessInfo(itemInfo)
+    openModal()
+    //console.log(itemInfo)
+  }
+
+  const handleCTA = (itemInfo) => {
+    closeModal()
     console.log(itemInfo)
   }
 
@@ -33,7 +65,15 @@ const App = () => {
           </Route>
           <Route path="/attendance">
             <div style={{width: '500px', margin: '20px auto'}}>
-              <RealTimeAttendeesList className="widget-container" onItemClick={handleItemClick} />
+              <RealTimeAttendeesList onItemClick={handleItemClick} />
+              <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                style={customStyles}
+                contentLabel="Attendee"
+              >
+                <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
+              </Modal>
             </div>
           </Route>
         </Switch>
