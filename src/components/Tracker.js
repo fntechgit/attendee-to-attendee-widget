@@ -2,14 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import publicIp from 'public-ip'
-import { trackAccess } from '../lib/Store'
+import AccessRepository from '../lib/AccessRepository'
 
 const Tracker = (props) => {
 
   useEffect(() => {
     const handleAsync = async () => {
+      const accessRepo = new AccessRepository(props.supabaseUrl, props.supabaseKey)
       const clientIP = await publicIp.v4()
-      trackAccess(
+      accessRepo.trackAccess(
         props.user,
         props.summitId,
         window.location.href,
@@ -40,6 +41,8 @@ const Tracker = (props) => {
 }
 
 Tracker.propTypes = {
+  supabaseUrl: PropTypes.string.isRequired,
+  supabaseKey: PropTypes.string.isRequired,
   summitId: PropTypes.number.isRequired,
   user: PropTypes.shape({
     fullName: PropTypes.string.isRequired,

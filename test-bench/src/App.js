@@ -19,6 +19,11 @@ const customStyles = {
   }
 };
 
+const sbAuthProps = {
+  supabaseUrl: process.env.REACT_APP_SUPABASE_URL,
+  supabaseKey: process.env.REACT_APP_SUPABASE_KEY
+};
+
 const widgetProps = {
   user: {
     fullName: '',
@@ -26,6 +31,7 @@ const widgetProps = {
     picUrl: 'https://i1.wp.com/dayinlab.com/wp-content/uploads/2018/04/iron-man.jpg?resize=470%2C260'
   },
   summitId: 8,
+  ...sbAuthProps
 };
 
 Modal.setAppElement('#root')
@@ -65,7 +71,7 @@ const App = () => {
           </Route>
           <Route path="/attendance">
             <div style={{width: '500px', margin: '20px auto'}}>
-              <RealTimeAttendeesList onItemClick={handleItemClick} />
+              <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} />
               <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}

@@ -17,6 +17,11 @@ import React from 'react'
 import { Tracker } from 'attendee-to-attendee-widget'
 import 'attendee-to-attendee-widget/dist/index.css'
 
+const sbAuthProps = {
+  supabaseUrl: process.env.GATSBY_SUPABASE_URL,
+  supabaseKey: process.env.GATSBY_SUPABASE_KEY
+};
+
 const widgetProps = {
   user: {
     fullName: '...',
@@ -25,6 +30,7 @@ const widgetProps = {
   },
   onAttendeeClick: console.log,
   summitId: 8,
+  ...sbAuthProps
 };
 
 const App = () => {
@@ -43,7 +49,7 @@ const App = () => {
   const handleItemClick = (itemInfo) => {
     console.log(itemInfo)
   }
-  return <RealTimeAttendeesList onItemClick={handleItemClick} />
+  return <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} />
 }
 ```
 

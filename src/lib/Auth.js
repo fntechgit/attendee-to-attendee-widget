@@ -3,10 +3,7 @@ const addAttendee = async (supabase, id, fullName, email, picUrl) => {
     .from('attendees')
     .insert([{ id, full_name: fullName, email, pic_url: picUrl }])
 
-  if (error) {
-    throw new Error(error)
-  }
-  //console.log('data: ', data)
+  if (error) throw new Error(error)
 }
 
 export const signUp = async (supabase, email, fullName, password, picUrl) => {
@@ -14,9 +11,7 @@ export const signUp = async (supabase, email, fullName, password, picUrl) => {
     email,
     password
   })
-  if (error) {
-    throw new Error(error)
-  }
+  if (error) throw new Error(error)
   addAttendee(supabase, data.user.id, fullName, email, picUrl)
   return data.user
 }
@@ -26,10 +21,6 @@ export const signIn = async (supabase, email, password) => {
     email,
     password
   })
-  if (error) {
-    console.log('signIn -> error: ', error)
-  }
-  console.log('signIn -> data: ', data)
   return data.user
 }
 
