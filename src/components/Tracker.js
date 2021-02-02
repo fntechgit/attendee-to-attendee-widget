@@ -4,11 +4,12 @@ import publicIp from 'public-ip'
 import AccessRepository from '../lib/AccessRepository'
 
 const Tracker = (props) => {
+  const accessRepo = new AccessRepository(
+    props.supabaseUrl,
+    props.supabaseKey
+  )
+
   const onEnter = async () => {
-    const accessRepo = new AccessRepository(
-      props.supabaseUrl,
-      props.supabaseKey
-    )
     const clientIP = await publicIp.v4()
     accessRepo.trackAccess(
       props.user,
@@ -21,22 +22,26 @@ const Tracker = (props) => {
 
   const onLeave = async () => {
     console.log('leaving tracked page')
-    const accessRepo = new AccessRepository(
-      props.supabaseUrl,
-      props.supabaseKey
-    )
     await accessRepo.trackAccess(props.user, props.summitId, '', '', false)
+  }
+
+  const onBeforeUnload = e => {
+    console.log('unload tracked page')
+    // if (!e) return
+    // e.preventDefault()
+    // e.returnValue = ''
+    accessRepo.trackAccess(props.user, props.summitId, '', '', false)
   }
 
   useEffect(() => {
     onEnter()
     if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', onLeave)
+      window.addEventListener('beforeunload', onBeforeUnload)
     }
     return () => {
       onLeave()
       if (typeof window !== 'undefined') {
-        window.removeEventListener('beforeunload', onLeave)
+        window.removeEventListener('beforeunload', onBeforeUnload)
       }
     }
   }, [])
