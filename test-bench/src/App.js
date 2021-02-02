@@ -28,6 +28,8 @@ const widgetProps = {
   user: {
     fullName: '',
     email: '',
+    company: '',
+    title: '',
     picUrl: 'https://i1.wp.com/dayinlab.com/wp-content/uploads/2018/04/iron-man.jpg?resize=470%2C260'
   },
   summitId: 8,
@@ -40,9 +42,11 @@ const App = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [accessInfo, setAccessInfo] = useState({});
 
-  const rnd = Math.floor(Math.random() * 10) + 1
+  const rnd = Math.floor(Math.random() * 5) + 1
   widgetProps.user.fullName = `Test User ${rnd}`
   widgetProps.user.email = `test${rnd}@nomail.com`
+  widgetProps.user.company = `Company ${rnd}`
+  widgetProps.user.title = `Title ${rnd}`
 
   const openModal = () => {
     setIsOpen(true);
@@ -67,7 +71,7 @@ const App = () => {
     <Router>
         <Switch>
           <Route exact path="/">
-             <Tracker {...widgetProps} />
+            <Tracker {...widgetProps} />
           </Route>
           <Route path="/attendance">
             <div style={{width: '500px', margin: '20px auto'}}>

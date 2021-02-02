@@ -8,7 +8,7 @@ export default class AccessRepository {
   }
 
   async getAttendeeUser(attendeeProfile) {
-    const { email, fullName, picUrl } = attendeeProfile
+    const { email, fullName, company, title, picUrl } = attendeeProfile
 
     const attFetchRes = await this._client
       .from('attendees')
@@ -30,6 +30,8 @@ export default class AccessRepository {
       email,
       fullName,
       email,
+      company,
+      title,
       picUrl
     )
   }
@@ -64,7 +66,7 @@ export default class AccessRepository {
     }
   }
 
-  async trackAccess(attendeeProfile, summitId, url, fromIP) {
+  async trackAccess(attendeeProfile, summitId, url, fromIP, mustLogAccess) {
     try {
       if (!this._sbUser) this._sbUser = await this.getAttendeeUser(attendeeProfile)
       if (!this._sbUser) throw new Error('User not found')
@@ -89,7 +91,7 @@ export default class AccessRepository {
           ])
           .eq('id', access.id)
         if (error) throw new Error(error)
-        logAccess(data[0])
+        if (mustLogAccess) await this.logAccess(data[0])
         return
       }
 
@@ -103,7 +105,7 @@ export default class AccessRepository {
       ])
 
       if (insRes.error) throw new Error(insRes.error)
-      this.logAccess(insRes.data[0])
+      if (mustLogAccess) await this.logAccess(insRes.data[0])
     } catch (error) {
       console.log('error', error)
     }

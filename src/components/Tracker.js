@@ -7,17 +7,21 @@ import AccessRepository from '../lib/AccessRepository'
 const Tracker = (props) => {
 
   useEffect(() => {
-    const handleAsync = async () => {
+    const handleAsync = async (url, mustLogAccess) => {
       const accessRepo = new AccessRepository(props.supabaseUrl, props.supabaseKey)
       const clientIP = await publicIp.v4()
       accessRepo.trackAccess(
         props.user,
         props.summitId,
-        window.location.href,
-        clientIP
+        url,
+        clientIP,
+        mustLogAccess
       )
     }
-    handleAsync()
+    handleAsync(window.location.href, true)
+    return () => {
+      handleAsync('', false)
+    }
   }, [])
 
   return (

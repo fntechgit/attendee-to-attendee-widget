@@ -15,7 +15,7 @@ const AttendeesListItem = (props) => {
           />
         </div>
         <div className={style.text}>
-           {attendee.full_name} ({attendee.email})
+           {attendee.full_name} - {attendee.title} - {attendee.company}
         </div>
       </div>
     </li>
