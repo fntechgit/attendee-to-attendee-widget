@@ -88,6 +88,7 @@ export default class AccessRepository {
       console.log('trackAccess 2: fetchRes ->', fetchRes)
 
       if (fetchRes.data && fetchRes.data.length > 0) {
+        console.log('trackAccess 3')
         const access = fetchRes.data[0]
         const { data, error } = await this._client
           .from('accesses')
@@ -99,9 +100,13 @@ export default class AccessRepository {
           ])
           .eq('id', access.id)
         if (error) throw new Error(error)
+        console.log('trackAccess 4 -> Updated!!!')
         if (mustLogAccess) await this.logAccess(data[0])
+        console.log('trackAccess 5 -> Tracked!!!')
         return
       }
+
+      console.log('trackAccess 6 -> Insert FUUUCKKKKKKKKKKKKK!!!')
 
       const insRes = await this._client.from('accesses').insert([
         {
