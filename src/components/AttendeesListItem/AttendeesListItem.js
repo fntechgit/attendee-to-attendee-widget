@@ -14,8 +14,15 @@ const AttendeesListItem = (props) => {
             style={{ backgroundImage: `url(${attendee.pic_url})` }}
           />
         </div>
-        <div className={style.text}>
-           {attendee.full_name} - {attendee.title} - {attendee.company}
+        <div className={style.textWrapper}>
+          <div className={style.title}>
+            {attendee.full_name}
+          </div>
+          {attendee.company && (
+            <div className={style.subtitle}>
+              {attendee.title ? `${attendee.title} at ` : ''}{attendee.company}
+            </div>
+          )}
         </div>
       </div>
     </li>
