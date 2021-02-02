@@ -1,47 +1,47 @@
-import React from 'react'
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import publicIp from 'public-ip'
 import AccessRepository from '../lib/AccessRepository'
 
 const Tracker = (props) => {
+  const onEnter = async () => {
+    const accessRepo = new AccessRepository(
+      props.supabaseUrl,
+      props.supabaseKey
+    )
+    const clientIP = await publicIp.v4()
+    accessRepo.trackAccess(
+      props.user,
+      props.summitId,
+      window.location.href,
+      clientIP,
+      true
+    )
+  }
+
+  const onLeave = async () => {
+    console.log('leaving tracked page')
+    const accessRepo = new AccessRepository(
+      props.supabaseUrl,
+      props.supabaseKey
+    )
+    await accessRepo.trackAccess(props.user, props.summitId, '', '', false)
+  }
 
   useEffect(() => {
-    const handleAsync = async (url, mustLogAccess) => {
-      const accessRepo = new AccessRepository(props.supabaseUrl, props.supabaseKey)
-      const clientIP = await publicIp.v4()
-      accessRepo.trackAccess(
-        props.user,
-        props.summitId,
-        url,
-        clientIP,
-        mustLogAccess
-      )
+    onEnter()
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', onLeave)
     }
-    handleAsync(window.location.href, true)
     return () => {
-      handleAsync('', false)
+      onLeave()
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('beforeunload', onLeave)
+      }
     }
   }, [])
-
-  return (
-    <div>
-      {/* <button
-        onClick={async () => {
-          const rnd = Math.floor(Math.random() * 10) + 1
-          const clientIP = await publicIp.v4()
-          trackAccess(
-            props.user,
-            props.summitId,
-            `http://localhost:3000/${rnd}`,
-            clientIP
-          )
-        }}
-      >
-        Mock access
-      </button> */}
-    </div>
-  )
+  
+  return null
 }
 
 Tracker.propTypes = {
@@ -51,6 +51,8 @@ Tracker.propTypes = {
   user: PropTypes.shape({
     fullName: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
+    company: PropTypes.string,
+    title: PropTypes.string,
     picUrl: PropTypes.string
   }).isRequired
 }

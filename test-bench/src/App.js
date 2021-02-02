@@ -3,6 +3,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  Link,
 } from "react-router-dom";
 import Modal from 'react-modal'
 import { Tracker, RealTimeAttendeesList, AttendeeDetail } from 'attendee-to-attendee-widget'
@@ -42,11 +43,16 @@ const App = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [accessInfo, setAccessInfo] = useState({});
 
-  const rnd = Math.floor(Math.random() * 5) + 1
-  widgetProps.user.fullName = `Test User ${rnd}`
-  widgetProps.user.email = `test${rnd}@nomail.com`
-  widgetProps.user.company = `Company ${rnd}`
-  widgetProps.user.title = `Title ${rnd}`
+  // const rnd = Math.floor(Math.random() * 5) + 1
+  // widgetProps.user.fullName = `Test User ${rnd}`
+  // widgetProps.user.email = `test${rnd}@nomail.com`
+  // widgetProps.user.company = `Company ${rnd}`
+  // widgetProps.user.title = `Title ${rnd}`
+
+  widgetProps.user.fullName = `Roman Gutierrez`
+  widgetProps.user.email = `roman.gutierrez@gmail.com`
+  widgetProps.user.company = `Tipit`
+  widgetProps.user.title = `Software engineer`
 
   const openModal = () => {
     setIsOpen(true);
@@ -71,10 +77,21 @@ const App = () => {
     <Router>
         <Switch>
           <Route exact path="/">
-            <Tracker {...widgetProps} />
+            <div>
+              <Link to='/attendance'>Attendees</Link>
+              <Tracker {...widgetProps} />
+            </div>
+          </Route>
+          <Route exact path="/a">
+            <div>
+              <Link to='/attendance'>Attendees</Link>
+              <Tracker {...widgetProps} />
+            </div>
           </Route>
           <Route path="/attendance">
             <div style={{width: '500px', margin: '20px auto'}}>
+              <Link to='/'>Track 1</Link>
+              <Link to='/a'>Track 2</Link>
               <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} />
               <Modal
                 isOpen={modalIsOpen}
@@ -85,6 +102,9 @@ const App = () => {
                 <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
               </Modal>
             </div>
+          </Route>
+          <Route exact path="/untracked">
+            <div>Untracked page</div>
           </Route>
         </Switch>
     </Router>
