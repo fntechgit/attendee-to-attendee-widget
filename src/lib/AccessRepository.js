@@ -92,13 +92,10 @@ export default class AccessRepository {
           ])
           .eq('id', access.id)
         if (error) throw new Error(error)
-        console.log('trackAccess 4 -> Updated!!!')
         if (mustLogAccess) {
           await this.logAccess(data[0])
         }
-        console.log('trackAccess 5 -> Tracked!!!')
       } else {
-        console.log('trackAccess 6 -> Insert FUUUCKKKKKKKKKKKKK!!!')
         const insRes = await this._client.from('accesses').insert([
           {
             attendee_id: this._sbUser.id,
@@ -107,7 +104,6 @@ export default class AccessRepository {
             attendee_ip: fromIP
           }
         ])
-  
         if (insRes.error) throw new Error(insRes.error)
         if (mustLogAccess) await this.logAccess(insRes.data[0])
       }
