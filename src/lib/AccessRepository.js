@@ -93,9 +93,10 @@ export default class AccessRepository {
           .eq('id', access.id)
         if (error) throw new Error(error)
         console.log('trackAccess 4 -> Updated!!!')
-        if (mustLogAccess) await this.logAccess(data[0])
+        if (mustLogAccess) {
+          await this.logAccess(data[0])
+        }
         console.log('trackAccess 5 -> Tracked!!!')
-        return
       } else {
         console.log('trackAccess 6 -> Insert FUUUCKKKKKKKKKKKKK!!!')
         const insRes = await this._client.from('accesses').insert([
