@@ -68,14 +68,8 @@ export default class AccessRepository {
 
   async trackAccess(attendeeProfile, summitId, url, fromIP, mustLogAccess) {
     try {
-      console.log('trackAccess 0: attendeeProfile ->', attendeeProfile)
-      console.log('trackAccess 0: user ->', this._sbUser)
-
-
       if (!this._sbUser) this._sbUser = await this.getAttendeeUser(attendeeProfile)
       if (!this._sbUser) throw new Error('User not found')
-
-      console.log('trackAccess 1: user ->', this._sbUser)
 
       //check existing access entry
       const fetchRes = await this._client
@@ -84,8 +78,6 @@ export default class AccessRepository {
         .match({ attendee_id: this._sbUser.id, summit_id: summitId })
 
       if (fetchRes.error) throw new Error(fetchRes.error)
-
-      console.log('trackAccess 2: fetchRes ->', fetchRes)
 
       if (fetchRes.data && fetchRes.data.length > 0) {
         console.log('trackAccess 3')
@@ -104,21 +96,20 @@ export default class AccessRepository {
         if (mustLogAccess) await this.logAccess(data[0])
         console.log('trackAccess 5 -> Tracked!!!')
         return
+      } else {
+        console.log('trackAccess 6 -> Insert FUUUCKKKKKKKKKKKKK!!!')
+        const insRes = await this._client.from('accesses').insert([
+          {
+            attendee_id: this._sbUser.id,
+            summit_id: summitId,
+            current_url: url,
+            attendee_ip: fromIP
+          }
+        ])
+  
+        if (insRes.error) throw new Error(insRes.error)
+        if (mustLogAccess) await this.logAccess(insRes.data[0])
       }
-
-      console.log('trackAccess 6 -> Insert FUUUCKKKKKKKKKKKKK!!!')
-
-      const insRes = await this._client.from('accesses').insert([
-        {
-          attendee_id: this._sbUser.id,
-          summit_id: summitId,
-          current_url: url,
-          attendee_ip: fromIP
-        }
-      ])
-
-      if (insRes.error) throw new Error(insRes.error)
-      if (mustLogAccess) await this.logAccess(insRes.data[0])
     } catch (error) {
       console.log('error', error)
     }
