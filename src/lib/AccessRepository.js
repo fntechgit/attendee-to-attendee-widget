@@ -68,19 +68,25 @@ export default class AccessRepository {
 
   async trackAccess(attendeeProfile, summitId, url, fromIP, mustLogAccess) {
     try {
-      if (!this._sbUser) this._sbUser = await this.getAttendeeUser(attendeeProfile)
+      console.log(`AccessRepository::trackAccess summitId ${summitId} url ${url} fromIP ${fromIP} mustLogAccess ${mustLogAccess}`)
+      if (!this._sbUser) {
+        console.log(`AccessRepository::trackAccess this._sbUser is null`)
+        this._sbUser = await this.getAttendeeUser(attendeeProfile)
+      }
+
       if (!this._sbUser) throw new Error('User not found')
 
       //check existing access entry
+      console.log(`AccessRepository::trackAccess querying supabase attendee_id ${this._sbUser.id}`);
       const fetchRes = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
         .match({ attendee_id: this._sbUser.id, summit_id: summitId })
 
       if (fetchRes.error) throw new Error(fetchRes.error)
-
+      // there were a previous access from this user
       if (fetchRes.data && fetchRes.data.length > 0) {
-        console.log('trackAccess 3')
+        console.log(`AccessRepository::trackAccess data on 'accesses' already exists, updating it...`);
         const access = fetchRes.data[0]
         const { data, error } = await this._client
           .from('accesses')
@@ -91,12 +97,17 @@ export default class AccessRepository {
             }
           ])
           .eq('id', access.id)
-        if (error) throw new Error(error)
+        if (error)
+          throw new Error(error)
         if (mustLogAccess) {
+          console.log(`AccessRepository::trackAccess logging access ...`);
           await this.logAccess(data[0])
         }
-      } else {
-        const insRes = await this._client.from('accesses').insert([
+        return;
+      }
+      // no access so far ( first time)
+      console.log(`AccessRepository::trackAccess first access from user ${this._sbUser.id}...`);
+      const insRes = await this._client.from('accesses').insert([
           {
             attendee_id: this._sbUser.id,
             summit_id: summitId,
@@ -104,13 +115,11 @@ export default class AccessRepository {
             attendee_ip: fromIP
           }
         ])
-        if (insRes.error) throw new Error(insRes.error)
-        if (mustLogAccess) await this.logAccess(insRes.data[0])
-      }
+      if (insRes.error) throw new Error(insRes.error)
+      if (mustLogAccess) await this.logAccess(insRes.data[0])
     } catch (error) {
       console.log('error', error)
     }
-    return
   }
 
   subscribe(handleAccessNews) {
