@@ -7,33 +7,54 @@ export default class AccessRepository {
     this._sbUser = null
   }
 
+  async addAttendee(id, fullName, email, company, title, picUrl, idpUserId) {
+    let { error } = await this._client
+      .from('attendees')
+      .insert([{ id, full_name: fullName, email, company, title, pic_url: picUrl, idp_user_id: idpUserId }])
+  
+    if (error) throw new Error(error)
+  }
+
+  async updateAttendee(id, fullName, company, title, picUrl, idpUserId) {
+    let { error } = await this._client
+      .from('attendees')
+      .update([{ full_name: fullName, company, title, pic_url: picUrl, idp_user_id: idpUserId }])
+      .eq('id', id)
+  
+    if (error) throw new Error(error)
+  }
+
+  somethigChange(fetchedAttendee, fullName, company, title, picUrl, idpUserId) {
+    return fetchedAttendee.full_name !== fullName || 
+      fetchedAttendee.company !== company ||
+      fetchedAttendee.title !== title ||
+      fetchedAttendee.pic_url !== picUrl ||
+      fetchedAttendee.idp_user_id !== idpUserId
+  }
+
   async getAttendeeUser(attendeeProfile) {
-    const { email, fullName, company, title, picUrl } = attendeeProfile
+    const { email, fullName, company, title, picUrl, idpUserId } = attendeeProfile
 
     const attFetchRes = await this._client
       .from('attendees')
-      .select(`id`)
+      .select(`*`)
       .eq('email', email)
 
     if (attFetchRes.error) throw new Error(attFetchRes.error)
 
     if (attFetchRes.data && attFetchRes.data.length > 0 && !this._sbUser) {
-      return await signIn(
-        this._client,
-        email,
-        email
-      )
+      const fetchedAttendee = attFetchRes.data[0]
+      const user = await signIn(this._client, email, email)
+      if (this.somethigChange(fetchedAttendee, fullName, company, title, picUrl, idpUserId)) {
+        console.log('something change')
+        this.updateAttendee(fetchedAttendee.id, fullName, company, title, picUrl, idpUserId)
+      }
+      return user
     }
 
-    return await signUp(
-      this._client,
-      email,
-      fullName,
-      email,
-      company,
-      title,
-      picUrl
-    )
+    const newUser = await signUp(this._client, email, email)
+    await addAttendee(newUser.id, fullName, email, company, title, picUrl, idpUserId)
+    return newUser
   }
 
   async fetchCurrentPageAttendees(url) {

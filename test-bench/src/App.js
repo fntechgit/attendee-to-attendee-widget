@@ -31,7 +31,7 @@ const widgetProps = {
     email: '',
     company: '',
     title: '',
-    picUrl: 'https://i1.wp.com/dayinlab.com/wp-content/uploads/2018/04/iron-man.jpg?resize=470%2C260'
+    picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
   },
   summitId: 8,
   ...sbAuthProps
@@ -48,11 +48,13 @@ const App = () => {
   // widgetProps.user.email = `test${rnd}@nomail.com`
   // widgetProps.user.company = `Company ${rnd}`
   // widgetProps.user.title = `Title ${rnd}`
+  // widgetProps.user.idpUserId = 13
 
   widgetProps.user.fullName = `Roman Gutierrez`
   widgetProps.user.email = `roman.gutierrez@gmail.com`
   widgetProps.user.company = `Tipit`
-  widgetProps.user.title = `Software engineer`
+  widgetProps.user.title = `Full stack developer`
+  widgetProps.user.idpUserId = 13
 
   const openModal = () => {
     setIsOpen(true);

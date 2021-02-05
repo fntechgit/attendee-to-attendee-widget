@@ -1,18 +1,9 @@
-const addAttendee = async (supabase, id, fullName, email, company, title, picUrl) => {
-  let { error } = await supabase
-    .from('attendees')
-    .insert([{ id, full_name: fullName, email, company, title, pic_url: picUrl }])
-
-  if (error) throw new Error(error)
-}
-
-export const signUp = async (supabase, email, fullName, password, company, title, picUrl) => {
+export const signUp = async (supabase, email, password) => {
   const { error, data } = await supabase.auth.signUp({
     email,
     password
   })
   if (error) throw new Error(error)
-  addAttendee(supabase, data.user.id, fullName, email, company, title, picUrl)
   return data.user
 }
 

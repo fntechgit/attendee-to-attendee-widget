@@ -1,11 +1,12 @@
 -- ATTENDEES
 create table public.attendees (
-  id          uuid not null primary key, -- UUID from auth.users
+  id          uuid NOT NULL primary key, -- UUID from auth.users
   full_name   text NOT NULL,
   email		    text,
   company     text,
   title       text,
-  pic_url	    text
+  pic_url	    text,
+  idp_user_id int
 );
 
 --ACCESSES
