@@ -10,30 +10,57 @@ export default class AccessRepository {
   async addAttendee(id, fullName, email, company, title, picUrl, idpUserId) {
     let { error } = await this._client
       .from('attendees')
-      .insert([{ id, full_name: fullName, email, company, title, pic_url: picUrl, idp_user_id: idpUserId }])
-  
+      .insert([
+        {
+          id,
+          full_name: fullName,
+          email,
+          company,
+          title,
+          pic_url: picUrl,
+          idp_user_id: idpUserId
+        }
+      ])
+
     if (error) throw new Error(error)
   }
 
   async updateAttendee(id, fullName, company, title, picUrl, idpUserId) {
     let { error } = await this._client
       .from('attendees')
-      .update([{ full_name: fullName, company, title, pic_url: picUrl, idp_user_id: idpUserId }])
+      .update([
+        {
+          full_name: fullName,
+          company,
+          title,
+          pic_url: picUrl,
+          idp_user_id: idpUserId
+        }
+      ])
       .eq('id', id)
-  
+
     if (error) throw new Error(error)
   }
 
   somethigChange(fetchedAttendee, fullName, company, title, picUrl, idpUserId) {
-    return fetchedAttendee.full_name !== fullName || 
+    return (
+      fetchedAttendee.full_name !== fullName ||
       fetchedAttendee.company !== company ||
       fetchedAttendee.title !== title ||
       fetchedAttendee.pic_url !== picUrl ||
       fetchedAttendee.idp_user_id !== idpUserId
+    )
   }
 
   async getAttendeeUser(attendeeProfile) {
-    const { email, fullName, company, title, picUrl, idpUserId } = attendeeProfile
+    const {
+      email,
+      fullName,
+      company,
+      title,
+      picUrl,
+      idpUserId
+    } = attendeeProfile
 
     const attFetchRes = await this._client
       .from('attendees')
@@ -45,15 +72,39 @@ export default class AccessRepository {
     if (attFetchRes.data && attFetchRes.data.length > 0 && !this._sbUser) {
       const fetchedAttendee = attFetchRes.data[0]
       const user = await signIn(this._client, email, email)
-      if (this.somethigChange(fetchedAttendee, fullName, company, title, picUrl, idpUserId)) {
+      if (
+        this.somethigChange(
+          fetchedAttendee,
+          fullName,
+          company,
+          title,
+          picUrl,
+          idpUserId
+        )
+      ) {
         console.log('something change')
-        this.updateAttendee(fetchedAttendee.id, fullName, company, title, picUrl, idpUserId)
+        this.updateAttendee(
+          fetchedAttendee.id,
+          fullName,
+          company,
+          title,
+          picUrl,
+          idpUserId
+        )
       }
       return user
     }
 
     const newUser = await signUp(this._client, email, email)
-    await addAttendee(newUser.id, fullName, email, company, title, picUrl, idpUserId)
+    await addAttendee(
+      newUser.id,
+      fullName,
+      email,
+      company,
+      title,
+      picUrl,
+      idpUserId
+    )
     return newUser
   }
 
@@ -89,16 +140,13 @@ export default class AccessRepository {
 
   async trackAccess(attendeeProfile, summitId, url, fromIP, mustLogAccess) {
     try {
-      console.log(`AccessRepository::trackAccess summitId ${summitId} url ${url} fromIP ${fromIP} mustLogAccess ${mustLogAccess}`)
       if (!this._sbUser) {
-        console.log(`AccessRepository::trackAccess this._sbUser is null`)
         this._sbUser = await this.getAttendeeUser(attendeeProfile)
       }
 
       if (!this._sbUser) throw new Error('User not found')
 
       //check existing access entry
-      console.log(`AccessRepository::trackAccess querying supabase attendee_id ${this._sbUser.id}`);
       const fetchRes = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
@@ -107,7 +155,6 @@ export default class AccessRepository {
       if (fetchRes.error) throw new Error(fetchRes.error)
       // there were a previous access from this user
       if (fetchRes.data && fetchRes.data.length > 0) {
-        console.log(`AccessRepository::trackAccess data on 'accesses' already exists, updating it...`);
         const access = fetchRes.data[0]
         const { data, error } = await this._client
           .from('accesses')
@@ -118,26 +165,42 @@ export default class AccessRepository {
             }
           ])
           .eq('id', access.id)
-        if (error)
-          throw new Error(error)
+        if (error) throw new Error(error)
         if (mustLogAccess) {
-          console.log(`AccessRepository::trackAccess logging access ...`);
           await this.logAccess(data[0])
         }
-        return;
+        return
       }
-      // no access so far ( first time)
-      console.log(`AccessRepository::trackAccess first access from user ${this._sbUser.id}...`);
+      // no access so far (first time)
       const insRes = await this._client.from('accesses').insert([
-          {
-            attendee_id: this._sbUser.id,
-            summit_id: summitId,
-            current_url: url,
-            attendee_ip: fromIP
-          }
-        ])
+        {
+          attendee_id: this._sbUser.id,
+          summit_id: summitId,
+          current_url: url,
+          attendee_ip: fromIP
+        }
+      ])
       if (insRes.error) throw new Error(insRes.error)
       if (mustLogAccess) await this.logAccess(insRes.data[0])
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  cleanUpAccess(summitId) {
+    try {
+      if (this._sbUser) {
+        this._client
+          .from('accesses')
+          .update([
+            {
+              current_url: '',
+              attendee_ip: ''
+            }
+          ])
+          .match({ attendee_id: this._sbUser.id, summit_id: summitId }
+        )
+      }
     } catch (error) {
       console.log('error', error)
     }
