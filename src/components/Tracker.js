@@ -27,9 +27,9 @@ const Tracker = (props) => {
 
   const onBeforeUnload = e => {
     accessRepo.cleanUpAccess(props.summitId)
-    // if (!e) return
-    // e.preventDefault()
-    // e.returnValue = ''
+    if (!e) return
+    e.preventDefault()
+    e.returnValue = ''
   }
 
   useEffect(() => {
