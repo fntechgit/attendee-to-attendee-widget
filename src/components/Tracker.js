@@ -27,9 +27,9 @@ const Tracker = (props) => {
 
   const onBeforeUnload = e => {
     console.log('unload tracked page')
-    // if (!e) return
-    // e.preventDefault()
-    // e.returnValue = ''
+    if (!e) return
+    e.preventDefault()
+    e.returnValue = ''
     accessRepo.trackAccess(props.user, props.summitId, '', '', false)
   }
 
