@@ -4,6 +4,9 @@ import publicIp from 'public-ip'
 import AccessRepository from '../lib/AccessRepository'
 
 const Tracker = (props) => {
+
+  const pendingOps = new Set();
+
   const accessRepo = new AccessRepository(
     props.supabaseUrl,
     props.supabaseKey
@@ -25,22 +28,38 @@ const Tracker = (props) => {
     await accessRepo.trackAccess(props.user, props.summitId, '', '', false)
   }
 
+  function addToPendingWork(promise) {
+    pendingOps.add(promise);
+    const cleanup = () => pendingOps.delete(promise);
+    promise.then(cleanup).catch(cleanup);
+  } 
+
   const onBeforeUnload = e => {
-    accessRepo.cleanUpAccess(props.summitId)
-    if (!e) return
-    e.preventDefault()
-    e.returnValue = ''
+    addToPendingWork(accessRepo.cleanUpAccess(props.summitId))
+    if (pendingOps.size) {
+      e.returnValue = 'Are you sure you want to leave?'
+    }
+  }
+
+  const onVisibilitychange = _ => {
+    if (document.visibilityState === 'visible') {
+      onEnter()
+    } else {
+      onLeave()
+    }
   }
 
   useEffect(() => {
     onEnter()
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', onBeforeUnload)
+      document.addEventListener("visibilitychange", onVisibilitychange)
     }
     return () => {
       onLeave()
       if (typeof window !== 'undefined') {
         window.removeEventListener('beforeunload', onBeforeUnload)
+        document.removeEventListener("visibilitychange", onVisibilitychange)
       }
     }
   }, [])

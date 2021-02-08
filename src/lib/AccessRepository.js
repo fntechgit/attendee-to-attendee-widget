@@ -187,10 +187,10 @@ export default class AccessRepository {
     }
   }
 
-  cleanUpAccess(summitId) {
+  async cleanUpAccess(summitId) {
     try {
       if (this._sbUser) {
-        this._client
+        return this._client
           .from('accesses')
           .update([
             {
