@@ -25,12 +25,12 @@ const Tracker = (props) => {
     await accessRepo.trackAccess(props.user, props.summitId, '', '', false)
   }
 
-  const onBeforeUnload = e => {
+  const onBeforeUnload = async (e) => {
     console.log('unload tracked page')
+    await accessRepo.trackAccess(props.user, props.summitId, '', '', false)
     if (!e) return
     e.preventDefault()
     e.returnValue = ''
-    accessRepo.trackAccess(props.user, props.summitId, '', '', false)
   }
 
   useEffect(() => {
