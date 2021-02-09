@@ -18,7 +18,7 @@ CREATE TABLE public.accesses (
   summit_id 	        int,
   current_url  	      text NOT NULL,
   attendee_ip	        text NOT NULL,
-  browser_user_agent  text NOT NULL
+  browser_user_agent  text
 );
 
 --ACCESS_TRACKING
@@ -29,7 +29,7 @@ CREATE TABLE public.access_tracking (
   summit_id 	        int,
   url	                text NOT NULL,
   attendee_ip 	      text NOT NULL,
-  browser_user_agent  text NOT NULL
+  browser_user_agent  text
 );
 
 comment on table public.access_tracking is 'Access tracking history';
