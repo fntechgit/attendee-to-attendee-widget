@@ -96,7 +96,7 @@ export default class AccessRepository {
     }
 
     const newUser = await signUp(this._client, email, email)
-    await addAttendee(
+    await this.addAttendee(
       newUser.id,
       fullName,
       email,
