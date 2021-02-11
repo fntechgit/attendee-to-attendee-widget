@@ -108,12 +108,34 @@ export default class AccessRepository {
     return newUser
   }
 
-  async fetchCurrentPageAttendees(url) {
+  async fetchCurrentPageAttendees(url, pageIx = 0, pageSize = 6) {
     try {
+      const lowerIx = pageIx * pageSize
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize) 
       let { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
         .eq('current_url', url)
+        .order('updated_at', { ascending: false })
+        .range(lowerIx, upperIx)
+      if (error) throw new Error(error)
+      return data
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  async fetchCurrentShowAttendees(summitId, skip = 0, take = 20) {
+    try {
+      const lowerIx = pageIx * pageSize
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize) 
+      let { data, error } = await this._client
+        .from('accesses')
+        .select(`*, attendees(*)`)
+        .eq('summit_id', summitId)
+        .neq('current_url', '')
+        .order('updated_at', { ascending: false })
+        .range(lowerIx, upperIx)
       if (error) throw new Error(error)
       return data
     } catch (error) {
@@ -140,7 +162,7 @@ export default class AccessRepository {
 
   async trackAccess(attendeeProfile, summitId, url, fromIP, mustLogAccess) {
     try {
-      if (!this._sbUser) {
+      if (!this._sbUser || this._sbUser.email !== attendeeProfile.email) {
         this._sbUser = await this.getAttendeeUser(attendeeProfile)
       }
 

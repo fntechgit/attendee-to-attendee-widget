@@ -1,41 +1,40 @@
 import { useState, useEffect } from 'react'
-import AccessRepository from './AccessRepository'
 
 export const useStore = (props) => {
-  const [accessList, setAccessList] = useState([])
-  const [accessNews, handleAccessNews] = useState()
+  const [attendeesNews, setAttendeesNews] = useState([])
+  const [accessNews, handleAccessNews] = useState({})
   const [accessListener, setAccessListener] = useState(null)
 
-  const accessRepo = new AccessRepository(props.supabaseUrl, props.supabaseKey)
+  const accessRepo = props.accessRepository
+
+  // useEffect(() => {
+  //   setAttendeesNews(null)
+  //   accessRepo.fetchCurrentPageAttendees(props.url)
+  //     .then((response) => {
+  //       //console.log(response)
+  //       setAttendeesNews(response)
+  //     })
+  //     .catch(console.error)
+  // }, [props.url])
 
   useEffect(() => {
-    setAccessList(null)
-    accessRepo.fetchCurrentPageAttendees(props.url)
-      .then((response) => {
-        //console.log(response)
-        setAccessList(response)
-      })
-      .catch(console.error)
-  }, [props.url])
-
-  useEffect(() => {
-    const handleAsync = async () => {
-      if (accessNews) {
-        accessRepo.fetchCurrentPageAttendees(props.url)
-          .then((response) => {
-            setAccessList(response)
-          })
-        .catch(console.error)
-      }
-    }
-    handleAsync()
+    //if (accessNews) {
+    // accessRepo.fetchCurrentPageAttendees(props.url)
+    //   .then((response) => {
+    //     setAttendeesNews(response)
+    //   })
+    // .catch(console.error)
+    //}
+    setAttendeesNews(accessNews)
   }, [accessNews, props.url])
 
   useEffect(() => {
     if (!accessListener) {
-      setAccessListener(accessRepo.subscribe(handleAccessNews))
+      setAccessListener(accessRepo.subscribe((payload) => { 
+        handleAccessNews(payload) 
+      }))
     }
   }, [accessListener])
 
-  return { accessList }
+  return { attendeesNews }
 }

@@ -8,7 +8,7 @@ export const signUp = async (supabase, email, password) => {
 }
 
 export const signIn = async (supabase, email, password) => {
-  const { error, data } = await supabase.auth.signIn({
+  const { data } = await supabase.auth.signIn({
     email,
     password
   })
