@@ -125,7 +125,7 @@ export default class AccessRepository {
     }
   }
 
-  async fetchCurrentShowAttendees(summitId, skip = 0, take = 20) {
+  async fetchCurrentShowAttendees(summitId, pageIx = 0, pageSize = 6) {
     try {
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize) 
@@ -226,6 +226,40 @@ export default class AccessRepository {
     } catch (error) {
       console.log('error', error)
     }
+  }
+
+  async mergeChanges(attendeesListLocal, attendeesNews, url) {
+    let oldItem = null
+    let oldItemVerOccurrences = attendeesListLocal.filter(
+      item => item.id === attendeesNews.id
+    )
+    if (oldItemVerOccurrences.length > 0) {
+      oldItem = oldItemVerOccurrences[0]
+
+      const newList = attendeesListLocal.filter(
+        (item) => item.id !== attendeesNews.id
+      )
+      if (attendeesNews.current_url === url) {
+        oldItem.current_url = attendeesNews.current_url
+        newList.unshift(oldItem)
+      }
+      return newList
+    } else {
+      //must fetch from api
+      let { data, error } = await this._client
+        .from('accesses')
+        .select(`*, attendees(*)`)
+        .eq('id', attendeesNews.id)
+
+      if (!error && data && data.length > 0) {
+        const item = data[0]
+        if (item.current_url === url) {
+          attendeesListLocal.unshift(item)
+        }
+        return [...attendeesListLocal]
+      }
+    }
+    return null
   }
 
   subscribe(handleAccessNews) {
