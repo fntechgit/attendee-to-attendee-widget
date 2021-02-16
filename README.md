@@ -26,6 +26,8 @@ const widgetProps = {
   user: {
     fullName: '...',
     email: '...',
+    company: '...',
+    title: '...',
     picUrl: '...'
   },
   onAttendeeClick: console.log,
@@ -49,7 +51,7 @@ const App = () => {
   const handleItemClick = (itemInfo) => {
     console.log(itemInfo)
   }
-  return <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} />
+  return <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} title='Looking at this page' summitId={widgetProps.summitId} />
 }
 ```
 

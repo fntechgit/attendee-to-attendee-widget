@@ -8,19 +8,17 @@ export default class AccessRepository {
   }
 
   async addAttendee(id, fullName, email, company, title, picUrl, idpUserId) {
-    let { error } = await this._client
-      .from('attendees')
-      .insert([
-        {
-          id,
-          full_name: fullName,
-          email,
-          company,
-          title,
-          pic_url: picUrl,
-          idp_user_id: idpUserId
-        }
-      ])
+    let { error } = await this._client.from('attendees').insert([
+      {
+        id,
+        full_name: fullName,
+        email,
+        company,
+        title,
+        pic_url: picUrl,
+        idp_user_id: idpUserId
+      }
+    ])
 
     if (error) throw new Error(error)
   }
@@ -111,7 +109,7 @@ export default class AccessRepository {
   async fetchCurrentPageAttendees(url, pageIx = 0, pageSize = 6) {
     try {
       const lowerIx = pageIx * pageSize
-      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize) 
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
       let { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
@@ -128,7 +126,7 @@ export default class AccessRepository {
   async fetchCurrentShowAttendees(summitId, pageIx = 0, pageSize = 6) {
     try {
       const lowerIx = pageIx * pageSize
-      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize) 
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
       let { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
@@ -136,6 +134,24 @@ export default class AccessRepository {
         .neq('current_url', '')
         .order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
+      if (error) throw new Error(error)
+      return data
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  async findByFullname(filter, summitId, url) {
+    try {
+      const { scopeFieldName, scopeFieldVal } = url
+        ? { scopeFieldName: 'current_url', scopeFieldVal: url }
+        : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
+
+      const { data, error } = await this._client
+        .from('accesses')
+        .select(`*, attendees(*)`)
+        .eq(scopeFieldName, scopeFieldVal)
+        .like('attendees.full_name', `%${filter}%`)
       if (error) throw new Error(error)
       return data
     } catch (error) {
@@ -220,8 +236,7 @@ export default class AccessRepository {
               attendee_ip: ''
             }
           ])
-          .match({ attendee_id: this._sbUser.id, summit_id: summitId }
-        )
+          .match({ attendee_id: this._sbUser.id, summit_id: summitId })
       }
     } catch (error) {
       console.log('error', error)
@@ -231,7 +246,7 @@ export default class AccessRepository {
   async mergeChanges(attendeesListLocal, attendeesNews, url) {
     let oldItem = null
     let oldItemVerOccurrences = attendeesListLocal.filter(
-      item => item.id === attendeesNews.id
+      (item) => item.id === attendeesNews.id
     )
     if (oldItemVerOccurrences.length > 0) {
       oldItem = oldItemVerOccurrences[0]

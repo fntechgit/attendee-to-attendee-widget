@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import debounce from 'lodash.debounce'
 import AccessRepository from '../../lib/AccessRepository'
 import { useStore } from '../../lib/Store'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
@@ -7,7 +8,8 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import style from './style.module.scss'
 
 let accessRepo = null
-let pageIx = 0
+const url = window.location.href
+let urlAccessesPageIx = 0, showAccessesPageIx = 0
 const pageSize = 6
 
 export const scopes = {
@@ -24,7 +26,7 @@ const AttendeesList = (props) => {
     accessRepo = new AccessRepository(supabaseUrl, supabaseKey)
   }
   const { attendeesNews } = useStore({
-    url: window.location.href,
+    url,
     accessRepository: accessRepo
   })
 
@@ -33,7 +35,7 @@ const AttendeesList = (props) => {
     if (scope === scopes.PAGE && attendeesNews) {
       if (attendeesList.length == 0) {
         accessRepo
-          .fetchCurrentPageAttendees(window.location.href, pageIx, pageSize)
+          .fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
           .then((response) => {
             setAttendeesList(response)
           })
@@ -41,7 +43,7 @@ const AttendeesList = (props) => {
       } else {
         //merge news
         accessRepo
-          .mergeChanges(attendeesList, attendeesNews, window.location.href)
+          .mergeChanges(attendeesList, attendeesNews, url)
           .then((response) => {
             if (response) setAttendeesList(response)
           })
@@ -49,7 +51,7 @@ const AttendeesList = (props) => {
       }
     } else if (scope === scopes.SHOW && attendeesList.length == 0) {
       accessRepo
-        .fetchCurrentShowAttendees(summitId, pageIx, pageSize)
+        .fetchCurrentShowAttendees(summitId, showAccessesPageIx, pageSize)
         .then((response) => {
           setAttendeesList(response)
         })
@@ -61,15 +63,16 @@ const AttendeesList = (props) => {
     let nextPage
     if (scope === scopes.PAGE) {
       nextPage = await accessRepo.fetchCurrentPageAttendees(
-        window.location.href,
-        ++pageIx,
+        url,
+        ++urlAccessesPageIx,
         pageSize
       )
     } else {
       nextPage = await accessRepo.fetchCurrentShowAttendees(
         summitId,
-        ++pageIx,
-        pageSize)
+        ++showAccessesPageIx,
+        pageSize
+      )
     }
 
     if (nextPage.length == 0) {
@@ -79,9 +82,27 @@ const AttendeesList = (props) => {
     setAttendeesList([...attendeesList, ...nextPage])
   }
 
+  let handleChangeDebounce
   const handleSearch = (e) => {
     const { value } = e.target
-    console.log('handleSearch', value)
+    if (handleChangeDebounce) handleChangeDebounce.cancel()
+    handleChangeDebounce = debounce(async () => {
+      //console.log('value', value)
+      if (scope === scopes.PAGE) {
+        urlAccessesPageIx = 0
+        const res = value
+          ? await accessRepo.findByFullname(value, summitId, url)
+          : await accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
+        if (res && res.length > 0) setAttendeesList([...res])
+      } else {
+        showAccessesPageIx = 0
+        const res = value
+          ? await accessRepo.findByFullname(value, summitId, '')
+          : await accessRepo.fetchCurrentShowAttendees(summitId, showAccessesPageIx, pageSize)
+        if (res && res.length > 0) setAttendeesList([...res])
+      }
+    }, 150)
+    handleChangeDebounce()
   }
 
   if (attendeesList) {
@@ -89,11 +110,14 @@ const AttendeesList = (props) => {
       return (
         <div className={style.outerWrapper}>
           <div className={style.searchWrapper}>
-            <input
-              className={style.searchInput}
-              onChange={handleSearch}
-              placeholder='Filter attendees'
-            />
+            <span className='deleteicon'>
+              <input
+                type='search'
+                className={style.searchInput}
+                onChange={handleSearch}
+                placeholder='Filter attendees'
+              />
+            </span>
           </div>
           <InfiniteScroll
             dataLength={attendeesList.length}

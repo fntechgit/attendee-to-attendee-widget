@@ -5,7 +5,7 @@ import style from "./style.module.scss"
 const AttendeesListItem = (props) => {
   const attendee = props.item.attendees
 
-  return (
+  return (attendee &&
     <li className={style.attendeesListItem}>
       <div className={style.attendeesListItemContent} key={`attendee-${props.item.id}`} onClick={() => props.onItemClick(props.item)}>
         <div className={style.picWrapper}>
