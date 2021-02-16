@@ -9,7 +9,8 @@ import style from './style.module.scss'
 
 let accessRepo = null
 const url = window.location.href
-let urlAccessesPageIx = 0, showAccessesPageIx = 0
+let urlAccessesPageIx = 0,
+  showAccessesPageIx = 0
 const pageSize = 6
 
 export const scopes = {
@@ -32,7 +33,7 @@ const AttendeesList = (props) => {
 
   //handle real-time updates
   useEffect(() => {
-    if (scope === scopes.PAGE && attendeesNews) {
+    if (scope === scopes.PAGE) {
       if (attendeesList.length == 0) {
         accessRepo
           .fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
@@ -40,7 +41,7 @@ const AttendeesList = (props) => {
             setAttendeesList(response)
           })
           .catch(console.error)
-      } else {
+      } else if (attendeesNews) {
         //merge news
         accessRepo
           .mergeChanges(attendeesList, attendeesNews, url)
@@ -49,7 +50,7 @@ const AttendeesList = (props) => {
           })
           .catch(console.error)
       }
-    } else if (scope === scopes.SHOW && attendeesList.length == 0) {
+    } else if (attendeesList.length == 0) {
       accessRepo
         .fetchCurrentShowAttendees(summitId, showAccessesPageIx, pageSize)
         .then((response) => {
@@ -62,6 +63,7 @@ const AttendeesList = (props) => {
   const fetchMoreData = async () => {
     let nextPage
     if (scope === scopes.PAGE) {
+      console.log('more')
       nextPage = await accessRepo.fetchCurrentPageAttendees(
         url,
         ++urlAccessesPageIx,
@@ -82,27 +84,35 @@ const AttendeesList = (props) => {
     setAttendeesList([...attendeesList, ...nextPage])
   }
 
-  let handleChangeDebounce
+  let handleSearchDebounce
   const handleSearch = (e) => {
     const { value } = e.target
-    if (handleChangeDebounce) handleChangeDebounce.cancel()
-    handleChangeDebounce = debounce(async () => {
+    if (handleSearchDebounce) handleSearchDebounce.cancel()
+    handleSearchDebounce = debounce(async () => {
       //console.log('value', value)
       if (scope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
           ? await accessRepo.findByFullname(value, summitId, url)
-          : await accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
+          : await accessRepo.fetchCurrentPageAttendees(
+              url,
+              urlAccessesPageIx,
+              pageSize
+            )
         if (res && res.length > 0) setAttendeesList([...res])
       } else {
         showAccessesPageIx = 0
         const res = value
           ? await accessRepo.findByFullname(value, summitId, '')
-          : await accessRepo.fetchCurrentShowAttendees(summitId, showAccessesPageIx, pageSize)
+          : await accessRepo.fetchCurrentShowAttendees(
+              summitId,
+              showAccessesPageIx,
+              pageSize
+            )
         if (res && res.length > 0) setAttendeesList([...res])
       }
     }, 150)
-    handleChangeDebounce()
+    handleSearchDebounce()
   }
 
   if (attendeesList) {
@@ -110,14 +120,12 @@ const AttendeesList = (props) => {
       return (
         <div className={style.outerWrapper}>
           <div className={style.searchWrapper}>
-            <span className='deleteicon'>
-              <input
-                type='search'
-                className={style.searchInput}
-                onChange={handleSearch}
-                placeholder='Filter attendees'
-              />
-            </span>
+            <input
+              type='search'
+              className={style.searchInput}
+              onChange={handleSearch}
+              placeholder='Filter attendees'
+            />
           </div>
           <InfiniteScroll
             dataLength={attendeesList.length}

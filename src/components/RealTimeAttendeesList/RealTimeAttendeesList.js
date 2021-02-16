@@ -11,9 +11,9 @@ const RealTimeAttendeesList = (props) => {
   }
   return (
     <div>
-      <h2>
+      <h3>
         <b>{props.title}</b>
-      </h2>
+      </h3>
       <Tabs onSelect={handleTabSelect}>
         <TabList>
           <Tab>Attendees on this page</Tab>

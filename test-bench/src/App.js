@@ -94,7 +94,7 @@ const App = () => {
             <div style={{width: '500px', margin: '20px auto'}}>
               <Link to='/'>Track 1</Link>
               <Link to='/a'>Track 2</Link>
-              <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} title='Looking at this page' summitId={widgetProps.summitId} />
+              <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} title='Attendance' summitId={widgetProps.summitId} />
               <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}
