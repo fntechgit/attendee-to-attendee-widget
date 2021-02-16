@@ -93,7 +93,7 @@ const AttendeesList = (props) => {
       if (scope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByFullname(value, summitId, url)
+          ? await accessRepo.findByFullName(value, summitId, url)
           : await accessRepo.fetchCurrentPageAttendees(
               url,
               urlAccessesPageIx,
@@ -103,7 +103,7 @@ const AttendeesList = (props) => {
       } else {
         showAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByFullname(value, summitId, '')
+          ? await accessRepo.findByFullName(value, summitId, '')
           : await accessRepo.fetchCurrentShowAttendees(
               summitId,
               showAccessesPageIx,

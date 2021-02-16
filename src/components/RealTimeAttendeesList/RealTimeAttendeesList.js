@@ -17,7 +17,7 @@ const RealTimeAttendeesList = (props) => {
       <Tabs onSelect={handleTabSelect}>
         <TabList>
           <Tab>Attendees on this page</Tab>
-          <Tab>Attendees on the show</Tab>
+          <Tab>Attendees at the show</Tab>
         </TabList>
         <TabPanel><AttendeesList {...props} scope={scopes.PAGE} /></TabPanel>
         <TabPanel><AttendeesList {...props} scope={scopes.SHOW} /></TabPanel>
