@@ -111,8 +111,6 @@ export default class AccessRepository {
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
 
-      console.log('fetchCurrentPageAttendees', url, pageIx, pageSize)
-
       let { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
@@ -130,8 +128,6 @@ export default class AccessRepository {
     try {
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
-
-      console.log('fetchCurrentShowAttendees', summitId, pageIx, pageSize)
 
       let { data, error } = await this._client
         .from('accesses')
@@ -152,8 +148,6 @@ export default class AccessRepository {
       const { scopeFieldName, scopeFieldVal } = url
         ? { scopeFieldName: 'current_url', scopeFieldVal: url }
         : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
-
-      console.log('findByFullName', filter, scopeFieldName, scopeFieldVal)
 
       const { data, error } = await this._client
         .from('accesses')
