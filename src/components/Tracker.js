@@ -76,7 +76,7 @@ Tracker.propTypes = {
     email: PropTypes.string.isRequired,
     company: PropTypes.string,
     title: PropTypes.string,
-    picUrl: PropTypes.string
+    picUrl: PropTypes.string,
   }).isRequired
 }
 

@@ -56,6 +56,7 @@ const App = () => {
   widgetProps.user.title = `Full stack developer`
   widgetProps.user.idpUserId = 13
 
+
   const openModal = () => {
     setIsOpen(true);
   }
@@ -94,6 +95,7 @@ const App = () => {
             <div style={{width: '500px', margin: '20px auto'}}>
               <Link to='/'>Track 1</Link>
               <Link to='/a'>Track 2</Link>
+              <Tracker {...widgetProps} />
               <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} title='Attendance' summitId={widgetProps.summitId} />
               <Modal
                 isOpen={modalIsOpen}

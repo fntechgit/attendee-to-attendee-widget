@@ -70,7 +70,6 @@ const AttendeesList = (props) => {
   const fetchMoreData = async () => {
     let nextPage
     if (scope === scopes.PAGE) {
-      console.log('more')
       nextPage = await accessRepo.fetchCurrentPageAttendees(
         url,
         ++urlAccessesPageIx,

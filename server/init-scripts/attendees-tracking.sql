@@ -6,7 +6,8 @@ create table public.attendees (
   company     text,
   title       text,
   pic_url	    text,
-  idp_user_id int
+  idp_user_id int,
+  is_online   boolean
 );
 
 --ACCESSES

@@ -7,7 +7,16 @@ export default class AccessRepository {
     this._sbUser = null
   }
 
-  async addAttendee(id, fullName, email, company, title, picUrl, idpUserId) {
+  async _addAttendee(
+    id,
+    fullName,
+    email,
+    company,
+    title,
+    picUrl,
+    idpUserId,
+    isOnline
+  ) {
     let { error } = await this._client.from('attendees').insert([
       {
         id,
@@ -16,14 +25,23 @@ export default class AccessRepository {
         company,
         title,
         pic_url: picUrl,
-        idp_user_id: idpUserId
+        idp_user_id: idpUserId,
+        is_online: isOnline
       }
     ])
 
     if (error) throw new Error(error)
   }
 
-  async updateAttendee(id, fullName, company, title, picUrl, idpUserId) {
+  async _updateAttendee(
+    id,
+    fullName,
+    company,
+    title,
+    picUrl,
+    idpUserId,
+    isOnline
+  ) {
     let { error } = await this._client
       .from('attendees')
       .update([
@@ -32,32 +50,42 @@ export default class AccessRepository {
           company,
           title,
           pic_url: picUrl,
-          idp_user_id: idpUserId
+          idp_user_id: idpUserId,
+          is_online: isOnline
         }
       ])
       .eq('id', id)
-
     if (error) throw new Error(error)
   }
 
-  somethigChange(fetchedAttendee, fullName, company, title, picUrl, idpUserId) {
+  _somethigChange(
+    fetchedAttendee,
+    fullName,
+    company,
+    title,
+    picUrl,
+    idpUserId,
+    isOnline
+  ) {
     return (
       fetchedAttendee.full_name !== fullName ||
       fetchedAttendee.company !== company ||
       fetchedAttendee.title !== title ||
       fetchedAttendee.pic_url !== picUrl ||
-      fetchedAttendee.idp_user_id !== idpUserId
+      fetchedAttendee.idp_user_id !== idpUserId ||
+      fetchedAttendee.is_online !== isOnline
     )
   }
 
-  async getAttendeeUser(attendeeProfile) {
+  async _initializeAttendeeUser(attendeeProfile) {
     const {
       email,
       fullName,
       company,
       title,
       picUrl,
-      idpUserId
+      idpUserId,
+      isOnline
     } = attendeeProfile
 
     const attFetchRes = await this._client
@@ -71,39 +99,61 @@ export default class AccessRepository {
       const fetchedAttendee = attFetchRes.data[0]
       const user = await signIn(this._client, email, email)
       if (
-        this.somethigChange(
+        this._somethigChange(
           fetchedAttendee,
           fullName,
           company,
           title,
           picUrl,
-          idpUserId
+          idpUserId,
+          isOnline
         )
       ) {
         console.log('something change')
-        this.updateAttendee(
+        this._updateAttendee(
           fetchedAttendee.id,
           fullName,
           company,
           title,
           picUrl,
-          idpUserId
+          idpUserId,
+          isOnline
         )
       }
       return user
     }
 
+    if (this._sbUser) return this._sbUser
+    
     const newUser = await signUp(this._client, email, email)
-    await this.addAttendee(
+    await this._addAttendee(
       newUser.id,
       fullName,
       email,
       company,
       title,
       picUrl,
-      idpUserId
+      idpUserId,
+      isOnline
     )
     return newUser
+  }
+
+  async _logAccess(accessEntry) {
+    //console.log('_logAccess: ', accessEntry)
+    const { error } = await this._client.from('access_tracking').insert([
+      {
+        access_id: accessEntry.id,
+        summit_id: accessEntry.summit_id,
+        url: accessEntry.current_url,
+        attendee_ip: accessEntry.attendee_ip
+      }
+    ])
+
+    if (error) {
+      console.log(error)
+      throw new Error(error)
+    }
   }
 
   async fetchCurrentPageAttendees(url, pageIx = 0, pageSize = 6) {
@@ -133,7 +183,7 @@ export default class AccessRepository {
         .from('accesses')
         .select(`*, attendees(*)`)
         .eq('summit_id', summitId)
-        .neq('current_url', '')
+        .eq('attendees.is_online', true)
         .order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
       if (error) throw new Error(error)
@@ -161,27 +211,17 @@ export default class AccessRepository {
     }
   }
 
-  async logAccess(accessEntry) {
-    //console.log('logAccess: ', accessEntry)
-    const { error } = await this._client.from('access_tracking').insert([
-      {
-        access_id: accessEntry.id,
-        summit_id: accessEntry.summit_id,
-        url: accessEntry.current_url,
-        attendee_ip: accessEntry.attendee_ip
-      }
-    ])
-
-    if (error) {
-      console.log(error)
-      throw new Error(error)
-    }
-  }
-
   async trackAccess(attendeeProfile, summitId, url, fromIP, mustLogAccess) {
     try {
-      if (!this._sbUser || this._sbUser.email !== attendeeProfile.email) {
-        this._sbUser = await this.getAttendeeUser(attendeeProfile)
+      attendeeProfile.isOnline = true
+
+      if (
+        !this._sbUser ||
+        this._sbUser.email !== attendeeProfile.email ||
+        this._sbUser.is_online !== attendeeProfile.isOnline
+      ) {
+        
+        this._sbUser = await this._initializeAttendeeUser(attendeeProfile)
       }
 
       if (!this._sbUser) throw new Error('User not found')
@@ -207,7 +247,7 @@ export default class AccessRepository {
           .eq('id', access.id)
         if (error) throw new Error(error)
         if (mustLogAccess) {
-          await this.logAccess(data[0])
+          await this._logAccess(data[0])
         }
         return
       }
@@ -221,23 +261,31 @@ export default class AccessRepository {
         }
       ])
       if (insRes.error) throw new Error(insRes.error)
-      if (mustLogAccess) await this.logAccess(insRes.data[0])
+      if (mustLogAccess) await this._logAccess(insRes.data[0])
     } catch (error) {
       console.log('error', error)
     }
   }
 
-  async cleanUpAccess(summitId) {
+  cleanUpAccess(summitId) {
     try {
       if (this._sbUser) {
         return this._client
           .from('accesses')
-          .update([
-            {
-              current_url: '',
-              attendee_ip: ''
-            }
-          ])
+          .update([{ current_url: '', attendee_ip: '' }])
+          .match({ attendee_id: this._sbUser.id, summit_id: summitId })
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  logOffAttendee(summitId) {
+    try {
+      if (this._sbUser) {
+        return this._client
+          .from('attendees')
+          .update([{ is_online: false }])
           .match({ attendee_id: this._sbUser.id, summit_id: summitId })
       }
     } catch (error) {
