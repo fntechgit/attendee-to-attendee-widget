@@ -12,8 +12,7 @@
 ## Usage
 ### As tracker
 ```jsx
-import React from 'react'
-
+import React, {useRef} from 'react'
 import { Tracker } from 'attendee-to-attendee-widget'
 import 'attendee-to-attendee-widget/dist/index.css'
 
@@ -36,7 +35,13 @@ const widgetProps = {
 };
 
 const App = () => {
-  return <Tracker {...widgetProps} />
+  const trackerRef = useRef();
+
+  const handleSignOut = () => {
+    trackerRef.current.signOut()
+  }
+
+  return <Tracker {...widgetProps}  ref={trackerRef} />
 }
 ```
 
