@@ -1,16 +1,12 @@
 import PropTypes from 'prop-types'
-import { useEffect } from 'react'
+import { forwardRef, useImperativeHandle, useEffect } from 'react'
 import publicIp from 'public-ip'
 import AccessRepository from '../lib/AccessRepository'
 
-const Tracker = (props) => {
+const Tracker = forwardRef((props, ref) => {
+  const accessRepo = new AccessRepository(props.supabaseUrl, props.supabaseKey)
 
-  const pendingOps = new Set();
-
-  const accessRepo = new AccessRepository(
-    props.supabaseUrl,
-    props.supabaseKey
-  )
+  const pendingOps = new Set()
 
   const onEnter = async () => {
     const clientIP = await publicIp.v4()
@@ -29,19 +25,19 @@ const Tracker = (props) => {
   }
 
   function addToPendingWork(promise) {
-    pendingOps.add(promise);
-    const cleanup = () => pendingOps.delete(promise);
-    promise.then(cleanup).catch(cleanup);
-  } 
+    pendingOps.add(promise)
+    const cleanup = () => pendingOps.delete(promise)
+    promise.then(cleanup).catch(cleanup)
+  }
 
-  const onBeforeUnload = e => {
+  const onBeforeUnload = (e) => {
     addToPendingWork(accessRepo.cleanUpAccess(props.summitId))
     if (pendingOps.size) {
       e.returnValue = 'Are you sure you want to leave?'
     }
   }
 
-  const onVisibilitychange = _ => {
+  const onVisibilitychange = (_) => {
     if (document.visibilityState === 'visible') {
       onEnter()
     } else {
@@ -53,19 +49,25 @@ const Tracker = (props) => {
     onEnter()
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', onBeforeUnload)
-      document.addEventListener("visibilitychange", onVisibilitychange)
+      document.addEventListener('visibilitychange', onVisibilitychange)
     }
     return () => {
       onLeave()
       if (typeof window !== 'undefined') {
         window.removeEventListener('beforeunload', onBeforeUnload)
-        document.removeEventListener("visibilitychange", onVisibilitychange)
+        document.removeEventListener('visibilitychange', onVisibilitychange)
       }
     }
   }, [])
-  
+
+  useImperativeHandle(ref, () => ({
+    signOut() {
+      accessRepo.signOut()
+    }
+  }))
+
   return null
-}
+})
 
 Tracker.propTypes = {
   supabaseUrl: PropTypes.string.isRequired,
@@ -76,7 +78,7 @@ Tracker.propTypes = {
     email: PropTypes.string.isRequired,
     company: PropTypes.string,
     title: PropTypes.string,
-    picUrl: PropTypes.string,
+    picUrl: PropTypes.string
   }).isRequired
 }
 

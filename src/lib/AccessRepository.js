@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { signIn, signUp } from './Auth'
+import { signIn, signUp, signOut } from './Auth'
 
 export default class AccessRepository {
   constructor(supabaseUrl, supabaseKey) {
@@ -280,13 +280,17 @@ export default class AccessRepository {
     }
   }
 
-  logOffAttendee(summitId) {
+  signOut() {
     try {
       if (this._sbUser) {
+        //await signOut(this._client)
         return this._client
           .from('attendees')
           .update([{ is_online: false }])
-          .match({ attendee_id: this._sbUser.id, summit_id: summitId })
+          .match({ id: this._sbUser.id })
+          .then((data) => {
+            console.log(data)
+          })
       }
     } catch (error) {
       console.log('error', error)

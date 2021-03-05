@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useRef, useState} from 'react'
 import {
   BrowserRouter as Router,
   Switch,
@@ -40,8 +40,9 @@ const widgetProps = {
 Modal.setAppElement('#root')
 
 const App = () => {
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [accessInfo, setAccessInfo] = useState({});
+  const [modalIsOpen, setIsOpen] = useState(false)
+  const [accessInfo, setAccessInfo] = useState({})
+  const trackerRef = useRef();
 
   // const rnd = Math.floor(Math.random() * 5) + 1
   // widgetProps.user.fullName = `Test User ${rnd}`
@@ -76,6 +77,10 @@ const App = () => {
     console.log(itemInfo)
   }
 
+  const handleSignOutClick = () => {
+    trackerRef.current.signOut()
+  }
+
   return (
     <Router>
         <Switch>
@@ -95,7 +100,8 @@ const App = () => {
             <div style={{width: '500px', margin: '20px auto'}}>
               <Link to='/'>Track 1</Link>
               <Link to='/a'>Track 2</Link>
-              <Tracker {...widgetProps} />
+              <button onClick={handleSignOutClick}>SignOut</button>
+              <Tracker {...widgetProps} ref={trackerRef} />
               <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} title='Attendance' summitId={widgetProps.summitId} />
               <Modal
                 isOpen={modalIsOpen}
