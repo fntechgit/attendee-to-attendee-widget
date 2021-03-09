@@ -270,6 +270,7 @@ export default class AccessRepository {
   cleanUpAccess(summitId) {
     try {
       if (this._sbUser) {
+        this.signOut()
         return this._client
           .from('accesses')
           .update([{ current_url: '', attendee_ip: '' }])
