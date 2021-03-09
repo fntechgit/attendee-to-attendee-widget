@@ -101,7 +101,6 @@ const App = () => {
               <Link to='/'>Track 1</Link>
               <Link to='/a'>Track 2</Link>
               <button onClick={handleSignOutClick}>SignOut</button>
-              <Tracker {...widgetProps} ref={trackerRef} />
               <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} title='Attendance' summitId={widgetProps.summitId} />
               <Modal
                 isOpen={modalIsOpen}
@@ -111,6 +110,7 @@ const App = () => {
               >
                 <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
               </Modal>
+              <Tracker {...widgetProps} ref={trackerRef} />
             </div>
           </Route>
           <Route exact path="/untracked">

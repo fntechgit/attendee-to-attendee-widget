@@ -30,8 +30,13 @@ const Tracker = forwardRef((props, ref) => {
     promise.then(cleanup).catch(cleanup)
   }
 
+  const leaveSite = async () => {
+    accessRepo.cleanUpAccess(props.summitId)
+    accessRepo.signOut()
+  }
+
   const onBeforeUnload = (e) => {
-    addToPendingWork(accessRepo.cleanUpAccess(props.summitId))
+    addToPendingWork(leaveSite)
     if (pendingOps.size) {
       e.returnValue = 'Are you sure you want to leave?'
     }

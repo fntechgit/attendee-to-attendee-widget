@@ -160,11 +160,11 @@ export default class AccessRepository {
     try {
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
-
       let { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
         .eq('current_url', url)
+        .eq('attendees.is_online', true)
         .order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
       if (error) throw new Error(error)

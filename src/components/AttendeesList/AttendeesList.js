@@ -38,7 +38,7 @@ const AttendeesList = (props) => {
         accessRepo
           .fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
           .then((response) => {
-            if (response && response.length > 0) {
+            if (response) {
               setAttendeesList(response)
             }
           })
@@ -48,7 +48,7 @@ const AttendeesList = (props) => {
         accessRepo
           .mergeChanges(attendeesList, attendeesNews, url)
           .then((response) => {
-            if (response && response.length > 0) {
+            if (response) {
               setAttendeesList(response)
             }
           })
@@ -59,7 +59,7 @@ const AttendeesList = (props) => {
       accessRepo
         .fetchCurrentShowAttendees(summitId, showAccessesPageIx, pageSize)
         .then((response) => {
-          if (response && response.length > 0) {
+          if (response) {
             setAttendeesList(response)
           }
         })
