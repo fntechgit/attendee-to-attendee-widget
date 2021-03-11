@@ -60,7 +60,7 @@ const Tracker = forwardRef((props, ref) => {
   }
 
   useEffect(() => {
-    //trackAccess()
+    trackAccess()
     startKeepAlive()
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', onBeforeUnload)
