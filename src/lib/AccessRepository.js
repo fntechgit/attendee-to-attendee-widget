@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { DateTime } from 'luxon'
 import { signIn, signUp, signOut } from './Auth'
 
 export default class AccessRepository {
@@ -156,8 +157,9 @@ export default class AccessRepository {
     }
   }
 
-  async fetchCurrentPageAttendees(url, pageIx = 0, pageSize = 6) {
+  async fetchCurrentPageAttendees(url, pageIx = 0, pageSize = 6, ageMinutesBackward = 5) {
     try {
+      const ageTreshold = DateTime.utc().minus({ minutes: ageMinutesBackward }).toString()
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
       let { data, error } = await this._client
@@ -165,6 +167,7 @@ export default class AccessRepository {
         .select(`*, attendees(*)`)
         .eq('current_url', url)
         .eq('attendees.is_online', true)
+        .gt('updated_at', ageTreshold)
         .order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
       if (error) throw new Error(error)
@@ -174,8 +177,9 @@ export default class AccessRepository {
     }
   }
 
-  async fetchCurrentShowAttendees(summitId, pageIx = 0, pageSize = 6) {
+  async fetchCurrentShowAttendees(summitId, pageIx = 0, pageSize = 6, ageMinutesBackward = 5) {
     try {
+      const ageTreshold = DateTime.utc().minus({ minutes: ageMinutesBackward }).toString()
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
 
@@ -184,6 +188,7 @@ export default class AccessRepository {
         .select(`*, attendees(*)`)
         .eq('summit_id', summitId)
         .eq('attendees.is_online', true)
+        .gt('updated_at', ageTreshold)
         .order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
       if (error) throw new Error(error)

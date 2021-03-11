@@ -7,8 +7,9 @@ const Tracker = forwardRef((props, ref) => {
   const accessRepo = new AccessRepository(props.supabaseUrl, props.supabaseKey)
 
   const pendingOps = new Set()
+  let timerHandler = null
 
-  const onEnter = async () => {
+  const trackAccess = async () => {
     const clientIP = await publicIp.v4()
     accessRepo.trackAccess(
       props.user,
@@ -17,6 +18,19 @@ const Tracker = forwardRef((props, ref) => {
       clientIP,
       true
     )
+  }
+  
+  const startKeepAlive = () => {
+    stopKeepAlive()
+    timerHandler = setInterval(() => {  
+      trackAccess()
+    }, 300000)
+  }
+
+  const stopKeepAlive = () => {
+    if (timerHandler) {
+      clearInterval(timerHandler)
+    }
   }
 
   const onLeave = async () => {
@@ -39,14 +53,15 @@ const Tracker = forwardRef((props, ref) => {
 
   const onVisibilitychange = (_) => {
     if (document.visibilityState === 'visible') {
-      onEnter()
+      trackAccess()
     } else {
       onLeave()
     }
   }
 
   useEffect(() => {
-    onEnter()
+    //trackAccess()
+    startKeepAlive()
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', onBeforeUnload)
       document.addEventListener('visibilitychange', onVisibilitychange)
