@@ -15,9 +15,11 @@ export const useStore = (props) => {
 
   useEffect(() => {
     if (!accessListener) {
-      setAccessListener(accessRepo.subscribe((payload) => { 
-        handleAccessNews(payload) 
-      }))
+      setAccessListener(
+        accessRepo.subscribe((payload) => {
+          handleAccessNews(payload)
+        })
+      )
     }
   }, [accessListener])
 

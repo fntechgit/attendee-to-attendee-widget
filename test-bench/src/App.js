@@ -6,7 +6,7 @@ import {
   Link,
 } from "react-router-dom";
 import Modal from 'react-modal'
-import { Tracker, RealTimeAttendeesList, AttendeeDetail } from 'attendee-to-attendee-widget'
+import { AttendeeDetail, RealTimeAttendeesList, SimpleChat, Tracker } from 'attendee-to-attendee-widget'
 import 'attendee-to-attendee-widget/dist/index.css'
 
 const customStyles = {
@@ -25,6 +25,25 @@ const sbAuthProps = {
   supabaseKey: process.env.REACT_APP_SUPABASE_KEY
 };
 
+const streamioProps = {
+  streamApiKey: '29gtgpyz5hht',
+  apiBaseUrl: 'https://idp.dev.fnopen.com',
+  forumSlug: 'fnvirtual-poc'
+};
+
+const accessToken = 'f~PqCKYnq3a37bir.9n5Qh3jVmRY2DtZ2R0uZFuGr_1b5TT9dAousrskXq6uvzY1oDFxKVolpAgaDp_9W5vRCbB40XU_1KnAoqnLNUDgfs_6AJYm~VdZTq4_PU0P6sbX'
+
+const chatProps = {
+  accessToken: accessToken,
+  onAuthError: (err, res) => console.log(err),
+  openDir: "left",
+  title: "",
+  showHelp: true,
+  showQA: true,
+  hideUsers: false,
+  ...streamioProps
+};
+
 const widgetProps = {
   user: {
     fullName: '',
@@ -34,7 +53,7 @@ const widgetProps = {
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
   },
   summitId: 8,
-  ...sbAuthProps
+  ...sbAuthProps,
 };
 
 Modal.setAppElement('#root')
@@ -42,7 +61,8 @@ Modal.setAppElement('#root')
 const App = () => {
   const [modalIsOpen, setIsOpen] = useState(false)
   const [accessInfo, setAccessInfo] = useState({})
-  const trackerRef = useRef();
+  const trackerRef = useRef()
+  const chatRef = useRef()
 
   // const rnd = Math.floor(Math.random() * 5) + 1
   // widgetProps.user.fullName = `Test User ${rnd}`
@@ -67,14 +87,20 @@ const App = () => {
   }
 
   const handleItemClick = (itemInfo) => {
-    setAccessInfo(itemInfo)
-    openModal()
+    //setAccessInfo(itemInfo)
+    //openModal()
     //console.log(itemInfo)
+    startOneToOneChat(11)
   }
 
   const handleCTA = (itemInfo) => {
     closeModal()
-    console.log(itemInfo)
+    //console.log(itemInfo)
+    //startOneToOneChat(11)
+  }
+
+  const startOneToOneChat = (partnerId) => {
+    chatRef.current.startOneToOneChat(partnerId)
   }
 
   const handleSignOutClick = () => {
@@ -111,6 +137,7 @@ const App = () => {
                 <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
               </Modal>
               <Tracker {...widgetProps} ref={trackerRef} />
+              <SimpleChat {...chatProps} ref={chatRef} />
             </div>
           </Route>
           <Route exact path="/untracked">

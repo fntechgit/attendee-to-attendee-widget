@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { DateTime } from 'luxon'
-import { signIn, signUp, signOut } from './Auth'
+import { signIn, signUp } from './Auth'
 
 export default class AccessRepository {
   constructor(supabaseUrl, supabaseKey) {
@@ -18,7 +18,7 @@ export default class AccessRepository {
     idpUserId,
     isOnline
   ) {
-    let { error } = await this._client.from('attendees').insert([
+    const { error } = await this._client.from('attendees').insert([
       {
         id,
         full_name: fullName,
@@ -43,7 +43,7 @@ export default class AccessRepository {
     idpUserId,
     isOnline
   ) {
-    let { error } = await this._client
+    const { error } = await this._client
       .from('attendees')
       .update([
         {
@@ -125,7 +125,7 @@ export default class AccessRepository {
     }
 
     if (this._sbUser) return this._sbUser
-    
+
     const newUser = await signUp(this._client, email, email)
     await this._addAttendee(
       newUser.id,
@@ -141,7 +141,7 @@ export default class AccessRepository {
   }
 
   async _logAccess(accessEntry) {
-    //console.log('_logAccess: ', accessEntry)
+    // console.log('_logAccess: ', accessEntry)
     const { error } = await this._client.from('access_tracking').insert([
       {
         access_id: accessEntry.id,
@@ -157,12 +157,19 @@ export default class AccessRepository {
     }
   }
 
-  async fetchCurrentPageAttendees(url, pageIx = 0, pageSize = 6, ageMinutesBackward = 5) {
+  async fetchCurrentPageAttendees(
+    url,
+    pageIx = 0,
+    pageSize = 6,
+    ageMinutesBackward = 5
+  ) {
     try {
-      const ageTreshold = DateTime.utc().minus({ minutes: ageMinutesBackward }).toString()
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
-      let { data, error } = await this._client
+      const { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
         .eq('current_url', url)
@@ -177,13 +184,20 @@ export default class AccessRepository {
     }
   }
 
-  async fetchCurrentShowAttendees(summitId, pageIx = 0, pageSize = 6, ageMinutesBackward = 5) {
+  async fetchCurrentShowAttendees(
+    summitId,
+    pageIx = 0,
+    pageSize = 6,
+    ageMinutesBackward = 5
+  ) {
     try {
-      const ageTreshold = DateTime.utc().minus({ minutes: ageMinutesBackward }).toString()
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
 
-      let { data, error } = await this._client
+      const { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
         .eq('summit_id', summitId)
@@ -225,13 +239,12 @@ export default class AccessRepository {
         this._sbUser.email !== attendeeProfile.email ||
         this._sbUser.is_online !== attendeeProfile.isOnline
       ) {
-        
         this._sbUser = await this._initializeAttendeeUser(attendeeProfile)
       }
 
       if (!this._sbUser) throw new Error('User not found')
 
-      //check existing access entry
+      // check existing access entry
       const fetchRes = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
@@ -289,7 +302,7 @@ export default class AccessRepository {
   signOut() {
     try {
       if (this._sbUser) {
-        //await signOut(this._client)
+        // await signOut(this._client)
         return this._client
           .from('attendees')
           .update([{ is_online: false }])
@@ -305,7 +318,7 @@ export default class AccessRepository {
 
   async mergeChanges(attendeesListLocal, attendeesNews, url) {
     let oldItem = null
-    let oldItemVerOccurrences = attendeesListLocal.filter(
+    const oldItemVerOccurrences = attendeesListLocal.filter(
       (item) => item.id === attendeesNews.id
     )
     if (oldItemVerOccurrences.length > 0) {
@@ -320,8 +333,8 @@ export default class AccessRepository {
       }
       return newList
     } else {
-      //must fetch from api
-      let { data, error } = await this._client
+      // must fetch from api
+      const { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
         .eq('id', attendeesNews.id)

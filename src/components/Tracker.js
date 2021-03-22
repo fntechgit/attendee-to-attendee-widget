@@ -5,7 +5,6 @@ import AccessRepository from '../lib/AccessRepository'
 
 const Tracker = forwardRef((props, ref) => {
   const accessRepo = new AccessRepository(props.supabaseUrl, props.supabaseKey)
-
   const pendingOps = new Set()
   let timerHandler = null
 
@@ -19,10 +18,10 @@ const Tracker = forwardRef((props, ref) => {
       true
     )
   }
-  
+
   const startKeepAlive = () => {
     stopKeepAlive()
-    timerHandler = setInterval(() => {  
+    timerHandler = setInterval(() => {
       trackAccess()
     }, 300000)
   }
@@ -44,7 +43,7 @@ const Tracker = forwardRef((props, ref) => {
     promise.then(cleanup).catch(cleanup)
   }
 
-  const onBeforeUnload = e => {
+  const onBeforeUnload = (e) => {
     addToPendingWork(accessRepo.cleanUpAccess(props.summitId))
     if (pendingOps.size) {
       e.returnValue = 'Are you sure you want to leave?'

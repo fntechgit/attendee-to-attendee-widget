@@ -7,39 +7,31 @@ const AttendeeDetail = ({ accessInfo, onCTA }) => {
 
   return (
     <div className={style.attendeeDetail}>
-        <div className={style.row}>
-          <div className={style.lcol}>
-            Name
-          </div>
-          <div className={style.rcol}>
-            {attendee.full_name}
-          </div>
+      <div className={style.row}>
+        <div className={style.lcol}>Name</div>
+        <div className={style.rcol}>{attendee.full_name}</div>
+      </div>
+      <div className={style.row}>
+        <div className={style.lcol}>Email</div>
+        <div className={style.rcol}>
+          <div>{attendee.email}</div>
         </div>
-        <div className={style.row}>
-          <div className={style.lcol}>
-            Email
-          </div>
-          <div className={style.rcol}>
-            <div>{attendee.email}</div>
-          </div>
+      </div>
+      <div className={style.row}>
+        <div className={style.lcol}>IP</div>
+        <div className={style.rcol}>
+          <div>{accessInfo.attendee_ip}</div>
         </div>
-        <div className={style.row}>
-          <div className={style.lcol}>
-            IP
-          </div>
-          <div className={style.rcol}>
-            <div>{accessInfo.attendee_ip}</div>
-          </div>
+      </div>
+      <div className={style.row}>
+        <div className={style.lcol}>Last access</div>
+        <div className={style.rcol}>
+          <div>{accessInfo.updated_at}</div>
         </div>
-        <div className={style.row}>
-          <div className={style.lcol}>
-            Last access
-          </div>
-          <div className={style.rcol}>
-            <div>{accessInfo.updated_at}</div>
-          </div>
-        </div>
-        <button className={style.ctaButton} onClick={() => onCTA(attendee)}>CTA</button>
+      </div>
+      <button className={style.ctaButton} onClick={() => onCTA(attendee)}>
+        CTA
+      </button>
     </div>
   )
 }

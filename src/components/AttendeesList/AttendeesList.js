@@ -9,8 +9,8 @@ import style from './style.module.scss'
 
 let accessRepo = null
 const url = window.location.href
-let urlAccessesPageIx = 0,
-  showAccessesPageIx = 0
+let urlAccessesPageIx = 0
+let showAccessesPageIx = 0
 const pageSize = 6
 
 export const scopes = {
@@ -31,10 +31,10 @@ const AttendeesList = (props) => {
     accessRepository: accessRepo
   })
 
-  //handle real-time updates
+  // handle real-time updates
   useEffect(() => {
     if (scope === scopes.PAGE) {
-      if (attendeesList.length == 0) {
+      if (attendeesList.length === 0) {
         accessRepo
           .fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
           .then((response) => {
@@ -44,7 +44,7 @@ const AttendeesList = (props) => {
           })
           .catch(console.error)
       } else if (attendeesNews) {
-        //merge news
+        // merge news
         accessRepo
           .mergeChanges(attendeesList, attendeesNews, url)
           .then((response) => {
@@ -54,7 +54,7 @@ const AttendeesList = (props) => {
           })
           .catch(console.error)
       }
-    } else if (attendeesList.length == 0) {
+    } else if (attendeesList.length === 0) {
       showAccessesPageIx = 0
       accessRepo
         .fetchCurrentShowAttendees(summitId, showAccessesPageIx, pageSize)
@@ -83,7 +83,7 @@ const AttendeesList = (props) => {
       )
     }
 
-    if (nextPage.length == 0) {
+    if (nextPage.length === 0) {
       setHasMore(false)
       return
     }
@@ -95,7 +95,7 @@ const AttendeesList = (props) => {
     const { value } = e.target
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
-      //console.log('value', value)
+      // console.log('value', value)
       if (scope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
