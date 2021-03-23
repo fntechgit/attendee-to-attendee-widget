@@ -31,7 +31,7 @@ const streamioProps = {
   forumSlug: 'fnvirtual-poc'
 };
 
-const accessToken = 'f~PqCKYnq3a37bir.9n5Qh3jVmRY2DtZ2R0uZFuGr_1b5TT9dAousrskXq6uvzY1oDFxKVolpAgaDp_9W5vRCbB40XU_1KnAoqnLNUDgfs_6AJYm~VdZTq4_PU0P6sbX'
+const accessToken = 'JWdgJBUh-J3BvIUfWE7jlfaFY-gaxifZzl96ZeGrol-0-8dHeIhcVqZ_QjhNkd-N1bNZWyI963W9M_kBwaWNx-IQSwN0vAYeVsrx-KTaa~-iCl~spU~N2_Wlq4qqvW0W'
 
 const chatProps = {
   accessToken: accessToken,

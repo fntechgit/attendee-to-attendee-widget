@@ -21,13 +21,15 @@ const ConversationBox = ({
   setActiveChannel
 }) => {
   const [channel, setChannel] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const getChannel = async () => {
       const res = await ChatChannelsBuilder.getChannel(partnerId, client, user)
       setChannel(res)
+      setIsLoading(false)
     }
-
+    setIsLoading(true)
     getChannel()
   }, [partnerId])
 
@@ -35,15 +37,16 @@ const ConversationBox = ({
     ev.preventDefault()
     setActiveChannel(null)
     setChannel(null)
+    setIsLoading(false)
   }
 
-  // if (!channel) {
-  //   return (
-  //     <div className={`${style.conversation} ${style[openDir]}`}>
-  //       <LoadingIndicator size={35} />
-  //     </div>
-  //   )
-  // }
+  if (isLoading) {
+    return (
+      <div className={`${style.conversation} ${style[openDir]}`}>
+        <LoadingIndicator size={35} />
+      </div>
+    )
+  }
 
   return (
     channel && (
