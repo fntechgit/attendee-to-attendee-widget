@@ -1,5 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faComment, faComments } from '@fortawesome/free-solid-svg-icons'
 import style from './style.module.scss'
 
 const AttendeesListItem = (props) => {
@@ -27,6 +29,9 @@ const AttendeesListItem = (props) => {
                 {attendee.company}
               </div>
             )}
+          </div>
+          <div className={style.chatNotificationWrapper}>
+            <FontAwesomeIcon icon={faComment} size="2x" />
           </div>
         </div>
       </li>

@@ -33,12 +33,12 @@ class Conversations extends Component {
     // if (!isSupportUser) {
     //   // create QA channel between this user and qa users
     //   if (showQA) {
-    //     const qaChannel = await this._channelsBuilder.createSupportChannel('qa')
+    //     const qaChannel = await this._channelsBuilder.createSupportChannel(chatClient, user, 'qa')
     //     this.setState({ qaChannel })
     //   }
     //   // create Help channel between this user and help user
     //   if (showHelp) {
-    //     const helpChannel = await this._channelsBuilder.createSupportChannel('help')
+    //     const helpChannel = await this._channelsBuilder.createSupportChannel(chatClient, user, 'help')
     //     this.setState({ helpChannel })
     //   }
     // }
@@ -48,6 +48,12 @@ class Conversations extends Component {
       user,
       this.props.setActiveChannel
     )
+
+    this._currChannel.on('message.new', event => { 
+      console.log('event', event); 
+      console.log('channel_id', event.channel_id); 
+      console.log('channel.state', this._currChannel.state); 
+    });
 
     this.setState({ loaded: true })
   }
@@ -69,9 +75,8 @@ class Conversations extends Component {
 
     if (!showHelp || isSupportUser || !helpChannel) return null
 
-    return (
-      <SupportChannelPreview channel={helpChannel} key='channel-list-help' />
-    )
+    return <SupportChannelPreview channel={helpChannel} key='channel-list-help' />
+    
   }
 
   render() {

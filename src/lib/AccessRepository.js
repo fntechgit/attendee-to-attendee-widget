@@ -316,6 +316,32 @@ export default class AccessRepository {
     }
   }
 
+  async notifyNewMessage(targetAttendeeIDPId, summitId, message) {
+    try {
+      attendeeProfile.isOnline = true
+
+      // get target attendee
+      const fetchRes = await this._client
+        .from('attendees')
+        .select(`id`)
+        .match({ idp_user_id: targetAttendeeIDPId })
+
+      if (fetchRes.error) throw new Error(fetchRes.error)
+
+      const insRes = await this._client.from('message_notifications').insert([
+        {
+          from_attendee_id: this._sbUser.id,
+          to_attendee_id: fetchRes.data.id,
+          summit_id: summitId,
+          last_message: message
+        }
+      ])
+      if (insRes.error) throw new Error(insRes.error)
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
   async mergeChanges(attendeesListLocal, attendeesNews, url) {
     let oldItem = null
     const oldItemVerOccurrences = attendeesListLocal.filter(
@@ -351,10 +377,18 @@ export default class AccessRepository {
   }
 
   subscribe(handleAccessNews) {
-    return this._client
+    this._client
       .from(`accesses`)
       .on('INSERT', (payload) => handleAccessNews(payload.new))
       .on('UPDATE', (payload) => handleAccessNews(payload.new))
+      .subscribe()
+  }
+
+  subscribeToChatNotifications(handleAccessNews) {
+    this._client
+      .from(`message_notifications`)
+      .on('INSERT', (payload) => handleChatNotifications(payload.new))
+      .on('UPDATE', (payload) => handleChatNotifications(payload.new))
       .subscribe()
   }
 }

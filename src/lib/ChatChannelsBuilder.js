@@ -1,8 +1,7 @@
 import { helpRoles, qaRoles } from '../models/local_roles'
 
 export default class ChatChannelsBuilder {
-  createSupportChannel = async (type) => {
-    const { chatClient, user } = this.props
+  createSupportChannel = async (chatClient, user, type) => {
     const roles = type === 'qa' ? qaRoles : helpRoles
 
     const supportUsers = await chatClient.queryUsers({
