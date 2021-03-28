@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import StreamChatService from '../../lib/StreamChatService'
+import ChatRepository from '../../lib/repository/ChatRepository'
 import Conversations from './Conversations'
 import style from './style.module.scss'
 
@@ -21,6 +22,7 @@ class SimpleChat extends Component {
       user: null
     }
     this._currPartnerId = null
+    this._chatRepo =  new ChatRepository(props.supabaseUrl, props.supabaseKey)
     this._streamChatService = new StreamChatService(props.streamApiKey)
   }
 
@@ -51,29 +53,33 @@ class SimpleChat extends Component {
       streamApiKey,
       apiBaseUrl,
       forumSlug,
-      onAuthError
+      onAuthError,
+      summitId,
+      user
     } = this.props
 
-    this._currPartnerId = partnerId
+    // this._currPartnerId = partnerId
 
-    if (accessToken) {
-      const { chatClient } = this.state
-      if (chatClient) {
-        await chatClient.disconnect()
-        this.state = this.setState({
-          ...this.state,
-          chatClientConnected: false
-        })
-      }
-      await this._streamChatService.initialiseClient(
-        streamApiKey,
-        apiBaseUrl,
-        accessToken,
-        forumSlug,
-        this.initCallback,
-        onAuthError
-      )
-    }
+    // if (accessToken) {
+    //   const { chatClient } = this.state
+    //   if (chatClient) {
+    //     await chatClient.disconnect()
+    //     this.state = this.setState({
+    //       ...this.state,
+    //       chatClientConnected: false
+    //     })
+    //   }
+    //   await this._streamChatService.initialiseClient(
+    //     streamApiKey,
+    //     apiBaseUrl,
+    //     accessToken,
+    //     forumSlug,
+    //     this.initCallback,
+    //     onAuthError
+    //   )
+    // }
+
+    this._chatRepo.notifyNewMessage(user, partnerId, summitId, 'Test message')
   }
 
   render() {

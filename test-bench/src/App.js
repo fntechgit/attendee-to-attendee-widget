@@ -40,8 +40,7 @@ const chatProps = {
   title: "",
   showHelp: true,
   showQA: true,
-  hideUsers: false,
-  ...streamioProps
+  hideUsers: false
 };
 
 const widgetProps = {
@@ -53,7 +52,9 @@ const widgetProps = {
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
   },
   summitId: 8,
+  ...chatProps,
   ...sbAuthProps,
+  ...streamioProps
 };
 
 Modal.setAppElement('#root')
@@ -137,7 +138,7 @@ const App = () => {
                 <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
               </Modal>
               <Tracker {...widgetProps} ref={trackerRef} />
-              <SimpleChat {...chatProps} ref={chatRef} />
+              <SimpleChat {...widgetProps} ref={chatRef} />
             </div>
           </Route>
           <Route exact path="/untracked">

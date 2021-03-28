@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { forwardRef, useImperativeHandle, useEffect } from 'react'
 import publicIp from 'public-ip'
-import AccessRepository from '../lib/AccessRepository'
+import AccessRepository from '../lib/repository/AccessRepository'
 
 const Tracker = forwardRef((props, ref) => {
   const accessRepo = new AccessRepository(props.supabaseUrl, props.supabaseKey)

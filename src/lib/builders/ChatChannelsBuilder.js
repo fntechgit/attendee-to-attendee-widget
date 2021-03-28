@@ -1,4 +1,4 @@
-import { helpRoles, qaRoles } from '../models/local_roles'
+import { helpRoles, qaRoles } from '../../models/local_roles'
 
 export default class ChatChannelsBuilder {
   createSupportChannel = async (chatClient, user, type) => {

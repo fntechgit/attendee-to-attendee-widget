@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Chat, LoadingIndicator, withChatContext } from 'stream-chat-react'
-import ChatChannelsBuilder from '../../lib/ChatChannelsBuilder'
+import ChatChannelsBuilder from '../../lib/builders/ChatChannelsBuilder'
 import ConversationBox from './ConversationBox'
 import SupportChannelPreview from './SupportChannelPreview'
 import { allHelpRoles, helpRoles, qaRoles } from '../../models/local_roles'

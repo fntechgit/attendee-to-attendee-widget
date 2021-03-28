@@ -11,7 +11,7 @@ import {
   withChatContext
 } from 'stream-chat-react'
 import CustomChannelHeader from './CustomChannelHeader'
-import ChatChannelsBuilder from '../../lib/ChatChannelsBuilder'
+import ChatChannelsBuilder from '../../lib/builders/ChatChannelsBuilder'
 
 const ConversationBox = ({
   partnerId,

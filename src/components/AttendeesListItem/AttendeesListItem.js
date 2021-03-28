@@ -6,7 +6,7 @@ import style from './style.module.scss'
 
 const AttendeesListItem = (props) => {
   const attendee = props.item.attendees
-
+  console.log('AttendeesListItem', props.item)
   return (
     attendee && (
       <li className={style.attendeesListItem}>
@@ -30,9 +30,11 @@ const AttendeesListItem = (props) => {
               </div>
             )}
           </div>
-          <div className={style.chatNotificationWrapper}>
-            <FontAwesomeIcon icon={faComment} size="2x" />
-          </div>
+          {props.item.has_new_message && (
+            <div className={style.chatNotificationWrapper}>
+              <FontAwesomeIcon icon={faComment} size='2x' />
+            </div>
+          )}
         </div>
       </li>
     )

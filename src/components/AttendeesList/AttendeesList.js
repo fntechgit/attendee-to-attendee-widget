@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash.debounce'
-import AccessRepository from '../../lib/AccessRepository'
+import AccessRepository from '../../lib/repository/AccessRepository'
+import ChatRepository from '../../lib/repository/ChatRepository'
 import { useStore } from '../../lib/Store'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import style from './style.module.scss'
 
 let accessRepo = null
+let chatRepo = null
 const url = window.location.href
 let urlAccessesPageIx = 0
 let showAccessesPageIx = 0
@@ -22,9 +24,13 @@ const AttendeesList = (props) => {
   const { supabaseUrl, supabaseKey, scope, summitId } = props
   const [hasMore, setHasMore] = useState(true)
   const [attendeesList, setAttendeesList] = useState([])
+  const [chatNotifications, setChatNotifications] = useState({})
 
   if (!accessRepo) {
     accessRepo = new AccessRepository(supabaseUrl, supabaseKey)
+  }
+  if (!chatRepo) {
+    chatRepo = new ChatRepository(supabaseUrl, supabaseKey)
   }
   const { attendeesNews } = useStore({
     url,
@@ -39,7 +45,9 @@ const AttendeesList = (props) => {
           .fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
           .then((response) => {
             if (response) {
-              setAttendeesList(response)
+              setAttendeesList(
+                chatRepo.mergeChatNews(response, chatNotifications)
+              )
             }
           })
           .catch(console.error)
@@ -49,7 +57,9 @@ const AttendeesList = (props) => {
           .mergeChanges(attendeesList, attendeesNews, url)
           .then((response) => {
             if (response) {
-              setAttendeesList(response)
+              setAttendeesList(
+                chatRepo.mergeChatNews(response, chatNotifications)
+              )
             }
           })
           .catch(console.error)
@@ -60,12 +70,43 @@ const AttendeesList = (props) => {
         .fetchCurrentShowAttendees(summitId, showAccessesPageIx, pageSize)
         .then((response) => {
           if (response) {
-            setAttendeesList(response)
+            setAttendeesList(
+              chatRepo.mergeChatNews(response, chatNotifications)
+            )
           }
         })
         .catch(console.error)
     }
   }, [attendeesNews])
+
+  useEffect(() => {
+    chatRepo.unsubscribe()
+    chatRepo.subscribe((payload) => {
+      if (payload.status === 'UNREAD') {
+        chatNotifications[payload.from_attendee_id] = true
+        //setChatNotifications(chatNotifications)
+      } else if (payload.status === 'READ') {
+        delete chatNotifications[payload.from_attendee_id]
+        //setChatNotifications(chatNotifications)
+      }
+
+      // console.log('subscribe...', chatNotifications)
+      // console.log('subscribe...', attendeesList)
+
+      setAttendeesList(
+        chatRepo.mergeChatNews(attendeesList, chatNotifications)
+      )
+
+      //console.log('chat data change', payload)
+      // if (attendeesList.length > 0) {
+      //   const index = attendeesList.findIndex((el) => el.attendee_id === payload.from_attendee_id)
+      //   console.log('attendeesList ix', index)
+      //   console.log('attendeesList found', attendeesList[index])
+      //   attendeesList[index].hasMessage = true
+      //   console.log('attendeesList changed', attendeesList[index])
+      // }
+    })
+  }, [attendeesList])
 
   const fetchMoreData = async () => {
     let nextPage
@@ -87,7 +128,9 @@ const AttendeesList = (props) => {
       setHasMore(false)
       return
     }
-    setAttendeesList([...attendeesList, ...nextPage])
+    setAttendeesList(
+      chatRepo.mergeChatNews([...attendeesList, ...nextPage], chatNotifications)
+    )
   }
 
   let handleSearchDebounce
@@ -105,7 +148,8 @@ const AttendeesList = (props) => {
               urlAccessesPageIx,
               pageSize
             )
-        if (res && res.length > 0) setAttendeesList([...res])
+        if (res && res.length > 0)
+          setAttendeesList(chatRepo.mergeChatNews([...res], chatNotifications))
       } else {
         showAccessesPageIx = 0
         const res = value
@@ -115,7 +159,8 @@ const AttendeesList = (props) => {
               showAccessesPageIx,
               pageSize
             )
-        if (res && res.length > 0) setAttendeesList([...res])
+        if (res && res.length > 0)
+          setAttendeesList(chatRepo.mergeChatNews([...res], chatNotifications))
       }
     }, 150)
     handleSearchDebounce()
