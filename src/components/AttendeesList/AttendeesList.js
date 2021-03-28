@@ -24,7 +24,6 @@ const AttendeesList = (props) => {
   const { supabaseUrl, supabaseKey, scope, summitId } = props
   const [hasMore, setHasMore] = useState(true)
   const [attendeesList, setAttendeesList] = useState([])
-  const [chatNotifications, setChatNotifications] = useState({})
 
   if (!accessRepo) {
     accessRepo = new AccessRepository(supabaseUrl, supabaseKey)
@@ -32,9 +31,11 @@ const AttendeesList = (props) => {
   if (!chatRepo) {
     chatRepo = new ChatRepository(supabaseUrl, supabaseKey)
   }
-  const { attendeesNews } = useStore({
+  const { attendeesNews, chatNotificationsMap } = useStore({
     url,
-    accessRepository: accessRepo
+    summitId,
+    accessRepository: accessRepo,
+    chatRepository: chatRepo
   })
 
   // handle real-time updates
@@ -46,67 +47,52 @@ const AttendeesList = (props) => {
           .then((response) => {
             if (response) {
               setAttendeesList(
-                chatRepo.mergeChatNews(response, chatNotifications)
+                chatRepo.mergeChatNews(response, chatNotificationsMap)
               )
             }
           })
           .catch(console.error)
-      } else if (attendeesNews) {
+      } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
         // merge news
         accessRepo
           .mergeChanges(attendeesList, attendeesNews, url)
           .then((response) => {
             if (response) {
               setAttendeesList(
-                chatRepo.mergeChatNews(response, chatNotifications)
+                chatRepo.mergeChatNews(response, chatNotificationsMap)
               )
             }
           })
           .catch(console.error)
       }
-    } else if (attendeesList.length === 0) {
-      showAccessesPageIx = 0
-      accessRepo
-        .fetchCurrentShowAttendees(summitId, showAccessesPageIx, pageSize)
-        .then((response) => {
-          if (response) {
-            setAttendeesList(
-              chatRepo.mergeChatNews(response, chatNotifications)
-            )
-          }
-        })
-        .catch(console.error)
-    }
-  }, [attendeesNews])
-
-  useEffect(() => {
-    chatRepo.unsubscribe()
-    chatRepo.subscribe((payload) => {
-      if (payload.status === 'UNREAD') {
-        chatNotifications[payload.from_attendee_id] = true
-        //setChatNotifications(chatNotifications)
-      } else if (payload.status === 'READ') {
-        delete chatNotifications[payload.from_attendee_id]
-        //setChatNotifications(chatNotifications)
+    } else {
+      if (attendeesList.length === 0) {
+        showAccessesPageIx = 0
+        accessRepo
+          .fetchCurrentShowAttendees(summitId, showAccessesPageIx, pageSize)
+          .then((response) => {
+            if (response) {
+              setAttendeesList(
+                chatRepo.mergeChatNews(response, chatNotificationsMap)
+              )
+            }
+          })
+          .catch(console.error)
+      } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
+        // merge news
+        accessRepo
+          .mergeChanges(attendeesList, attendeesNews)
+          .then((response) => {
+            if (response) {
+              setAttendeesList(
+                chatRepo.mergeChatNews(response, chatNotificationsMap)
+              )
+            }
+          })
+          .catch(console.error)
       }
-
-      // console.log('subscribe...', chatNotifications)
-      // console.log('subscribe...', attendeesList)
-
-      setAttendeesList(
-        chatRepo.mergeChatNews(attendeesList, chatNotifications)
-      )
-
-      //console.log('chat data change', payload)
-      // if (attendeesList.length > 0) {
-      //   const index = attendeesList.findIndex((el) => el.attendee_id === payload.from_attendee_id)
-      //   console.log('attendeesList ix', index)
-      //   console.log('attendeesList found', attendeesList[index])
-      //   attendeesList[index].hasMessage = true
-      //   console.log('attendeesList changed', attendeesList[index])
-      // }
-    })
-  }, [attendeesList])
+    }
+  }, [attendeesNews, chatNotificationsMap])
 
   const fetchMoreData = async () => {
     let nextPage
@@ -128,9 +114,7 @@ const AttendeesList = (props) => {
       setHasMore(false)
       return
     }
-    setAttendeesList(
-      chatRepo.mergeChatNews([...attendeesList, ...nextPage], chatNotifications)
-    )
+    setAttendeesList([...attendeesList, ...nextPage])
   }
 
   let handleSearchDebounce
@@ -148,8 +132,7 @@ const AttendeesList = (props) => {
               urlAccessesPageIx,
               pageSize
             )
-        if (res && res.length > 0)
-          setAttendeesList(chatRepo.mergeChatNews([...res], chatNotifications))
+        if (res && res.length > 0) setAttendeesList([...res])
       } else {
         showAccessesPageIx = 0
         const res = value
@@ -159,8 +142,7 @@ const AttendeesList = (props) => {
               showAccessesPageIx,
               pageSize
             )
-        if (res && res.length > 0)
-          setAttendeesList(chatRepo.mergeChatNews([...res], chatNotifications))
+        if (res && res.length > 0) setAttendeesList([...res])
       }
     }, 150)
     handleSearchDebounce()

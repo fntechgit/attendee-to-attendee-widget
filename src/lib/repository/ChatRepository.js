@@ -29,27 +29,42 @@ export default class ChatRepository extends AttendeeRepository {
     }
   }
 
-  mergeChatNews(attendeesNews, chatNotifications) {
-    //console.log('chatNotifications', chatNotifications)
-    if (!chatNotifications) return attendeesNews
+  chatNotificationsToMap(chatNotifications) {
+    return chatNotifications.reduce((map, obj) => {
+        map[obj.from_attendee_id] = obj.status;
+        return map;
+    }, {});
+  }
+
+  mergeChatNews(attendeesNews, chatNotificationsMap) {
+    if (!chatNotificationsMap || chatNotificationsMap.length === 0) return attendeesNews
     attendeesNews.forEach((attendeeNews) => {
-      //console.log('attendeeNews.attendee_id in chatNotifications', attendeeNews.attendee_id in chatNotifications)
-      if (attendeeNews.attendee_id in chatNotifications) {
-        attendeeNews.has_new_message = true
+      if (attendeeNews.attendee_id in chatNotificationsMap) {
+        attendeeNews.notification_status = chatNotificationsMap[attendeeNews.attendee_id]
       }
     })
     return attendeesNews
   }
 
+  async fetchChatNotifications(summitId) {
+    try {
+      const { data, error } = await this._client
+        .from('message_notifications')
+        .select(`from_attendee_id, last_message, status`)
+        .eq('summit_id', summitId)
+      if (error) throw new Error(error)
+      return data
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
   subscribe(handleNotificationsNews) {
+    if (this._subscription) this._client.removeSubscription(this._subscription)
     this._subscription = this._client
       .from(`message_notifications`)
       .on('INSERT', (payload) => handleNotificationsNews(payload.new))
       .on('UPDATE', (payload) => handleNotificationsNews(payload.new))
       .subscribe()
-  }
-
-  unsubscribe() {
-    this._client.removeSubscription(this._subscription)
   }
 }

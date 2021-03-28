@@ -74,6 +74,20 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
+  async findByAttendeeId(attendeeId, summitId) {
+    try {
+      const { data, error } = await this._client
+        .from('accesses')
+        .select(`*, attendees(*)`)
+        .eq('summit_id', summitId)
+        .eq('attendee_id', attendeeId)
+      if (error) throw new Error(error)
+      return data[0]
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
   cleanUpAccess(summitId) {
     try {
       if (this._sbUser) {
@@ -87,20 +101,27 @@ export default class AccessRepository extends AttendeeRepository {
       console.log('error', error)
     }
   }
-
+  
   async mergeChanges(attendeesListLocal, attendeesNews, url) {
+    const mustCheckURL = arguments.length > 2
     let oldItem = null
+
     const oldItemVerOccurrences = attendeesListLocal.filter(
       (item) => item.id === attendeesNews.id
     )
     if (oldItemVerOccurrences.length > 0) {
       oldItem = oldItemVerOccurrences[0]
+      oldItem.notification_status = attendeesNews.notification_status
 
       const newList = attendeesListLocal.filter(
         (item) => item.id !== attendeesNews.id
       )
-      if (attendeesNews.current_url === url) {
-        oldItem.current_url = attendeesNews.current_url
+      if (mustCheckURL) {
+        if (attendeesNews.current_url === url) {
+          oldItem.current_url = attendeesNews.current_url
+          newList.unshift(oldItem)
+        }
+      } else {
         newList.unshift(oldItem)
       }
       return newList
@@ -113,7 +134,7 @@ export default class AccessRepository extends AttendeeRepository {
 
       if (!error && data && data.length > 0) {
         const item = data[0]
-        if (item.current_url === url) {
+        if (!mustCheckURL || item.current_url === url) {
           attendeesListLocal.unshift(item)
         }
         return [...attendeesListLocal]
@@ -123,14 +144,11 @@ export default class AccessRepository extends AttendeeRepository {
   }
 
   subscribe(handleAccessNews) {
+    if (this._subscription) this._client.removeSubscription(this._subscription)
     this._subscription = this._client
       .from(`accesses`)
       .on('INSERT', (payload) => handleAccessNews(payload.new))
       .on('UPDATE', (payload) => handleAccessNews(payload.new))
       .subscribe()
-  }
-
-  unsubscribe() {
-    this._client.removeSubscription(this._subscription)
   }
 }

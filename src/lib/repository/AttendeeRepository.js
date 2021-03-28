@@ -160,6 +160,7 @@ export default class AttendeeRepository {
         .gt('updated_at', ageTreshold)
         .order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
+
       if (error) throw new Error(error)
       return data
     } catch (error) {
