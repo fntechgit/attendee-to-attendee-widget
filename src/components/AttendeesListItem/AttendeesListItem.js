@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faComment, faComments } from '@fortawesome/free-solid-svg-icons'
+import { faComment, faCommentDots } from '@fortawesome/free-solid-svg-icons'
 import style from './style.module.scss'
 
 const AttendeesListItem = (props) => {
@@ -35,9 +35,14 @@ const AttendeesListItem = (props) => {
                 icon={
                   props.item.notification_status === 'READ'
                     ? faComment
-                    : faComments
+                    : faCommentDots
                 }
                 size='2x'
+                title={
+                  props.item.notification_status === 'READ'
+                    ? 'Send message'
+                    : 'Unread messages'
+                }
               />
             </div>
           )}

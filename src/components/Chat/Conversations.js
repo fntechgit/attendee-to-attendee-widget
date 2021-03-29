@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { Chat, LoadingIndicator, withChatContext } from 'stream-chat-react'
+import { Chat, withChatContext } from 'stream-chat-react'
 import ChatChannelsBuilder from '../../lib/builders/ChatChannelsBuilder'
 import ConversationBox from './ConversationBox'
 import SupportChannelPreview from './SupportChannelPreview'
 import { allHelpRoles, helpRoles, qaRoles } from '../../models/local_roles'
 
-import style from './style.module.scss'
 import 'stream-chat-react/dist/css/index.css'
 
 class Conversations extends Component {
@@ -21,7 +20,7 @@ class Conversations extends Component {
   }
 
   async componentDidMount() {
-    const { user, chatClient, showHelp, showQA } = this.props
+    const { user, chatClient, partnerId, summitId, showHelp, showQA } = this.props
     const isHelpUser = helpRoles.includes(user.local_role)
     const isQaUser = qaRoles.includes(user.local_role)
     const isSupportUser = isQaUser || isHelpUser
@@ -43,16 +42,19 @@ class Conversations extends Component {
     //   }
     // }
     this._currChannel = await this._channelsBuilder.startConversation(
-      this.props.partnerId,
+      partnerId,
       chatClient,
       user,
       this.props.setActiveChannel
     )
 
+    this.props.chatRepo.engage(partnerId, summitId)
+
     this._currChannel.on('message.new', event => { 
-      console.log('event', event); 
-      console.log('channel_id', event.channel_id); 
-      console.log('channel.state', this._currChannel.state); 
+      // console.log('event', event); 
+      // console.log('channel_id', event.channel_id); 
+      // console.log('channel.state', this._currChannel.state); 
+      this.props.chatRepo.notifyNewMessage(partnerId, summitId, event.message.text)
     });
 
     this.setState({ loaded: true })

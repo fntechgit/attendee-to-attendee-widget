@@ -3,9 +3,74 @@ import { signIn, signUp } from '../Auth'
 import SupabaseClientBuilder from '../builders/SupabaseClientBuilder'
 
 export default class AttendeeRepository {
-  constructor(supabaseUrl, supabaseKey) {
+  constructor(supabaseUrl, supabaseKey, user) {
     this._client = SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
     this._sbUser = null
+    if (user) {
+      this._initializeAttendeeUser(user).then((u) => this._sbUser = u)
+    }
+  }
+
+  async _initializeAttendeeUser(attendeeProfile) {
+    const {
+      email,
+      fullName,
+      company,
+      title,
+      picUrl,
+      idpUserId,
+      isOnline
+    } = attendeeProfile
+
+    const attFetchRes = await this._client
+      .from('attendees')
+      .select(`*`)
+      .eq('email', email)
+
+    if (attFetchRes.error) throw new Error(attFetchRes.error)
+
+    if (attFetchRes.data && attFetchRes.data.length > 0 && !this._sbUser) {
+      const fetchedAttendee = attFetchRes.data[0]
+      const user = await signIn(this._client, email, email)
+      if (
+        this._somethigChange(
+          fetchedAttendee,
+          fullName,
+          company,
+          title,
+          picUrl,
+          idpUserId,
+          isOnline
+        )
+      ) {
+        console.log('something change')
+        this._updateAttendee(
+          fetchedAttendee.id,
+          fullName,
+          company,
+          title,
+          picUrl,
+          idpUserId,
+          isOnline
+        )
+      }
+      return user
+    }
+
+    if (this._sbUser) return this._sbUser
+
+    const newUser = await signUp(this._client, email, email)
+    await this._addAttendee(
+      newUser.id,
+      fullName,
+      email,
+      company,
+      title,
+      picUrl,
+      idpUserId,
+      isOnline
+    )
+    return newUser
   }
 
   _somethigChange(
@@ -76,68 +141,6 @@ export default class AttendeeRepository {
       ])
       .eq('id', id)
     if (error) throw new Error(error)
-  }
-
-  async _initializeAttendeeUser(attendeeProfile) {
-    const {
-      email,
-      fullName,
-      company,
-      title,
-      picUrl,
-      idpUserId,
-      isOnline
-    } = attendeeProfile
-
-    const attFetchRes = await this._client
-      .from('attendees')
-      .select(`*`)
-      .eq('email', email)
-
-    if (attFetchRes.error) throw new Error(attFetchRes.error)
-
-    if (attFetchRes.data && attFetchRes.data.length > 0 && !this._sbUser) {
-      const fetchedAttendee = attFetchRes.data[0]
-      const user = await signIn(this._client, email, email)
-      if (
-        this._somethigChange(
-          fetchedAttendee,
-          fullName,
-          company,
-          title,
-          picUrl,
-          idpUserId,
-          isOnline
-        )
-      ) {
-        console.log('something change')
-        this._updateAttendee(
-          fetchedAttendee.id,
-          fullName,
-          company,
-          title,
-          picUrl,
-          idpUserId,
-          isOnline
-        )
-      }
-      return user
-    }
-
-    if (this._sbUser) return this._sbUser
-
-    const newUser = await signUp(this._client, email, email)
-    await this._addAttendee(
-      newUser.id,
-      fullName,
-      email,
-      company,
-      title,
-      picUrl,
-      idpUserId,
-      isOnline
-    )
-    return newUser
   }
 
   async fetchCurrentPageAttendees(
@@ -229,5 +232,9 @@ export default class AttendeeRepository {
     } catch (error) {
       console.log('error', error)
     }
+  }
+
+  me() {
+    return this._sbUser
   }
 }

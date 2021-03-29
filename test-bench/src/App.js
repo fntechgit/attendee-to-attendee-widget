@@ -1,47 +1,63 @@
-import React, {useRef, useState} from 'react'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-} from "react-router-dom";
+import React, { useRef, useState } from 'react'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import Modal from 'react-modal'
-import { AttendeeDetail, RealTimeAttendeesList, SimpleChat, Tracker } from 'attendee-to-attendee-widget'
+import {
+  AttendeeDetail,
+  RealTimeAttendeesList,
+  SimpleChat,
+  Tracker
+} from 'attendee-to-attendee-widget'
 import 'attendee-to-attendee-widget/dist/index.css'
 
+function findGetParameter(parameterName) {
+  var result = null,
+    tmp = []
+  window.location.search
+    .substr(1)
+    .split('&')
+    .forEach(function (item) {
+      tmp = item.split('=')
+      if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1])
+    })
+  return result
+}
+
+const accessToken = findGetParameter('accessToken')
+const fullName = findGetParameter('fullName')
+const email = findGetParameter('email')
+const idpUserId = findGetParameter('idpUserId')
+
 const customStyles = {
-  content : {
-    top                   : '20%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+  content: {
+    top: '20%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)'
   }
-};
+}
 
 const sbAuthProps = {
   supabaseUrl: process.env.REACT_APP_SUPABASE_URL,
   supabaseKey: process.env.REACT_APP_SUPABASE_KEY
-};
+}
 
 const streamioProps = {
   streamApiKey: '29gtgpyz5hht',
   apiBaseUrl: 'https://idp.dev.fnopen.com',
   forumSlug: 'fnvirtual-poc'
-};
-
-const accessToken = 'PBUjC.XWzVPnw2IO6Wk8Z6D79JaVSZB_ucZsUBBg5A5oV-ef7ImHCO7crqU8l0qmDAbLFN4Flng2V_dr_JS-mkGXQV-zuy_11OOrSu7DuTi~MmWH.55ycLcG2--1HyEo'
+}
 
 const chatProps = {
   accessToken: accessToken,
   onAuthError: (err, res) => console.log(err),
-  openDir: "left",
-  title: "",
+  openDir: 'left',
+  title: '',
   showHelp: true,
   showQA: true,
   hideUsers: false
-};
+}
 
 const widgetProps = {
   user: {
@@ -55,7 +71,7 @@ const widgetProps = {
   ...chatProps,
   ...sbAuthProps,
   ...streamioProps
-};
+}
 
 Modal.setAppElement('#root')
 
@@ -72,26 +88,27 @@ const App = () => {
   // widgetProps.user.title = `Title ${rnd}`
   // widgetProps.user.idpUserId = 13
 
-  widgetProps.user.fullName = `Roman Gutierrez`
-  widgetProps.user.email = `roman.gutierrez@gmail.com`
+  widgetProps.user.fullName = fullName
+  widgetProps.user.email = email
   widgetProps.user.company = `Tipit`
   widgetProps.user.title = `Full stack developer`
-  widgetProps.user.idpUserId = 13
-
+  widgetProps.user.idpUserId = idpUserId
 
   const openModal = () => {
-    setIsOpen(true);
+    setIsOpen(true)
   }
- 
+
   const closeModal = () => {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   const handleItemClick = (itemInfo) => {
     //setAccessInfo(itemInfo)
     //openModal()
     //console.log(itemInfo)
-    startOneToOneChat(11)
+    if (itemInfo.attendees.idp_user_id != widgetProps.user.idpUserId) {
+      startOneToOneChat(itemInfo.attendees.idp_user_id)
+    }
   }
 
   const handleCTA = (itemInfo) => {
@@ -110,43 +127,47 @@ const App = () => {
 
   return (
     <Router>
-        <Switch>
-          <Route exact path="/">
-            <div>
-              <Link to='/attendance'>Attendees</Link>
-              <Tracker {...widgetProps} />
-            </div>
-          </Route>
-          <Route exact path="/a">
-            <div>
-              <Link to='/attendance'>Attendees</Link>
-              <Tracker {...widgetProps} />
-            </div>
-          </Route>
-          <Route path="/attendance">
-            <div style={{width: '500px', margin: '20px auto'}}>
-              <Link to='/'>Track 1</Link>
-              <Link to='/a'>Track 2</Link>
-              <button onClick={handleSignOutClick}>SignOut</button>
-              <RealTimeAttendeesList onItemClick={handleItemClick} {...sbAuthProps} title='Attendance' summitId={widgetProps.summitId} />
-              <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                style={customStyles}
-                contentLabel="Attendee"
-              >
-                <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
-              </Modal>
-              <Tracker {...widgetProps} ref={trackerRef} />
-              <SimpleChat {...widgetProps} ref={chatRef} />
-            </div>
-          </Route>
-          <Route exact path="/untracked">
-            <div>Untracked page</div>
-          </Route>
-        </Switch>
+      <Switch>
+        <Route exact path='/'>
+          <div>
+            <Link to='/attendance'>Attendees</Link>
+            <Tracker {...widgetProps} />
+          </div>
+        </Route>
+        <Route exact path='/a'>
+          <div>
+            <Link to='/attendance'>Attendees</Link>
+            <Tracker {...widgetProps} />
+          </div>
+        </Route>
+        <Route path='/attendance'>
+          <div style={{ width: '500px', margin: '20px auto' }}>
+            <Link to='/'>Track 1</Link>
+            <Link to='/a'>Track 2</Link>
+            <button onClick={handleSignOutClick}>SignOut</button>
+            <RealTimeAttendeesList
+              onItemClick={handleItemClick}
+              title='Attendance'
+              {...widgetProps}
+            />
+            <Modal
+              isOpen={modalIsOpen}
+              onRequestClose={closeModal}
+              style={customStyles}
+              contentLabel='Attendee'
+            >
+              <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
+            </Modal>
+            <Tracker {...widgetProps} ref={trackerRef} />
+            <SimpleChat {...widgetProps} ref={chatRef} />
+          </div>
+        </Route>
+        <Route exact path='/untracked'>
+          <div>Untracked page</div>
+        </Route>
+      </Switch>
     </Router>
-  );
+  )
 }
 
 export default App

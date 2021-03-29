@@ -26,13 +26,24 @@ export const useStore = (props) => {
         chatRepo.subscribe((payload) => {
           const fromAttendeeId = payload.from_attendee_id
           //Sync chat news hashmap
-          chatNotificationsMap[fromAttendeeId] = payload.status
-          setChatNotificationsMap(chatNotificationsMap)
+
+          setChatNotificationsMap(
+            chatRepo.syncChatNotificationsMap(
+              chatNotificationsMap,
+              fromAttendeeId,
+              payload.status
+            )
+          )
 
           //Fetch current attendee access
-          accessRepo.findByAttendeeId(fromAttendeeId, summitId).then((attendeeAccess) => {
-            handleAccessNews({ ...attendeeAccess, notification_status: payload.status })
-          })
+          accessRepo
+            .findByAttendeeId(fromAttendeeId, summitId)
+            .then((attendeeAccess) => {
+              handleAccessNews({
+                ...attendeeAccess,
+                notification_status: payload.status
+              })
+            })
         })
       ])
     }
@@ -41,7 +52,7 @@ export const useStore = (props) => {
   useEffect(() => {
     if (chatNotificationsMap.length === 0) {
       chatRepo.fetchChatNotifications(summitId).then((cn) => {
-        setChatNotificationsMap(chatRepo.chatNotificationsToMap(cn)) 
+        setChatNotificationsMap(chatRepo.chatNotificationsToMap(cn))
       })
     }
   }, [])

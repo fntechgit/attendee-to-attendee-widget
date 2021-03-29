@@ -1,28 +1,54 @@
 import AttendeeRepository from './AttendeeRepository'
 
 export default class ChatRepository extends AttendeeRepository {
-  async notifyNewMessage(attendeeProfile, targetAttendeeIDPId, summitId, message) {
+  async notifyNewMessage(targetAttendeeIDPId, summitId, message) {
     try {
       // get target attendee
-      const {error, data} = await this._client
+      const { error, data } = await this._client
         .from('attendees')
         .select(`id`)
         .match({ idp_user_id: targetAttendeeIDPId })
 
       if (error) throw new Error(error)
 
-      if (!this._sbUser) {
-        this._sbUser = await this._initializeAttendeeUser(attendeeProfile)
-      }
+      const insRes = await this._client.from('message_notifications').insert(
+        [
+          {
+            from_attendee_id: this._sbUser.id,
+            to_attendee_id: data[0].id,
+            summit_id: summitId,
+            last_message: message,
+            status: 'UNREAD'
+          }
+        ],
+        { upsert: true }
+      )
+      if (insRes.error) throw new Error(insRes.error)
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
 
-      const insRes = await this._client.from('message_notifications').insert([
-        {
-          from_attendee_id: this._sbUser.id,
-          to_attendee_id: data[0].id,
-          summit_id: summitId,
-          last_message: message
-        }
-      ])
+  async engage(targetAttendeeIDPId, summitId) {
+    try {
+      // get target attendee
+      const { error, data } = await this._client
+        .from('attendees')
+        .select(`id`)
+        .match({ idp_user_id: targetAttendeeIDPId })
+
+      if (error) throw new Error(error)
+
+      const insRes = await this._client
+        .from('message_notifications')
+        .update([
+          {
+            status: 'READ'
+          }
+        ])
+        .eq('from_attendee_id', data[0].id)
+        .eq('to_attendee_id', this._sbUser.id)
+        .eq('summit_id', summitId)
       if (insRes.error) throw new Error(insRes.error)
     } catch (error) {
       console.log('error', error)
@@ -31,18 +57,43 @@ export default class ChatRepository extends AttendeeRepository {
 
   chatNotificationsToMap(chatNotifications) {
     return chatNotifications.reduce((map, obj) => {
-        map[obj.from_attendee_id] = obj.status;
-        return map;
-    }, {});
+      map[obj.from_attendee_id] = obj.status
+      return map
+    }, {})
+  }
+
+  syncChatNotificationsMap(
+    chatNotificationsMap,
+    attendeeId,
+    notificationStatus
+  ) {
+    const currentAttendeeUserId = this._sbUser ? this._sbUser.id : null
+    chatNotificationsMap[attendeeId] =
+      attendeeId !== currentAttendeeUserId ? notificationStatus : undefined
+    return chatNotificationsMap
   }
 
   mergeChatNews(attendeesNews, chatNotificationsMap) {
-    if (!chatNotificationsMap || chatNotificationsMap.length === 0) return attendeesNews
+    const currentAttendeeUserId = this._sbUser ? this._sbUser.id : null
+
+    if (!chatNotificationsMap || chatNotificationsMap.length === 0) {
+      attendeesNews.forEach((attendeeNews) => {
+        if (attendeeNews.attendee_id === currentAttendeeUserId) {
+          attendeeNews.notification_status = undefined
+        }
+      })
+      return attendeesNews
+    }
+
     attendeesNews.forEach((attendeeNews) => {
       if (attendeeNews.attendee_id in chatNotificationsMap) {
-        attendeeNews.notification_status = chatNotificationsMap[attendeeNews.attendee_id]
+        attendeeNews.notification_status =
+          attendeeNews.attendee_id !== currentAttendeeUserId
+            ? chatNotificationsMap[attendeeNews.attendee_id]
+            : undefined
       }
     })
+
     return attendeesNews
   }
 

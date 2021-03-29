@@ -16,13 +16,15 @@ class SimpleChat extends Component {
   constructor(props) {
     super(props)
 
+    const { supabaseUrl, supabaseKey, user } = props
+
     this.state = {
       chatClient: null,
       chatClientConnected: false,
       user: null
     }
     this._currPartnerId = null
-    this._chatRepo =  new ChatRepository(props.supabaseUrl, props.supabaseKey)
+    this._chatRepo =  new ChatRepository(supabaseUrl, supabaseKey, user)
     this._streamChatService = new StreamChatService(props.streamApiKey)
   }
 
@@ -47,44 +49,41 @@ class SimpleChat extends Component {
     }
   }
 
-  startOneToOneChat = async (partnerId) => {
+  startOneToOneChat = async (partnerId) => {Y
     const {
       accessToken,
       streamApiKey,
       apiBaseUrl,
       forumSlug,
       onAuthError,
-      summitId,
-      user
+      summitId
     } = this.props
 
-    // this._currPartnerId = partnerId
+    this._currPartnerId = partnerId
 
-    // if (accessToken) {
-    //   const { chatClient } = this.state
-    //   if (chatClient) {
-    //     await chatClient.disconnect()
-    //     this.state = this.setState({
-    //       ...this.state,
-    //       chatClientConnected: false
-    //     })
-    //   }
-    //   await this._streamChatService.initialiseClient(
-    //     streamApiKey,
-    //     apiBaseUrl,
-    //     accessToken,
-    //     forumSlug,
-    //     this.initCallback,
-    //     onAuthError
-    //   )
-    // }
-
-    this._chatRepo.notifyNewMessage(user, partnerId, summitId, 'Test message')
+    if (accessToken) {
+      const { chatClient } = this.state
+      if (chatClient) {
+        await chatClient.disconnect()
+        this.state = this.setState({
+          ...this.state,
+          chatClientConnected: false
+        })
+      }
+      await this._streamChatService.initialiseClient(
+        streamApiKey,
+        apiBaseUrl,
+        accessToken,
+        forumSlug,
+        this.initCallback,
+        onAuthError
+      )
+    }
   }
 
   render() {
     const { chatClient, chatClientConnected, user } = this.state
-    const { openDir, hideUsers, showHelp, showQA } = this.props
+    const { openDir, hideUsers, showHelp, showQA, summitId } = this.props
 
     return (
       <div className={style.widgetWrapper}>
@@ -98,6 +97,8 @@ class SimpleChat extends Component {
               hideUsers={hideUsers}
               showHelp={showHelp}
               showQA={showQA}
+              summitId={summitId}
+              chatRepo={this._chatRepo}
             />
           </div>
         )}

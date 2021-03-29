@@ -4,7 +4,8 @@ import publicIp from 'public-ip'
 import AccessRepository from '../lib/repository/AccessRepository'
 
 const Tracker = forwardRef((props, ref) => {
-  const accessRepo = new AccessRepository(props.supabaseUrl, props.supabaseKey)
+  const { supabaseUrl, supabaseKey } = props
+  const accessRepo = new AccessRepository(supabaseUrl, supabaseKey, null)
   const pendingOps = new Set()
   let timerHandler = null
 
@@ -13,7 +14,7 @@ const Tracker = forwardRef((props, ref) => {
     accessRepo.trackAccess(
       props.user,
       props.summitId,
-      window.location.href,
+      window.location.href.split('?')[0],
       clientIP,
       true
     )
