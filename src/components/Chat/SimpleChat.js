@@ -49,7 +49,7 @@ class SimpleChat extends Component {
     }
   }
 
-  startOneToOneChat = async (partnerId) => {Y
+  startOneToOneChat = async (partnerId) => {
     const {
       accessToken,
       streamApiKey,

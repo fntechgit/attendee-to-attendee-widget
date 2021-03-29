@@ -7,7 +7,60 @@ export default class AttendeeRepository {
     this._client = SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
     this._sbUser = null
     if (user) {
-      this._initializeAttendeeUser(user).then((u) => this._sbUser = u)
+      this._fetchExistingAttendeeUser(user).then((u) => this._sbUser = u)
+    }
+  }
+
+  async _fetchExistingAttendeeUser(attendeeProfile) {
+    const {
+      email,
+      fullName,
+      company,
+      title,
+      picUrl,
+      idpUserId,
+      isOnline
+    } = attendeeProfile
+
+    try {
+      const attFetchRes = await this._client
+      .from('attendees')
+      .select(`*`)
+      .eq('email', email)
+
+      if (attFetchRes.error) throw new Error(attFetchRes.error)
+
+      if (attFetchRes.data && attFetchRes.data.length > 0 && !this._sbUser) {
+        const fetchedAttendee = attFetchRes.data[0]
+        const user = await signIn(this._client, email, email)
+        if (
+          this._somethigChange(
+            fetchedAttendee,
+            fullName,
+            company,
+            title,
+            picUrl,
+            idpUserId,
+            isOnline
+          )
+        ) {
+          console.log('something change')
+          this._updateAttendee(
+            fetchedAttendee.id,
+            fullName,
+            company,
+            title,
+            picUrl,
+            idpUserId,
+            isOnline
+          )
+        }
+        return user
+      }
+      return null
+    } catch (error) {
+      console.log('error', error)
+      return null
     }
   }
 
@@ -22,40 +75,7 @@ export default class AttendeeRepository {
       isOnline
     } = attendeeProfile
 
-    const attFetchRes = await this._client
-      .from('attendees')
-      .select(`*`)
-      .eq('email', email)
-
-    if (attFetchRes.error) throw new Error(attFetchRes.error)
-
-    if (attFetchRes.data && attFetchRes.data.length > 0 && !this._sbUser) {
-      const fetchedAttendee = attFetchRes.data[0]
-      const user = await signIn(this._client, email, email)
-      if (
-        this._somethigChange(
-          fetchedAttendee,
-          fullName,
-          company,
-          title,
-          picUrl,
-          idpUserId,
-          isOnline
-        )
-      ) {
-        console.log('something change')
-        this._updateAttendee(
-          fetchedAttendee.id,
-          fullName,
-          company,
-          title,
-          picUrl,
-          idpUserId,
-          isOnline
-        )
-      }
-      return user
-    }
+    this._sbUser = await this._fetchExistingAttendeeUser(attendeeProfile)
 
     if (this._sbUser) return this._sbUser
 
