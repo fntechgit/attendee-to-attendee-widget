@@ -4,7 +4,7 @@ import publicIp from 'public-ip'
 import AccessRepository from '../lib/repository/AccessRepository'
 
 const Tracker = forwardRef((props, ref) => {
-  const { supabaseUrl, supabaseKey } = props
+  const { supabaseUrl, supabaseKey, onPageTracked } = props
   const accessRepo = new AccessRepository(supabaseUrl, supabaseKey, null)
   const pendingOps = new Set()
   let timerHandler = null
@@ -17,7 +17,11 @@ const Tracker = forwardRef((props, ref) => {
       window.location.href.split('?')[0],
       clientIP,
       true
-    )
+    ).then(() => {
+      if (onPageTracked) {
+        onPageTracked()
+      }
+    })
   }
 
   const startKeepAlive = () => {

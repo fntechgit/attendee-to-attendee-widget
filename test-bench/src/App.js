@@ -78,6 +78,7 @@ Modal.setAppElement('#root')
 const App = () => {
   const [modalIsOpen, setIsOpen] = useState(false)
   const [accessInfo, setAccessInfo] = useState({})
+  const [ready, setReady] = useState(false)
   const trackerRef = useRef()
   const chatRef = useRef()
 
@@ -145,11 +146,13 @@ const App = () => {
             <Link to='/'>Track 1</Link>
             <Link to='/a'>Track 2</Link>
             <button onClick={handleSignOutClick}>SignOut</button>
-            <RealTimeAttendeesList
-              onItemClick={handleItemClick}
-              title='Attendance'
-              {...widgetProps}
-            />
+            {ready && (
+              <RealTimeAttendeesList
+                onItemClick={handleItemClick}
+                title='Attendance'
+                {...widgetProps}
+              />
+            )}
             <Modal
               isOpen={modalIsOpen}
               onRequestClose={closeModal}
@@ -158,7 +161,14 @@ const App = () => {
             >
               <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
             </Modal>
-            <Tracker {...widgetProps} ref={trackerRef} />
+            <Tracker
+              {...widgetProps}
+              ref={trackerRef}
+              onPageTracked={() => {
+                console.log('TRACKED')
+                setReady(true)
+              }}
+            />
             <SimpleChat {...widgetProps} ref={chatRef} />
           </div>
         </Route>
