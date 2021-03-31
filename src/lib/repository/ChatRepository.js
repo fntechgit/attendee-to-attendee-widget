@@ -75,8 +75,7 @@ export default class ChatRepository extends AttendeeRepository {
 
   mergeChatNews(attendeesNews, chatNotificationsMap) {
     const currentAttendeeUserId = this._sbUser ? this._sbUser.id : null
-
-    if (!chatNotificationsMap || chatNotificationsMap.length === 0) {
+    if (!chatNotificationsMap || Object.keys(chatNotificationsMap).length === 0) {
       attendeesNews.forEach((attendeeNews) => {
         if (attendeeNews.attendee_id === currentAttendeeUserId) {
           attendeeNews.notification_status = undefined

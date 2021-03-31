@@ -4,7 +4,7 @@ export const useStore = (props) => {
   const [attendeesNews, setAttendeesNews] = useState({})
   const [accessNews, handleAccessNews] = useState(null)
   const [accessListener, setAccessListener] = useState([])
-  const [chatNotificationsMap, setChatNotificationsMap] = useState([])
+  const [chatNotificationsMap, setChatNotificationsMap] = useState({})
 
   const { summitId } = props
 
@@ -50,7 +50,7 @@ export const useStore = (props) => {
   }, [accessListener])
 
   useEffect(() => {
-    if (chatNotificationsMap.length === 0) {
+    if (Object.keys(chatNotificationsMap).length === 0) {
       chatRepo.fetchChatNotifications(summitId).then((cn) => {
         setChatNotificationsMap(chatRepo.chatNotificationsToMap(cn))
       })

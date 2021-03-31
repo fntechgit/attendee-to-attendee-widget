@@ -30,7 +30,7 @@ export default class AttendeeRepository {
 
       if (attFetchRes.error) throw new Error(attFetchRes.error)
 
-      if (attFetchRes.data && attFetchRes.data.length > 0 && !this._sbUser) {
+      if (attFetchRes.data && attFetchRes.data.length > 0) {
         const fetchedAttendee = attFetchRes.data[0]
         const user = await signIn(this._client, email, email)
         if (
@@ -74,6 +74,8 @@ export default class AttendeeRepository {
       idpUserId,
       isOnline
     } = attendeeProfile
+
+    if (this._sbUser) return this._sbUser
 
     this._sbUser = await this._fetchExistingAttendeeUser(attendeeProfile)
 
