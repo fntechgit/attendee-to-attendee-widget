@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash.debounce'
 import { useStore } from '../../lib/Store'
@@ -10,6 +10,8 @@ const url = window.location.href.split('?')[0]
 let urlAccessesPageIx = 0
 let showAccessesPageIx = 0
 const pageSize = 6
+let firstNewsUpdate = true
+let chatNotificationsMapAux = {}
 
 export const scopes = {
   PAGE: 'page',
@@ -20,7 +22,6 @@ const AttendeesList = (props) => {
   const { accessRepo, chatRepo, scope, summitId } = props
   const [hasMore, setHasMore] = useState(true)
   const [attendeesList, setAttendeesList] = useState([])
-  const [chatNews, setChatNews] = useState({})
 
   const { attendeesNews, chatNotificationsMap } = useStore({
     url,
@@ -33,15 +34,16 @@ const AttendeesList = (props) => {
     promise
       .then((response) => {
         if (response) {
-          // if (response.length > 0 && Object.keys(chatNotificationsMap).length > 0) {
-          //   console.log('updateAttendeesList chatNotificationsMap...', chatNotificationsMap)
-          //   const before = response
-          //   console.log('updateAttendeesList before merge...', before)
-          //   const after = chatRepo.mergeChatNews(response, chatNotificationsMap)
-          //   console.log('updateAttendeesList after merge...', after)
-          // }
+          console.log('updateAttendeesList chatNotificationsMap...', response.length, Object.keys(chatNotificationsMapAux).length)
+          if (response.length > 0 && Object.keys(chatNotificationsMapAux).length > 0) {
+            console.log('updateAttendeesList chatNotificationsMap...', chatNotificationsMapAux)
+            const before = response
+            console.log('updateAttendeesList bm...', before.map((b) => { return b.notification_status }))
+            const after = chatRepo.mergeChatNews(response, chatNotificationsMapAux)
+            console.log('updateAttendeesList am...', after.map((a) => { return a.notification_status }))
+          }
           setAttendeesList(
-            chatRepo.mergeChatNews(response, chatNotificationsMap)
+            chatRepo.mergeChatNews(response, chatNotificationsMapAux)
           )
         }
       })
@@ -50,6 +52,17 @@ const AttendeesList = (props) => {
 
   // handle real-time updates
   useEffect(() => {
+    if (firstNewsUpdate) {
+      firstNewsUpdate = false
+      return
+    }
+
+    console.log('firing up real-time updates', firstNewsUpdate)
+
+    if (Object.keys(chatNotificationsMap).length > 0) {
+      chatNotificationsMapAux = {...chatNotificationsMap}
+    }
+
     if (scope === scopes.PAGE) {
       if (attendeesList.length === 0) {
         updateAttendeesList(
@@ -77,11 +90,7 @@ const AttendeesList = (props) => {
         )
       }
     }
-  }, [attendeesNews, chatNews])
-
-  useEffect(() => {
-    setChatNews(chatNotificationsMap)
-  }, [chatNotificationsMap])
+  }, [attendeesNews])
 
   const fetchMoreData = async () => {
     let nextPage
@@ -151,38 +160,37 @@ const AttendeesList = (props) => {
   }
 
   if (attendeesList) {
-    if (attendeesList.length > 0) {
-      return (
-        <div className={style.outerWrapper}>
-          <div className={style.searchWrapper}>
-            <input
-              type='search'
-              className={style.searchInput}
-              onChange={handleSearch}
-              placeholder='Filter attendees'
-            />
-          </div>
-          <InfiniteScroll
-            dataLength={attendeesList.length}
-            next={fetchMoreData}
-            hasMore={hasMore}
-            loader={<h4>Loading...</h4>}
-            height={300}
-          >
-            {attendeesList.map((item) => (
+    return (
+      <div className={style.outerWrapper}>
+        <div className={style.searchWrapper}>
+          <input
+            type='search'
+            className={style.searchInput}
+            onChange={handleSearch}
+            placeholder='Filter attendees'
+          />
+        </div>
+
+        <InfiniteScroll
+          dataLength={attendeesList.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={<h4>Loading...</h4>}
+          height={300}
+        >
+          {attendeesList.length > 0 &&
+            attendeesList.map((item) => (
               <AttendeesListItem
                 key={`item-${item.id}`}
                 item={item}
                 {...props}
               />
             ))}
-          </InfiniteScroll>
-        </div>
-      )
-    }
-    return <div>No info</div>
+        </InfiniteScroll>
+      </div>
+    )
   }
-  return <div>Loading...</div>
+  return <h4>Loading...</h4>
 }
 
 AttendeesList.propTypes = {

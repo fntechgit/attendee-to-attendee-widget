@@ -13,7 +13,7 @@ const RealTimeAttendeesList = (props) => {
   const { supabaseUrl, supabaseKey, user } = props
 
   if (!accessRepo) {
-    accessRepo = new AccessRepository(supabaseUrl, supabaseKey, null)
+    accessRepo = new AccessRepository(supabaseUrl, supabaseKey)
   }
 
   if (!chatRepo) {

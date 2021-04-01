@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 export const useStore = (props) => {
   const [attendeesNews, setAttendeesNews] = useState({})
@@ -11,7 +11,14 @@ export const useStore = (props) => {
   const accessRepo = props.accessRepository
   const chatRepo = props.chatRepository
 
+  const firsUpdate = useRef(true)
+
   useEffect(() => {
+
+    if (firsUpdate.current) {
+      return;
+    }
+
     if (accessNews) {
       setAttendeesNews(accessNews)
     }
@@ -53,6 +60,7 @@ export const useStore = (props) => {
     if (Object.keys(chatNotificationsMap).length === 0) {
       chatRepo.fetchChatNotifications(summitId).then((cn) => {
         setChatNotificationsMap(chatRepo.chatNotificationsToMap(cn))
+        firsUpdate.current = false;
       })
     }
   }, [])

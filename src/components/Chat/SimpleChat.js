@@ -78,6 +78,8 @@ class SimpleChat extends Component {
         this.initCallback,
         onAuthError
       )
+
+      //this._chatRepo.notifyNewMessage(partnerId, summitId, 'TEST')
     }
   }
 

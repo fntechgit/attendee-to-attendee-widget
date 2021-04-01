@@ -2,6 +2,10 @@ import AttendeeRepository from './AttendeeRepository'
 
 export default class AccessRepository extends AttendeeRepository {
 
+  constructor(supabaseUrl, supabaseKey) {
+    super(supabaseUrl, supabaseKey, null)
+  }
+
   async _logAccess(accessEntry) {
     // console.log('_logAccess: ', accessEntry)
     const { error } = await this._client.from('access_tracking').insert([
