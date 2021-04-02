@@ -6,7 +6,6 @@ import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import style from './style.module.scss'
 
-const url = window.location.href.split('?')[0]
 let urlAccessesPageIx = 0
 let showAccessesPageIx = 0
 const pageSize = 6
@@ -19,7 +18,7 @@ export const scopes = {
 }
 
 const AttendeesList = (props) => {
-  const { accessRepo, chatRepo, scope, summitId } = props
+  const { accessRepo, chatRepo, scope, summitId, url } = props
   const [hasMore, setHasMore] = useState(true)
   const [attendeesList, setAttendeesList] = useState([])
 
@@ -169,8 +168,8 @@ const AttendeesList = (props) => {
           dataLength={attendeesList.length}
           next={fetchMoreData}
           hasMore={hasMore}
-          loader={<h4>Loading...</h4>}
-          height={300}
+          // loader={<h4>Loading...</h4>}
+          height={350}
         >
           {attendeesList.length > 0 &&
             attendeesList.map((item) => (
