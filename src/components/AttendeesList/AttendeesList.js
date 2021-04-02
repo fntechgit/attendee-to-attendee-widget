@@ -54,15 +54,12 @@ const AttendeesList = (props) => {
     }
 
     if (scope === scopes.PAGE) {
-      console.log('Loading page attendees...')
       if (attendeesList.length === 0) {                                             
-        console.log('Fetching...')
         updateAttendeesList(
           accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
         )
       } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
         // merge news
-        console.log('Merging...')
         updateAttendeesList(
           accessRepo.mergeChanges(attendeesList, attendeesNews, url)
         )

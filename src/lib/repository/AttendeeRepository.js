@@ -176,8 +176,6 @@ export default class AttendeeRepository {
       //   .minus({ minutes: ageMinutesBackward })
       //   .toString()
 
-      console.log('fetchCurrentPageAttendees', url, pageIx, pageSize)
-
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
       const { data, error } = await this._client
@@ -188,9 +186,6 @@ export default class AttendeeRepository {
         //.gt('updated_at', ageTreshold)
         .order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
-
-        console.log('fetchCurrentPageAttendees error', error)
-        console.log('fetchCurrentPageAttendees data', data)
 
       if (error) throw new Error(error)
       return data
