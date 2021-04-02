@@ -33,15 +33,8 @@ const AttendeesList = (props) => {
   const updateAttendeesList = (promise) => {
     promise
       .then((response) => {
-        if (response) {
-          console.log('updateAttendeesList chatNotificationsMap...', response.length, Object.keys(chatNotificationsMapAux).length)
-          if (response.length > 0 && Object.keys(chatNotificationsMapAux).length > 0) {
-            console.log('updateAttendeesList chatNotificationsMap...', chatNotificationsMapAux)
-            const before = response
-            console.log('updateAttendeesList bm...', before.map((b) => { return b.notification_status }))
-            const after = chatRepo.mergeChatNews(response, chatNotificationsMapAux)
-            console.log('updateAttendeesList am...', after.map((a) => { return a.notification_status }))
-          }
+        console.log('updateAttendeesList chatNotificationsMap...', response.length, Object.keys(chatNotificationsMapAux).length)
+        if (response && response.length > 0) {
           setAttendeesList(
             chatRepo.mergeChatNews(response, chatNotificationsMapAux)
           )
@@ -57,19 +50,20 @@ const AttendeesList = (props) => {
       return
     }
 
-    console.log('firing up real-time updates', firstNewsUpdate)
-
     if (Object.keys(chatNotificationsMap).length > 0) {
       chatNotificationsMapAux = {...chatNotificationsMap}
     }
 
     if (scope === scopes.PAGE) {
-      if (attendeesList.length === 0) {
+      console.log('Loading page attendees...')
+      if (attendeesList.length === 0) {                                             
+        console.log('Fetching...')
         updateAttendeesList(
           accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
         )
       } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
         // merge news
+        console.log('Merging...')
         updateAttendeesList(
           accessRepo.mergeChanges(attendeesList, attendeesNews, url)
         )

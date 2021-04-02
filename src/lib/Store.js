@@ -14,11 +14,7 @@ export const useStore = (props) => {
   const firsUpdate = useRef(true)
 
   useEffect(() => {
-
-    if (firsUpdate.current) {
-      return;
-    }
-
+    if (firsUpdate.current) return
     if (accessNews) {
       setAttendeesNews(accessNews)
     }
