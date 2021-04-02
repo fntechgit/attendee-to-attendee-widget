@@ -172,9 +172,9 @@ export default class AttendeeRepository {
     ageMinutesBackward = 5
   ) {
     try {
-      // const ageTreshold = DateTime.utc()
-      //   .minus({ minutes: ageMinutesBackward })
-      //   .toString()
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
 
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
@@ -183,7 +183,7 @@ export default class AttendeeRepository {
         .select(`*, attendees(*)`)
         .eq('current_url', url)
         .eq('attendees.is_online', true)
-        //.gt('updated_at', ageTreshold)
+        .gt('updated_at', ageTreshold)
         .order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
 
