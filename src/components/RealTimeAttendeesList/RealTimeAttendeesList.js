@@ -11,7 +11,7 @@ let chatRepo = null
 const RealTimeAttendeesList = (props) => {
 
   const { supabaseUrl, supabaseKey, user } = props
-  props.url = window.location.href.split('?')[0]
+  props = {...props, url: window.location.href.split('?')[0]}
 
   if (!accessRepo) {
     accessRepo = new AccessRepository(supabaseUrl, supabaseKey)
