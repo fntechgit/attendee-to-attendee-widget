@@ -7,7 +7,7 @@ export default class AttendeeRepository {
     this._client = SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
     this._sbUser = null
     if (user) {
-      this._fetchExistingAttendeeUser(user).then((u) => this._sbUser = u)
+      this._fetchExistingAttendeeUser(user).then((u) => (this._sbUser = u))
     }
   }
 
@@ -24,9 +24,9 @@ export default class AttendeeRepository {
 
     try {
       const attFetchRes = await this._client
-      .from('attendees')
-      .select(`*`)
-      .eq('email', email)
+        .from('attendees')
+        .select(`*`)
+        .eq('email', email)
 
       if (attFetchRes.error) throw new Error(attFetchRes.error)
 
@@ -222,16 +222,22 @@ export default class AttendeeRepository {
     }
   }
 
-  async findByFullName(filter, summitId, url) {
+  async findByFullName(filter, summitId, url, ageMinutesBackward = 5) {
     try {
       const { scopeFieldName, scopeFieldVal } = url
         ? { scopeFieldName: 'current_url', scopeFieldVal: url }
         : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
 
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
+
       const { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
         .eq(scopeFieldName, scopeFieldVal)
+        .eq('attendees.is_online', true)
+        .gt('updated_at', ageTreshold)
         .ilike('attendees.full_name', `%${filter}%`)
       if (error) throw new Error(error)
       return data
