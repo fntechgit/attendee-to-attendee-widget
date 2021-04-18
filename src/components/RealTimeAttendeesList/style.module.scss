@@ -1,0 +1,60 @@
+.widgetContainer {
+  border: solid 1px #ababab;
+  border-radius: 10px;
+  padding: 5px;
+
+  .reactTabs {
+    -webkit-tap-highlight-color: transparent;
+  
+    &__tabList {
+      border-bottom: none;
+      margin: 0 0 10px;
+      padding: 0;
+    }
+  
+    &__tab {
+      display: inline-block;
+      bottom: -1px;
+      position: relative;
+      list-style: none;
+      padding: 6px 12px;
+      cursor: pointer;
+  
+      &--selected {
+        background: #fff;
+        border-bottom: 1px solid red;
+        bottom: -1px;
+        color: blueviolet;
+      }
+  
+      &--disabled {
+        color: GrayText;
+        cursor: default;
+      }
+  
+      &:focus {
+        border-bottom: 1px solid red;
+        color: yellow;
+        outline: none;
+  
+        &:after {
+          content: "";
+          position: absolute;
+          height: 5px;
+          left: -4px;
+          right: -4px;
+          bottom: -5px;
+          background: #fff;
+        }
+      }
+    }
+
+    &__tabPanel {
+      display: none;
+  
+      &--selected {
+        display: block;
+      }
+    }
+  }
+}
