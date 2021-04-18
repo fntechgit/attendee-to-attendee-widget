@@ -11,6 +11,7 @@
       border-radius: 50%;
       float: left;
       background-color: lightgrey;
+      cursor: pointer;
 
       .pic {
         height: 100%;
@@ -26,10 +27,16 @@
       margin-left: 10px;
 
       .title {
+        color: #555;
+        font-weight: bold;
         font-size: 24px;
       }
     }
     .menu {
         margin-left: auto;
+        .menuItem {
+          margin-left: 10px;
+          cursor: pointer;
+        }
     }
   }

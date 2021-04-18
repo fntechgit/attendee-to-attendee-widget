@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 import AccessRepository from '../../lib/repository/AccessRepository'
 import ChatRepository from '../../lib/repository/ChatRepository'
 import AttendeesList, { scopes } from '../AttendeesList/AttendeesList'
-//import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
 import { makeStyles, Paper, Tab, Tabs, Box } from '@material-ui/core'
 import { MainBar } from '../MainBar/MainBar'
 
@@ -18,6 +17,7 @@ const useStyles = makeStyles({
 });
 
 const RealTimeAttendeesList = (props) => {
+  const [value, setValue] = useState(0);
   const { supabaseUrl, supabaseKey, user } = props
   props = { ...props, url: window.location.href.split('?')[0] }
 
@@ -29,14 +29,7 @@ const RealTimeAttendeesList = (props) => {
     chatRepo = new ChatRepository(supabaseUrl, supabaseKey, user)
   }
 
-  // const handleTabSelect = (index) => {
-  //   if (index === 1) {
-  //     setCurrShowAttendeesList([])
-  //   }
-  // }
-
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
   const handleTabSelect = (event, newValue) => {
     setValue(newValue);
   };
@@ -53,7 +46,7 @@ const RealTimeAttendeesList = (props) => {
         {...other}
       >
         {value === index && (
-          <Box p={3}>
+          <Box p={1}>
             {children}
           </Box>
         )}
@@ -64,32 +57,15 @@ const RealTimeAttendeesList = (props) => {
   return (
     <div className={style.widgetContainer}>
       <MainBar user={user} />
-      <hr />
-      {/* <Tabs className={style.reactTabs} onSelect={handleTabSelect}>
-        <TabList className={style.reactTabs__tabList}>
-          <Tab className={style.reactTabs__tab}>ATTENDEES</Tab>
-          <Tab className={style.reactTabs__tab}>MESSAGES</Tab>
-          <Tab className={style.reactTabs__tab}>ROOM CHATS</Tab>
-        </TabList>
-        <TabPanel>
-          <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.PAGE} />
-        </TabPanel>
-        <TabPanel>
-          <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} />
-        </TabPanel>
-        <TabPanel>
-          <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} />
-        </TabPanel>
-      </Tabs> */}
-
+      <hr/>
       <Paper className={classes.root}>
         <Tabs
           value={value}
           onChange={handleTabSelect}
         >
-          <Tab label='ATTENDEES AT THIS PAGE' />
-          <Tab label='ATTENDEES ON THE SHOW' />
-          {/* <Tab label='ROOM CHATS' /> */}
+          <Tab label='ATTENDEES' />
+          <Tab label='MESSAGES' />
+          <Tab label='ROOM CHATS' />
         </Tabs>
       </Paper>
       <TabPanel value={value} index={0}>
@@ -98,9 +74,9 @@ const RealTimeAttendeesList = (props) => {
       <TabPanel value={value} index={1}>
         <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} />
       </TabPanel>
-      {/* <TabPanel value={value} index={2}>
+      <TabPanel value={value} index={2}>
         <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} />
-      </TabPanel> */}
+      </TabPanel>
     </div>
   )
 }
