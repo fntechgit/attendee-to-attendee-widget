@@ -1,18 +1,16 @@
 .attendeeInfoContainer {
   position: absolute;
   top: 100px;
-  width: 300px;
+  width: 400px;
   height: auto;
+  border-radius: 10px;
   z-index: 50;
 
   .card {
-    display: 'flex';
-    .details {
-      display: 'flex';
-      flex-direction: 'column';
-      .content {
-        flex: '1 0 auto';
-      }
+    .img {
+      margin: 'auto';
+      width: 100%;
+      border-radius: 50%;
     }
   }
 }

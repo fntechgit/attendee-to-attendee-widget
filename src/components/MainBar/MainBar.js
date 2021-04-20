@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faQuestionCircle,
-  faChevronDown
-} from '@fortawesome/free-solid-svg-icons'
+import { IconButton } from '@material-ui/core'
+import { HelpOutlined, KeyboardArrowDown } from '@material-ui/icons'
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import style from './style.module.scss'
 
@@ -15,9 +12,9 @@ export const MainBar = ({ user }) => {
       <div className={style.mainBarContent}>
         <div
           className={style.picWrapper}
-          //onClick={() => setShowAttCard(true)}
-          onMouseEnter={() => setShowAttCard(true)}
-          onMouseLeave={() => setShowAttCard(false)}
+          onClick={() => setShowAttCard(!showAttCard)}
+          // onMouseEnter={() => setShowAttCard(true)}
+          // onMouseLeave={() => setShowAttCard(false)}
         >
           <div
             className={style.pic}
@@ -28,8 +25,12 @@ export const MainBar = ({ user }) => {
           <div className={style.title}>Connect</div>
         </div>
         <div className={style.menu}>
-          <FontAwesomeIcon icon={faQuestionCircle} className={style.menuItem} />
-          <FontAwesomeIcon icon={faChevronDown} className={style.menuItem} />
+           <IconButton>
+            <HelpOutlined fontSize="small"/>
+          </IconButton>
+          <IconButton>
+            <KeyboardArrowDown fontSize="small"/>
+          </IconButton>
         </div>
       </div>
     </div>

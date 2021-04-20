@@ -65,7 +65,12 @@ const widgetProps = {
     email: '',
     company: '',
     title: '',
-    picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
+    picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
+		github_user: 'romanetar',	
+		linked_in_profile: 'https://www.linkedin.com/in/rom%C3%A1n-gutierrez-pmp-7a001b6/',
+		twitter_name: 'romanetar',
+		wechat_user: '',
+    badge_features: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
   },
   summitId: 8,
   ...chatProps,
@@ -158,7 +163,7 @@ const App = () => {
             >
               <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
             </Modal>
-            <Tracker {...widgetProps} ref={trackerRef} />
+            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
             <SimpleChat {...widgetProps} ref={chatRef} />
           </div>
         </Route>
