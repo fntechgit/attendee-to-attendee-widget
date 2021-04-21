@@ -146,7 +146,7 @@ const App = () => {
           </div>
         </Route>
         <Route path='/attendance'>
-          <div style={{ width: '500px', margin: '20px auto' }}>
+          <div style={{ width: '400px', margin: '20px auto' }}>
             {/* <Link to='/'>Track 1</Link>
             <Link to='/a'>Track 2</Link>
             <button onClick={handleSignOutClick}>SignOut</button> */}
@@ -163,7 +163,7 @@ const App = () => {
             >
               <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
             </Modal>
-            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
+            <Tracker {...widgetProps} ref={trackerRef} />
             <SimpleChat {...widgetProps} ref={chatRef} />
           </div>
         </Route>
