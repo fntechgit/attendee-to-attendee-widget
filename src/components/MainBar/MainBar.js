@@ -25,11 +25,11 @@ export const MainBar = ({ user }) => {
           <div className={style.title}>Connect</div>
         </div>
         <div className={style.menu}>
-           <IconButton>
-            <HelpOutlined fontSize="small"/>
+          <IconButton>
+            <HelpOutlined />
           </IconButton>
           <IconButton>
-            <KeyboardArrowDown fontSize="small"/>
+            <KeyboardArrowDown />
           </IconButton>
         </div>
       </div>

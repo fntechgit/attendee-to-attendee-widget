@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import AccessRepository from '../../lib/repository/AccessRepository'
 import ChatRepository from '../../lib/repository/ChatRepository'
 import AttendeesList, { scopes } from '../AttendeesList/AttendeesList'
-import { makeStyles, Paper, Tab, Tabs, Box } from '@material-ui/core'
+import { makeStyles, withStyles , Paper, Tab, Tabs, Box } from '@material-ui/core'
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { MainBar } from '../MainBar/MainBar'
 
@@ -13,8 +13,20 @@ let chatRepo = null
 
 const theme = createMuiTheme({
   typography: {
-    fontFamily: ['Chilanka', 'cursive'].join(',')
-  }
+    //fontFamily: ['Chilanka', 'cursive'].join(','),
+  },
+  components: {
+    MuiIcon: {
+      styleOverrides: {
+        root: {
+          // Match 24px = 3 * 2 + 1.125 * 16
+          boxSizing: 'content-box',
+          padding: 3,
+          fontSize: '1.125rem',
+        },
+      },
+    },
+  },
 })
 
 const useStyles = makeStyles({
@@ -24,7 +36,9 @@ const useStyles = makeStyles({
 })
 
 const RealTimeAttendeesList = (props) => {
+  const classes = useStyles()
   const [value, setValue] = useState(0)
+
   const { supabaseUrl, supabaseKey, user } = props
   props = { ...props, url: window.location.href.split('?')[0] }
 
@@ -36,7 +50,48 @@ const RealTimeAttendeesList = (props) => {
     chatRepo = new ChatRepository(supabaseUrl, supabaseKey, user)
   }
 
-  const classes = useStyles()
+  const AntTabs = withStyles({
+    root: {
+      borderBottom: '1px solid #e8e8e8',
+    },
+    indicator: {
+      backgroundColor: '#1890ff',
+    },
+  })(Tabs);
+  
+  const AntTab = withStyles((theme) => ({
+    root: {
+      textTransform: 'none',
+      minWidth: 72,
+      fontWeight: theme.typography.fontWeightRegular,
+      marginRight: theme.spacing(4),
+      fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(','),
+      '&:hover': {
+        color: '#40a9ff',
+        opacity: 1,
+      },
+      '&$selected': {
+        color: '#1890ff',
+        fontWeight: theme.typography.fontWeightMedium,
+      },
+      '&:focus': {
+        color: '#40a9ff',
+      },
+    },
+    selected: {},
+  }))((props) => <Tab disableRipple {...props} />);
+
   const handleTabSelect = (event, newValue) => {
     setValue(newValue)
   }
@@ -56,18 +111,21 @@ const RealTimeAttendeesList = (props) => {
     )
   }
 
+
+  
+
   return (
     <ThemeProvider theme={theme}>
       <div className={style.widgetContainer}>
         <MainBar user={user} />
         <hr />
-        <Paper className={classes.root}>
-          <Tabs value={value} onChange={handleTabSelect} variant='fullWidth'>
-            <Tab label='ATTENDEES' />
-            <Tab label='MESSAGES' />
-            <Tab label='ROOM CHATS' />
-          </Tabs>
-        </Paper>
+        <div className={classes.root}>
+        <AntTabs value={value} onChange={handleTabSelect}>
+            <AntTab label='ATTENDEES' />
+            <AntTab label='MESSAGES' />
+            <AntTab label='ROOM CHATS' />
+          </AntTabs>
+        </div>
         <TabPanel value={value} index={0}>
           <AttendeesList
             {...props}
