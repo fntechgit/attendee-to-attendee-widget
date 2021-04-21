@@ -69,13 +69,13 @@ const RealTimeAttendeesList = (props) => {
         </Tabs>
       </Paper>
       <TabPanel value={value} index={0}>
-        <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.PAGE} />
+        <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} />
+        {/* <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} /> */}
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} />
+        {/* <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} /> */}
       </TabPanel>
     </div>
   )

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import debounce from 'lodash.debounce'
 import { useStore } from '../../lib/Store'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
+import { SearchBar } from '../SearchBar/SearchBar'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import style from './style.module.scss'
 
@@ -152,15 +153,7 @@ const AttendeesList = (props) => {
   if (attendeesList) {
     return (
       <div className={style.outerWrapper}>
-        <div className={style.searchWrapper}>
-          <input
-            type='search'
-            className={style.searchInput}
-            onChange={handleSearch}
-            placeholder='Filter attendees'
-          />
-        </div>
-
+        <SearchBar onSearch={handleSearch} />
         <InfiniteScroll
           dataLength={attendeesList.length}
           next={fetchMoreData}
