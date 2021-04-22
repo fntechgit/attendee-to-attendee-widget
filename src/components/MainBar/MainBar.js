@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
-import { IconButton } from '@material-ui/core'
-import { HelpOutlined, KeyboardArrowDown } from '@material-ui/icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faQuestionCircle,
+  faChevronDown
+} from '@fortawesome/free-solid-svg-icons'
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import style from './style.module.scss'
 
@@ -25,12 +28,8 @@ export const MainBar = ({ user }) => {
           <div className={style.title}>Connect</div>
         </div>
         <div className={style.menu}>
-          <IconButton>
-            <HelpOutlined />
-          </IconButton>
-          <IconButton>
-            <KeyboardArrowDown />
-          </IconButton>
+          <FontAwesomeIcon icon={faQuestionCircle} className={style.menuItem} />
+          <FontAwesomeIcon icon={faChevronDown} className={style.menuItem} />
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import {
   SimpleChat,
   Tracker
 } from 'attendee-to-attendee-widget'
+
 import 'attendee-to-attendee-widget/dist/index.css'
 
 function findGetParameter(parameterName) {
@@ -163,7 +164,7 @@ const App = () => {
             >
               <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
             </Modal>
-            <Tracker {...widgetProps} ref={trackerRef} />
+            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
             <SimpleChat {...widgetProps} ref={chatRef} />
           </div>
         </Route>

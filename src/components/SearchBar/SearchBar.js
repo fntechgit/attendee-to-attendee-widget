@@ -1,69 +1,59 @@
 import React, { useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import { IconButton, InputBase, Menu, MenuItem, Paper } from '@material-ui/core'
-import MenuIcon from '@material-ui/icons/Tune'
-import SearchIcon from '@material-ui/icons/Search'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch, faSlidersH } from '@fortawesome/free-solid-svg-icons'
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: '2px 2px',
-    display: 'flex',
-    alignItems: 'center'
-  },
-  input: {
-    marginLeft: '5px',
-    flex: 1
-  }
-}))
+export const SearchBar = ({ onSearch }) => {
+  const [isMenuOpen, setMenuOpen] = useState(false)
 
-export const SearchBar = ({onSearch}) => {
-  const classes = useStyles()
-  const [anchorEl, setAnchorEl] = useState(null)
-
-  const isMenuOpen = Boolean(anchorEl)
-
-  const handleFilterSettingsOpen = (event) => {
-    setAnchorEl(event.currentTarget)
+  const toggleMenu = (event) => {
+    setMenuOpen(!isMenuOpen)
   }
 
-  const handleMenuClose = () => {
-    setAnchorEl(null)
+  const handleMenuSelection = () => {
+    setMenuOpen(false)
   }
-
-  const menuId = 'primary-search-account-menu'
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>All Attendees</MenuItem>
-      <MenuItem onClick={handleMenuClose}>On this Room</MenuItem>
-    </Menu>
-  )
 
   return (
     <div>
-      <Paper component='form' className={classes.root}>
-        <SearchIcon color='disabled' />
-        <InputBase
-          className={classes.input}
-          placeholder='Search by Name or Company'
-          inputProps={{ 'aria-label': 'Search by name or company' }}
-          onChange={onSearch}
-        />
-        <IconButton
-          className={classes.iconButton}
-          onClick={handleFilterSettingsOpen}
-        >
-          <MenuIcon />
-        </IconButton>
-      </Paper>
-      {renderMenu}
+      <div className='container'>
+        <div className='field has-addons'>
+          <div className='control has-icons-left'>
+            <div className='control has-icons-left'>
+              <input
+                className='input'
+                type='search'
+                placeholder='Search by name or company'
+              />
+              <span className='icon is-left'>
+                <FontAwesomeIcon icon={faSearch} />
+              </span>
+            </div>
+          </div>
+          <div className={`dropdown ${isMenuOpen ? 'is-active' : ''}`}>
+            <div className='dropdown-trigger'>
+              <button
+                className='button'
+                aria-haspopup='true'
+                aria-controls='dropdown-menu2'
+                onClick={toggleMenu}
+              >
+                <FontAwesomeIcon icon={faSlidersH} />
+              </button>
+            </div>
+            <div className='dropdown-menu' id='dropdown-menu2' role='menu'>
+              <div className='dropdown-content'>
+                <a className='dropdown-item' onClick={handleMenuSelection}>
+                  All Attendees
+                </a>
+                <hr className='dropdown-divider' />
+                <a className='dropdown-item' onClick={handleMenuSelection}>
+                  On this Room
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
