@@ -5,6 +5,7 @@ import AttendeesList, { scopes } from '../AttendeesList/AttendeesList'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
 
+import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
 
 import style from './style.module.scss'

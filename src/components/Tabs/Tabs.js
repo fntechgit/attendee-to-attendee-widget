@@ -6,7 +6,7 @@ const Tab = (props) => {
 
   return (
     <li
-      className={name === activeTab && 'is-active'}
+      className={name === activeTab ? 'is-active' : ''}
       onClick={() => changeActiveTab(name)}
     >
       <a>
@@ -18,7 +18,7 @@ const Tab = (props) => {
 
 const Tabs = ({tabList, activeTab, changeActiveTab}) => {
   return (
-    <div className='tabs is-centered'>
+    <div className='tabs is-fullwidth'>
       <ul>
         {tabList.map((tab) => (
           <Tab

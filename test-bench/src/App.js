@@ -1,8 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
-import Modal from 'react-modal'
 import {
-  AttendeeDetail,
   RealTimeAttendeesList,
   SimpleChat,
   Tracker
@@ -27,17 +25,6 @@ const accessToken = findGetParameter('accessToken')
 const fullName = findGetParameter('fullName')
 const email = findGetParameter('email')
 const idpUserId = findGetParameter('idpUserId')
-
-const customStyles = {
-  content: {
-    top: '20%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)'
-  }
-}
 
 const sbAuthProps = {
   supabaseUrl: process.env.REACT_APP_SUPABASE_URL,
@@ -72,6 +59,7 @@ const widgetProps = {
 		twitter_name: 'romanetar',
 		wechat_user: '',
     badge_features: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
+    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.'
   },
   summitId: 8,
   ...chatProps,
@@ -79,11 +67,7 @@ const widgetProps = {
   ...streamioProps
 }
 
-Modal.setAppElement('#root')
-
 const App = () => {
-  const [modalIsOpen, setIsOpen] = useState(false)
-  const [accessInfo, setAccessInfo] = useState({})
   const trackerRef = useRef()
   const chatRef = useRef()
 
@@ -100,14 +84,6 @@ const App = () => {
   widgetProps.user.title = `Full stack developer`
   widgetProps.user.idpUserId = idpUserId
 
-  const openModal = () => {
-    setIsOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsOpen(false)
-  }
-
   const handleItemClick = (itemInfo) => {
     //setAccessInfo(itemInfo)
     //openModal()
@@ -115,12 +91,6 @@ const App = () => {
     if (itemInfo.attendees.idp_user_id != widgetProps.user.idpUserId) {
       startOneToOneChat(itemInfo.attendees.idp_user_id)
     }
-  }
-
-  const handleCTA = (itemInfo) => {
-    closeModal()
-    //console.log(itemInfo)
-    //startOneToOneChat(11)
   }
 
   const startOneToOneChat = (partnerId) => {
@@ -147,7 +117,7 @@ const App = () => {
           </div>
         </Route>
         <Route path='/attendance'>
-          <div style={{ width: '400px', margin: '20px auto' }}>
+          <div style={{ width: '400px', margin: '20px auto', position: 'relative' }}>
             {/* <Link to='/'>Track 1</Link>
             <Link to='/a'>Track 2</Link>
             <button onClick={handleSignOutClick}>SignOut</button> */}
@@ -156,15 +126,7 @@ const App = () => {
               title='Attendance'
               {...widgetProps}
             />
-            <Modal
-              isOpen={modalIsOpen}
-              onRequestClose={closeModal}
-              style={customStyles}
-              contentLabel='Attendee'
-            >
-              <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
-            </Modal>
-            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
+            <Tracker {...widgetProps} ref={trackerRef} />
             <SimpleChat {...widgetProps} ref={chatRef} />
           </div>
         </Route>

@@ -2,55 +2,68 @@ import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faSlidersH } from '@fortawesome/free-solid-svg-icons'
 
-export const SearchBar = ({ onSearch }) => {
+export const SearchBar = ({ onSearch, onFilterModeChange }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(1)
 
   const toggleMenu = (event) => {
     setMenuOpen(!isMenuOpen)
   }
 
-  const handleMenuSelection = () => {
-    setMenuOpen(false)
+  const handleMenuSelection = (index) => {
+    setSelectedIndex(index)
+    onFilterModeChange(index)
+    setTimeout(() => {
+      setMenuOpen(false)
+    }, 200)
   }
 
   return (
-    <div>
-      <div className='container'>
-        <div className='field has-addons'>
-          <div className='control has-icons-left'>
-            <div className='control has-icons-left'>
-              <input
-                className='input'
-                type='search'
-                placeholder='Search by name or company'
-              />
-              <span className='icon is-left'>
-                <FontAwesomeIcon icon={faSearch} />
+    <div className='field has-addons'>
+      <div className='control has-icons-left is-expanded'>
+        <input
+          className='input is-static'
+          type='search'
+          placeholder='Search by name or company'
+          onChange={onSearch}
+        />
+        <span className='icon is-left'>
+          <FontAwesomeIcon icon={faSearch} />
+        </span>
+      </div>
+      <div className={`dropdown ${isMenuOpen ? 'is-active' : ''}`}>
+        <div className='dropdown-trigger'>
+          <button
+            className='button is-white'
+            aria-haspopup='true'
+            aria-controls='dropdown-menu2'
+            onClick={toggleMenu}
+          >
+            <FontAwesomeIcon icon={faSlidersH} />
+          </button>
+        </div>
+        <div className='dropdown-menu' id='dropdown-menu2' role='menu'>
+          <div className='dropdown-content'>
+            <a className='dropdown-item' onClick={() => handleMenuSelection(1)}>
+              <span className='icon-text has-text-info'>
+                <span>All Attendees</span>
+                {selectedIndex === 1 && (
+                  <span className='icon'>
+                    <i className='fa fa-check' aria-hidden='true'></i>
+                  </span>
+                )}
               </span>
-            </div>
-          </div>
-          <div className={`dropdown ${isMenuOpen ? 'is-active' : ''}`}>
-            <div className='dropdown-trigger'>
-              <button
-                className='button'
-                aria-haspopup='true'
-                aria-controls='dropdown-menu2'
-                onClick={toggleMenu}
-              >
-                <FontAwesomeIcon icon={faSlidersH} />
-              </button>
-            </div>
-            <div className='dropdown-menu' id='dropdown-menu2' role='menu'>
-              <div className='dropdown-content'>
-                <a className='dropdown-item' onClick={handleMenuSelection}>
-                  All Attendees
-                </a>
-                <hr className='dropdown-divider' />
-                <a className='dropdown-item' onClick={handleMenuSelection}>
-                  On this Room
-                </a>
-              </div>
-            </div>
+            </a>
+            <a className='dropdown-item' onClick={() => handleMenuSelection(2)}>
+              <span className='icon-text has-text-info'>
+                <span>On this Room</span>
+                {selectedIndex === 2 && (
+                  <span className='icon'>
+                    <i className='fa fa-check' aria-hidden='true'></i>
+                  </span>
+                )}
+              </span>
+            </a>
           </div>
         </div>
       </div>

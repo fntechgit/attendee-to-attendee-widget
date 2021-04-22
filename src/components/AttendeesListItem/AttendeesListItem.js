@@ -1,18 +1,28 @@
-import React from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComment, faCommentDots } from '@fortawesome/free-solid-svg-icons'
+import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import style from './style.module.scss'
 
 const AttendeesListItem = (props) => {
   const attendee = props.item.attendees
+  const [showAttCard, setShowAttCard] = useState(false)
+
+  const handleItemClick = (item) => {
+    setShowAttCard(!showAttCard)
+    props.onItemClick(props.item)
+  }
+
   return (
-    attendee && (
+    attendee && <div>
+      {showAttCard && <AttendeeInfo user={attendee} fullMode={true} />}
+      
       <li className={style.attendeesListItem}>
         <div
           className={style.attendeesListItemContent}
           key={`attendee-${props.item.id}`}
-          onClick={() => props.onItemClick(props.item)}
+          onClick={() => handleItemClick(props.item)}
         >
           <div className={style.picWrapper}>
             <div
@@ -48,7 +58,7 @@ const AttendeesListItem = (props) => {
           )}
         </div>
       </li>
-    )
+    </div>
   )
 }
 

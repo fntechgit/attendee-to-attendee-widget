@@ -150,10 +150,14 @@ const AttendeesList = (props) => {
     handleSearchDebounce()
   }
 
+  const handleFilterModeChange = (mode) => {
+    console.log('handleFilterModeChange', mode)
+  }
+
   if (attendeesList) {
     return (
       <div className={style.outerWrapper}>
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={handleSearch} onFilterModeChange={handleFilterModeChange} />
         <InfiniteScroll
           dataLength={attendeesList.length}
           next={fetchMoreData}

@@ -11,7 +11,7 @@ export const MainBar = ({ user }) => {
   const [showAttCard, setShowAttCard] = useState(false)
   return (
     <div>
-      {showAttCard && <AttendeeInfo user={user} />}
+      {showAttCard && <AttendeeInfo user={user} fullMode={false} />}
       <div className={style.mainBarContent}>
         <div
           className={style.picWrapper}
