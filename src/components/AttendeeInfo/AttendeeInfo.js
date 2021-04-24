@@ -2,21 +2,26 @@ import React from 'react'
 
 import style from './style.module.scss'
 
-export const AttendeeInfo = ({ user, fullMode }) => {
+export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => {
   const {
     fullName,
     title,
     company,
     picUrl,
-    github_user,
-    linked_in_profile,
-    twitter_name,
-    wechat_user,
-    badge_features,
+    socialInfo,
+    badgeFeatures,
     bio
   } = user
+
+  const {
+    githubUser,
+    linkedInProfile,
+    twitterName,
+    wechatUser
+  } = socialInfo
+  
   return (
-    <div className={style.attendeeInfoContainer}>
+    <div className={style.attendeeInfoContainer} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <div className='box'>
         <article className='media'>
           <div className='media-left'>
@@ -36,9 +41,9 @@ export const AttendeeInfo = ({ user, fullMode }) => {
             </div>
             <nav className='level is-mobile'>
               <div className='level-left'>
-                {github_user && (
+                {githubUser && (
                   <a
-                    href={`https://github.com/${github_user}/`}
+                    href={`https://github.com/${githubUser}/`}
                     target='_blank'
                     className='level-item'
                   >
@@ -47,9 +52,9 @@ export const AttendeeInfo = ({ user, fullMode }) => {
                     </span>
                   </a>
                 )}
-                {linked_in_profile && (
+                {linkedInProfile && (
                   <a
-                    href={linked_in_profile}
+                    href={linkedInProfile}
                     target='_blank'
                     className='level-item'
                   >
@@ -58,9 +63,9 @@ export const AttendeeInfo = ({ user, fullMode }) => {
                     </span>
                   </a>
                 )}
-                {twitter_name && (
+                {twitterName && (
                   <a
-                    href={`https://twitter.com/${twitter_name}/`}
+                    href={`https://twitter.com/${twitterName}/`}
                     target='_blank'
                     className='level-item'
                   >
@@ -72,7 +77,7 @@ export const AttendeeInfo = ({ user, fullMode }) => {
               </div>
             </nav>
             <nav className='level is-mobile'>
-              <div className='level-left'>{badge_features && badge_features.map((bf) => bf)}</div>
+              <div className='level-left'>{badgeFeatures && badgeFeatures.map((bf) => bf)}</div>
             </nav>
           </div>
         </article>

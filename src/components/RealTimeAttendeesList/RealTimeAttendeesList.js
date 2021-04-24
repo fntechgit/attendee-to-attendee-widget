@@ -15,6 +15,7 @@ let chatRepo = null
 
 const RealTimeAttendeesList = (props) => {
   const [activeTab, setActiveTab] = useState('ATTENDEES')
+  const [isMinimized, setMinimized] = useState(false)
 
   const { supabaseUrl, supabaseKey, user } = props
   props = { ...props, url: window.location.href.split('?')[0] }
@@ -66,13 +67,17 @@ const RealTimeAttendeesList = (props) => {
 
   return (
     <div className={style.widgetContainer}>
-      <MainBar user={user} />
-      <Tabs
-        tabList={tabList}
-        activeTab={activeTab}
-        changeActiveTab={changeActiveTab}
-      />
-      <ActiveTabContent key={activeTab} content={activeTabContent()} />
+      <MainBar user={user} onMinimizeButtonClick={() => setMinimized(!isMinimized)} />
+      {!isMinimized && (
+        <div>
+          <Tabs
+            tabList={tabList}
+            activeTab={activeTab}
+            changeActiveTab={changeActiveTab}
+          />
+          <ActiveTabContent key={activeTab} content={activeTabContent()} />
+        </div>
+      )}
     </div>
   )
 }

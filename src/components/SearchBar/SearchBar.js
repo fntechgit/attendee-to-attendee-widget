@@ -31,18 +31,18 @@ export const SearchBar = ({ onSearch, onFilterModeChange }) => {
           <FontAwesomeIcon icon={faSearch} />
         </span>
       </div>
-      <div className={`dropdown ${isMenuOpen ? 'is-active' : ''}`}>
+      <div className={`dropdown is-right ${isMenuOpen ? 'is-active' : ''}`}>
         <div className='dropdown-trigger'>
           <button
             className='button is-white'
             aria-haspopup='true'
-            aria-controls='dropdown-menu2'
+            aria-controls='search-menu'
             onClick={toggleMenu}
           >
             <FontAwesomeIcon icon={faSlidersH} />
           </button>
         </div>
-        <div className='dropdown-menu' id='dropdown-menu2' role='menu'>
+        <div className='dropdown-menu' id='search-menu' role='menu'>
           <div className='dropdown-content'>
             <a className='dropdown-item' onClick={() => handleMenuSelection(1)}>
               <span className='icon-text has-text-info'>

@@ -56,6 +56,7 @@ export default class ChatRepository extends AttendeeRepository {
   }
 
   chatNotificationsToMap(chatNotifications) {
+    if (!chatNotifications) return {}
     return chatNotifications.reduce((map, obj) => {
       map[obj.from_attendee_id] = obj.status
       return map

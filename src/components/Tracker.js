@@ -93,7 +93,15 @@ Tracker.propTypes = {
     email: PropTypes.string.isRequired,
     company: PropTypes.string,
     title: PropTypes.string,
-    picUrl: PropTypes.string
+    picUrl: PropTypes.string,
+    socialInfo: PropTypes.shape({
+      githubUser: PropTypes.string,
+      linkedInProfile: PropTypes.string,
+      twitterName: PropTypes.string,
+      wechatUser: PropTypes.string,
+    }),
+    badgeFeatures: PropTypes.array,
+    bio: PropTypes.string,
   }).isRequired
 }
 

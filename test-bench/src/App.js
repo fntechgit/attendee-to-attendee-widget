@@ -54,11 +54,13 @@ const widgetProps = {
     company: '',
     title: '',
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
-		github_user: 'romanetar',	
-		linked_in_profile: 'https://www.linkedin.com/in/rom%C3%A1n-gutierrez-pmp-7a001b6/',
-		twitter_name: 'romanetar',
-		wechat_user: '',
-    badge_features: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
+		socialInfo: {
+      githubUser: 'romanetar',	
+      linkedInProfile: 'https://www.linkedin.com/in/rom%C3%A1n-gutierrez-pmp-7a001b6/',
+      twitterName: 'romanetar',
+      wechatUser: ''
+    },
+    badgeFeatures: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.'
   },
   summitId: 8,
@@ -106,13 +108,8 @@ const App = () => {
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to='/attendance'>Attendees</Link>
-            <Tracker {...widgetProps} />
-          </div>
-        </Route>
-        <Route exact path='/a'>
-          <div>
-            <Link to='/attendance'>Attendees</Link>
+            <Link to='/attendance?accessToken=&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
+            <Link to='/attendance?accessToken=&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11'>Attendees 2</Link>
             <Tracker {...widgetProps} />
           </div>
         </Route>

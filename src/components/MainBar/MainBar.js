@@ -7,17 +7,49 @@ import {
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import style from './style.module.scss'
 
-export const MainBar = ({ user }) => {
+export const MainBar = ({ user, onMinimizeButtonClick }) => {
   const [showAttCard, setShowAttCard] = useState(false)
+  let isCardHovered = false
+
+  const handleClick = () => {
+    if (!showAttCard) setShowAttCard(true)
+  }
+
+  const handleMouseEnter = () => {
+    setShowAttCard(true)
+  }
+
+  const handleMouseLeave = () => {
+    setTimeout(() => {
+      if (!isCardHovered) setShowAttCard(false)
+    }, 100)
+  }
+
+  const handleCardMouseEnter = () => {
+    isCardHovered = true
+  }
+
+  const handleCardMouseLeave = () => {
+    isCardHovered = false
+    setShowAttCard(false)
+  }
+
   return (
     <div>
-      {showAttCard && <AttendeeInfo user={user} fullMode={false} />}
+      {showAttCard && (
+        <AttendeeInfo
+          user={user}
+          fullMode={false}
+          onMouseEnter={handleCardMouseEnter}
+          onMouseLeave={handleCardMouseLeave}
+        />
+      )}
       <div className={style.mainBarContent}>
         <div
           className={style.picWrapper}
-          onClick={() => setShowAttCard(!showAttCard)}
-          // onMouseEnter={() => setShowAttCard(true)}
-          // onMouseLeave={() => setShowAttCard(false)}
+          onClick={handleClick}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           <div
             className={style.pic}
@@ -29,7 +61,7 @@ export const MainBar = ({ user }) => {
         </div>
         <div className={style.menu}>
           <FontAwesomeIcon icon={faQuestionCircle} className={style.menuItem} />
-          <FontAwesomeIcon icon={faChevronDown} className={style.menuItem} />
+          <FontAwesomeIcon icon={faChevronDown} className={style.menuItem} onClick={onMinimizeButtonClick} />
         </div>
       </div>
     </div>
