@@ -1,9 +1,4 @@
 import React, { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faQuestionCircle,
-  faChevronDown
-} from '@fortawesome/free-solid-svg-icons'
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import style from './style.module.scss'
 
@@ -60,8 +55,16 @@ export const MainBar = ({ user, onMinimizeButtonClick }) => {
           <div className={style.title}>Connect</div>
         </div>
         <div className={style.menu}>
-          <FontAwesomeIcon icon={faQuestionCircle} className={style.menuItem} />
-          <FontAwesomeIcon icon={faChevronDown} className={style.menuItem} onClick={onMinimizeButtonClick} />
+          <button className='button is-white'>
+            <span className='icon'>
+              <i className='fa fa-question-circle-o' aria-hidden='true'></i>
+            </span>
+          </button>
+          <button className='button is-white' onClick={onMinimizeButtonClick}>
+            <span className='icon'>
+              <i className='fa fa-chevron-down' aria-hidden='true'></i>
+            </span>
+          </button>
         </div>
       </div>
     </div>

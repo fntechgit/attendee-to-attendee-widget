@@ -19,7 +19,7 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
     twitterName,
     wechatUser
   } = socialInfo
-  
+
   return (
     <div className={style.attendeeInfoContainer} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <div className='box'>
@@ -31,13 +31,9 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
           </div>
           <div className='media-content'>
             <div className='content'>
-              <p>
-                <strong>{fullName}</strong>
-                <br />
-                <small>{title}</small>
-                <br />
-                <small>{company}</small>
-              </p>
+              <div className="is-size-5 has-text-weight-semibold">{fullName}</div>
+              <div className="is-size-6 has-text-grey">{title}</div>
+              <div className="is-size-6 has-text-grey">{company}</div>
             </div>
             <nav className='level is-mobile'>
               <div className='level-left'>
@@ -48,7 +44,7 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
                     className='level-item'
                   >
                     <span className='icon is-small'>
-                      <i className='fa fa-github' aria-hidden='true'></i>
+                      <i className='fa fa-github has-text-grey' aria-hidden='true'></i>
                     </span>
                   </a>
                 )}
@@ -59,7 +55,7 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
                     className='level-item'
                   >
                     <span className='icon is-small'>
-                      <i className='fa fa-linkedin' aria-hidden='true'></i>
+                      <i className='fa fa-linkedin has-text-grey' aria-hidden='true'></i>
                     </span>
                   </a>
                 )}
@@ -70,7 +66,7 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
                     className='level-item'
                   >
                     <span className='icon is-small'>
-                      <i className='fa fa-twitter' aria-hidden='true'></i>
+                      <i className='fa fa-twitter has-text-grey' aria-hidden='true'></i>
                     </span>
                   </a>
                 )}

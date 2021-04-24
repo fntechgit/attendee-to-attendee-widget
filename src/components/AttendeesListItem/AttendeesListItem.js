@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faComment, faCommentDots } from '@fortawesome/free-solid-svg-icons'
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import style from './style.module.scss'
 
@@ -93,7 +91,7 @@ const AttendeesListItem = (props) => {
                 </div>
               )}
             </div>
-            {props.item.notification_status && (
+            {/* {props.item.notification_status && (
               <div className={style.chatNotificationWrapper}>
                 <FontAwesomeIcon
                   icon={
@@ -109,7 +107,7 @@ const AttendeesListItem = (props) => {
                   }
                 />
               </div>
-            )}
+            )} */}
           </div>
         </li>
       </div>

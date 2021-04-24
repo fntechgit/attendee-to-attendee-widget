@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faSlidersH } from '@fortawesome/free-solid-svg-icons'
 
 export const SearchBar = ({ onSearch, onFilterModeChange }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
@@ -28,7 +26,9 @@ export const SearchBar = ({ onSearch, onFilterModeChange }) => {
           onChange={onSearch}
         />
         <span className='icon is-left'>
-          <FontAwesomeIcon icon={faSearch} />
+          <span className='icon'>
+              <i className='fa fa-search' aria-hidden='true'></i>
+            </span>
         </span>
       </div>
       <div className={`dropdown is-right ${isMenuOpen ? 'is-active' : ''}`}>
@@ -39,13 +39,15 @@ export const SearchBar = ({ onSearch, onFilterModeChange }) => {
             aria-controls='search-menu'
             onClick={toggleMenu}
           >
-            <FontAwesomeIcon icon={faSlidersH} />
+            <span className='icon'>
+              <i className='fa fa-sliders' aria-hidden='true'></i>
+            </span>
           </button>
         </div>
         <div className='dropdown-menu' id='search-menu' role='menu'>
           <div className='dropdown-content'>
             <a className='dropdown-item' onClick={() => handleMenuSelection(1)}>
-              <span className='icon-text has-text-info'>
+              <span className='icon-text has-text-weight-semibold has-text-grey'>
                 <span>All Attendees</span>
                 {selectedIndex === 1 && (
                   <span className='icon'>
@@ -55,7 +57,7 @@ export const SearchBar = ({ onSearch, onFilterModeChange }) => {
               </span>
             </a>
             <a className='dropdown-item' onClick={() => handleMenuSelection(2)}>
-              <span className='icon-text has-text-info'>
+              <span className='icon-text has-text-weight-semibold has-text-grey'>
                 <span>On this Room</span>
                 {selectedIndex === 2 && (
                   <span className='icon'>

@@ -108,7 +108,7 @@ const App = () => {
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to='/attendance?accessToken=&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
+            <Link to='/attendance?accessToken=~vJFR470A0TskQsBTUCmPh1NBl2T11TStPyIAgt0lblH9TpeSL~vXgWkXLCu2JujhVy~g.Ouf0GW_iVc1FFKCbWD7A6V0wGWrYaFZS58_2Ab6_br_65JizsyYSe165U6&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
             <Link to='/attendance?accessToken=&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11'>Attendees 2</Link>
             <Tracker {...widgetProps} />
           </div>
@@ -123,7 +123,7 @@ const App = () => {
               title='Attendance'
               {...widgetProps}
             />
-            <Tracker {...widgetProps} ref={trackerRef} />
+            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
             <SimpleChat {...widgetProps} ref={chatRef} />
           </div>
         </Route>
