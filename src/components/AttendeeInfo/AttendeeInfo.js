@@ -37,9 +37,9 @@ export const AttendeeInfo = ({
           </div>
           <div className='media-content'>
             <div className='content'>
-              <div className='is-size-5 has-text-weight-semibold'>
+              <h2 className='is-size-5 has-text-weight-semibold'>
                 {fullName}
-              </div>
+              </h2>
               <div className='is-size-6 has-text-grey'>{title}</div>
               <div className='is-size-6 has-text-grey'>{company}</div>
             </div>

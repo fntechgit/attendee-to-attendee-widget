@@ -11,23 +11,11 @@ const AttendeesListItem = (props) => {
 
   const att = props.item.attendees
 
-  const {
-    github_user,
-    linked_in_profile,
-    twitter_name,
-    wechat_user
-  } = att.social_info
-
   const attendee = {
     ...att,
     fullName: att.full_name,
     picUrl: att.pic_url,
-    socialInfo: {
-      githubUser: github_user,
-      linkedInProfile: linked_in_profile,
-      twitterName: twitter_name,
-      wechatUser: wechat_user
-    },
+    socialInfo: att.social_info,
     badgeFeatures: att.badges_info,
     bio: att.bio
   }
