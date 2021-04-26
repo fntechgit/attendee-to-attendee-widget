@@ -61,10 +61,12 @@ const AttendeesListItem = (props) => {
       <div>
         {showAttCard && (
           <AttendeeInfo
+            key={`attendee-info-${props.item.id}`}
             user={attendee}
             fullMode={true}
             onMouseEnter={handleCardMouseEnter}
             onMouseLeave={handleCardMouseLeave}
+            onChatClick={() => handleItemClick(props.item)}
           />
         )}
 
@@ -72,11 +74,13 @@ const AttendeesListItem = (props) => {
           <div
             className={style.attendeesListItemContent}
             key={`attendee-${props.item.id}`}
-            onClick={() => handleItemClick(props.item)}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
           >
-            <div className={style.picWrapper}>
+            <div
+              className={style.picWrapper}
+              onClick={() => handleItemClick(props.item)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
               <div
                 className={style.pic}
                 style={{ backgroundImage: `url(${attendee.pic_url})` }}

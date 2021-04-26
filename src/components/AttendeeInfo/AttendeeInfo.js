@@ -2,10 +2,17 @@ import React from 'react'
 
 import style from './style.module.scss'
 
-export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => {
+export const AttendeeInfo = ({
+  user,
+  fullMode,
+  onMouseEnter,
+  onMouseLeave,
+  onChatClick
+}) => {
   const {
     fullName,
     title,
+    email,
     company,
     picUrl,
     socialInfo,
@@ -13,15 +20,14 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
     bio
   } = user
 
-  const {
-    githubUser,
-    linkedInProfile,
-    twitterName,
-    wechatUser
-  } = socialInfo
+  const { githubUser, linkedInProfile, twitterName, wechatUser } = socialInfo
 
   return (
-    <div className={style.attendeeInfoContainer} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div
+      className={style.attendeeInfoContainer}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <div className='box'>
         <article className='media'>
           <div className='media-left'>
@@ -31,9 +37,11 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
           </div>
           <div className='media-content'>
             <div className='content'>
-              <div className="is-size-5 has-text-weight-semibold">{fullName}</div>
-              <div className="is-size-6 has-text-grey">{title}</div>
-              <div className="is-size-6 has-text-grey">{company}</div>
+              <div className='is-size-5 has-text-weight-semibold'>
+                {fullName}
+              </div>
+              <div className='is-size-6 has-text-grey'>{title}</div>
+              <div className='is-size-6 has-text-grey'>{company}</div>
             </div>
             <nav className='level is-mobile'>
               <div className='level-left'>
@@ -44,7 +52,10 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
                     className='level-item'
                   >
                     <span className='icon is-small'>
-                      <i className='fa fa-github has-text-grey' aria-hidden='true'></i>
+                      <i
+                        className='fa fa-github has-text-grey'
+                        aria-hidden='true'
+                      ></i>
                     </span>
                   </a>
                 )}
@@ -55,7 +66,10 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
                     className='level-item'
                   >
                     <span className='icon is-small'>
-                      <i className='fa fa-linkedin has-text-grey' aria-hidden='true'></i>
+                      <i
+                        className='fa fa-linkedin has-text-grey'
+                        aria-hidden='true'
+                      ></i>
                     </span>
                   </a>
                 )}
@@ -66,15 +80,22 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
                     className='level-item'
                   >
                     <span className='icon is-small'>
-                      <i className='fa fa-twitter has-text-grey' aria-hidden='true'></i>
+                      <i
+                        className='fa fa-twitter has-text-grey'
+                        aria-hidden='true'
+                      ></i>
                     </span>
                   </a>
                 )}
               </div>
             </nav>
-            <nav className='level is-mobile'>
-              <div className='level-left'>{badgeFeatures && badgeFeatures.map((bf) => bf)}</div>
-            </nav>
+            {badgeFeatures && (
+              <nav className='level'>
+                <div className='level-left'>
+                  {badgeFeatures.map((bf) => <span key={bf} className='has-text-grey mr-2'>{bf}</span>)}
+                </div>
+              </nav>
+            )}
           </div>
         </article>
         {fullMode && (
@@ -83,9 +104,9 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
               <div className='content'>
                 <p>{bio}</p>
               </div>
-              <nav className='level is-mobile'>
+              <nav className='level'>
                 <div className='level-left'>
-                  <a className='level-item'>
+                  <a className='level-item' onClick={onChatClick}>
                     <span className='icon-text has-text-info'>
                       <span className='icon'>
                         <i className='fa fa-comment' aria-hidden='true'></i>
@@ -93,7 +114,11 @@ export const AttendeeInfo = ({ user, fullMode, onMouseEnter, onMouseLeave }) => 
                       <span>Chat</span>
                     </span>
                   </a>
-                  <a className='level-item'>
+                  <a
+                    className='level-item'
+                    href={`mailto:${email}`}
+                    target='_blank'
+                  >
                     <span className='icon-text has-text-info'>
                       <span className='icon'>
                         <i className='fa fa-envelope' aria-hidden='true'></i>

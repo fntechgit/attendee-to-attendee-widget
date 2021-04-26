@@ -123,7 +123,7 @@ const App = () => {
               title='Attendance'
               {...widgetProps}
             />
-            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
+            <Tracker {...widgetProps} ref={trackerRef} />
             <SimpleChat {...widgetProps} ref={chatRef} />
           </div>
         </Route>

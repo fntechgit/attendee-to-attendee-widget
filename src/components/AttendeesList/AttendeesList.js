@@ -19,8 +19,9 @@ export const scopes = {
 }
 
 const AttendeesList = (props) => {
-  const { accessRepo, chatRepo, scope, summitId, url } = props
+  const { accessRepo, chatRepo, summitId, url } = props
   const [hasMore, setHasMore] = useState(true)
+  const [currScope, setCurrScope] = useState(scopes.SHOW)
   const [attendeesList, setAttendeesList] = useState([])
 
   const { attendeesNews, chatNotificationsMap } = useStore({
@@ -54,7 +55,7 @@ const AttendeesList = (props) => {
       chatNotificationsMapAux = {...chatNotificationsMap}
     }
 
-    if (scope === scopes.PAGE) {
+    if (currScope === scopes.PAGE) {
       if (attendeesList.length === 0) {                                             
         updateAttendeesList(
           accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
@@ -85,7 +86,7 @@ const AttendeesList = (props) => {
 
   const fetchMoreData = async () => {
     let nextPage
-    if (scope === scopes.PAGE) {
+    if (currScope === scopes.PAGE) {
       nextPage = await accessRepo.fetchCurrentPageAttendees(
         url,
         ++urlAccessesPageIx,
@@ -117,7 +118,7 @@ const AttendeesList = (props) => {
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
       // console.log('value', value)
-      if (scope === scopes.PAGE) {
+      if (currScope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
           ? await accessRepo.findByFullName(value, summitId, url)
@@ -151,7 +152,7 @@ const AttendeesList = (props) => {
   }
 
   const handleFilterModeChange = (mode) => {
-    console.log('handleFilterModeChange', mode)
+    setCurrScope(mode === 1 ? scopes.SHOW : scopes.PAGE)
   }
 
   if (attendeesList) {
@@ -182,8 +183,7 @@ const AttendeesList = (props) => {
 
 AttendeesList.propTypes = {
   supabaseUrl: PropTypes.string.isRequired,
-  supabaseKey: PropTypes.string.isRequired,
-  scope: PropTypes.oneOf([scopes.PAGE, scopes.SHOW])
+  supabaseKey: PropTypes.string.isRequired
 }
 
 export default AttendeesList

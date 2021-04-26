@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import AccessRepository from '../../lib/repository/AccessRepository'
 import ChatRepository from '../../lib/repository/ChatRepository'
-import AttendeesList, { scopes } from '../AttendeesList/AttendeesList'
+import AttendeesList from '../AttendeesList/AttendeesList'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
 
@@ -49,7 +49,6 @@ const RealTimeAttendeesList = (props) => {
           {...props}
           accessRepo={accessRepo}
           chatRepo={chatRepo}
-          scope={scopes.SHOW}
         />
       )
     },
