@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-boolean-value */
 import React, { useEffect, useState } from 'react'
-import style from './style.module.scss'
 import {
   Channel,
   LoadingIndicator,
@@ -12,6 +11,8 @@ import {
 } from 'stream-chat-react'
 import CustomChannelHeader from './CustomChannelHeader'
 import ChatChannelsBuilder from '../../lib/builders/ChatChannelsBuilder'
+
+import style from './style.module.scss'
 
 const ConversationBox = ({
   partnerId,

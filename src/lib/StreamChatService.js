@@ -7,8 +7,7 @@ export default class StreamChatService {
     this.flag = `${streamApiKey}_chat`
   }
 
-  initialiseClient = async (
-    streamApiKey,
+  initializeClient = async (
     apiBaseUrl,
     accessToken,
     forumSlug,

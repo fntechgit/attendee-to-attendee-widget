@@ -19,7 +19,10 @@ export default class AttendeeRepository {
       title,
       picUrl,
       idpUserId,
-      isOnline
+      isOnline,
+      socialInfo,
+      badgeFeatures,
+      bio
     } = attendeeProfile
 
     try {
@@ -41,10 +44,13 @@ export default class AttendeeRepository {
             title,
             picUrl,
             idpUserId,
-            isOnline
+            isOnline,
+            socialInfo,
+            badgeFeatures,
+            bio
           )
         ) {
-          console.log('something change')
+          //console.log('something change')
           this._updateAttendee(
             fetchedAttendee.id,
             fullName,
@@ -52,7 +58,10 @@ export default class AttendeeRepository {
             title,
             picUrl,
             idpUserId,
-            isOnline
+            isOnline,
+            socialInfo,
+            badgeFeatures,
+            bio
           )
         }
         return user
@@ -72,7 +81,10 @@ export default class AttendeeRepository {
       title,
       picUrl,
       idpUserId,
-      isOnline
+      isOnline,
+      socialInfo,
+      badgeFeatures,
+      bio
     } = attendeeProfile
 
     if (this._sbUser) return this._sbUser
@@ -90,7 +102,10 @@ export default class AttendeeRepository {
       title,
       picUrl,
       idpUserId,
-      isOnline
+      isOnline,
+      socialInfo,
+      badgeFeatures,
+      bio
     )
     return newUser
   }
@@ -102,15 +117,40 @@ export default class AttendeeRepository {
     title,
     picUrl,
     idpUserId,
-    isOnline
+    isOnline,
+    socialInfo,
+    badgeFeatures,
+    bio
   ) {
+    let sameBadgeFeatures = true
+    if (fetchedAttendee.badges_info && badgeFeatures) {
+      sameBadgeFeatures =
+        fetchedAttendee.badges_info.length === badgeFeatures.length &&
+        fetchedAttendee.badges_info.every(
+          (value, index) => value === badgeFeatures[index]
+        )
+    }
+
+    let sameSocialInfo = true
+    if (fetchedAttendee.social_info && socialInfo) {
+      sameSocialInfo =
+        fetchedAttendee.social_info.github_user === socialInfo.githubUser &&
+        fetchedAttendee.social_info.linked_in_profile ===
+          socialInfo.linkedInProfile &&
+        fetchedAttendee.social_info.twitter_name === socialInfo.twitterName &&
+        fetchedAttendee.social_info.wechat_user === socialInfo.wechatUser
+    }
+
     return (
       fetchedAttendee.full_name !== fullName ||
       fetchedAttendee.company !== company ||
       fetchedAttendee.title !== title ||
       fetchedAttendee.pic_url !== picUrl ||
       fetchedAttendee.idp_user_id !== idpUserId ||
-      fetchedAttendee.is_online !== isOnline
+      fetchedAttendee.is_online !== isOnline ||
+      !sameSocialInfo ||
+      !sameBadgeFeatures ||
+      fetchedAttendee.bio !== bio
     )
   }
 
@@ -122,7 +162,10 @@ export default class AttendeeRepository {
     title,
     picUrl,
     idpUserId,
-    isOnline
+    isOnline,
+    socialInfo,
+    badgeFeatures,
+    bio
   ) {
     const { error } = await this._client.from('attendees').insert([
       {
@@ -133,7 +176,10 @@ export default class AttendeeRepository {
         title,
         pic_url: picUrl,
         idp_user_id: idpUserId,
-        is_online: isOnline
+        is_online: isOnline,
+        social_info: socialInfo,
+        badge_info: badgeFeatures,
+        bio
       }
     ])
 
@@ -147,7 +193,10 @@ export default class AttendeeRepository {
     title,
     picUrl,
     idpUserId,
-    isOnline
+    isOnline,
+    socialInfo,
+    badgeFeatures,
+    bio
   ) {
     const { error } = await this._client
       .from('attendees')
@@ -158,7 +207,10 @@ export default class AttendeeRepository {
           title,
           pic_url: picUrl,
           idp_user_id: idpUserId,
-          is_online: isOnline
+          is_online: isOnline,
+          social_info: socialInfo,
+          badges_info: badgeFeatures,
+          bio
         }
       ])
       .eq('id', id)

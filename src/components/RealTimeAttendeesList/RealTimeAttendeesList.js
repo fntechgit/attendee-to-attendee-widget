@@ -1,49 +1,106 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import AccessRepository from '../../lib/repository/AccessRepository'
 import ChatRepository from '../../lib/repository/ChatRepository'
-import AttendeesList, { scopes } from '../AttendeesList/AttendeesList'
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-import 'react-tabs/style/react-tabs.css'
+import AttendeesList from '../AttendeesList/AttendeesList'
+import { MainBar } from '../MainBar/MainBar'
+import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
+import StreamChatService from '../../lib/StreamChatService'
+import MessagesList from '../Chat/MessagesList'
+
+import 'font-awesome/css/font-awesome.min.css'
+import 'bulma/css/bulma.css'
+
+import style from './style.module.scss'
 
 let accessRepo = null
 let chatRepo = null
+let streamChatService = null
 
 const RealTimeAttendeesList = (props) => {
+  const [activeTab, setActiveTab] = useState('ATTENDEES')
+  const [isMinimized, setMinimized] = useState(false)
+  const [chatClient, setChatClient] = useState(null);
 
-  const { supabaseUrl, supabaseKey, user } = props
-  props = {...props, url: window.location.href.split('?')[0]}
+  const { supabaseUrl, supabaseKey, streamApiKey, apiBaseUrl, forumSlug, user, accessToken } = props
+  props = { ...props, url: window.location.href.split('?')[0] }
 
   if (!accessRepo) {
     accessRepo = new AccessRepository(supabaseUrl, supabaseKey)
+  }
+
+  if (!streamChatService) {
+    streamChatService = new StreamChatService(streamApiKey)
   }
 
   if (!chatRepo) {
     chatRepo = new ChatRepository(supabaseUrl, supabaseKey, user)
   }
 
-  const handleTabSelect = (index) => {
-    // if (index === 1) {
-    //   setCurrShowAttendeesList([])
-    // }
+  useEffect(() => {
+    const initChat = async () => {
+      await streamChatService.initializeClient(
+        apiBaseUrl,
+        accessToken,
+        forumSlug,
+        (client) => {setChatClient(client)},
+        (err, res) => console.log(err)
+      )
+    }
+
+    if (accessToken) {
+      initChat();
+    }
+  }, []);
+
+  const changeActiveTab = (tab) => {
+    setActiveTab(tab)
   }
 
+  const activeTabContent = () => {
+    const activeIndex = tabList.findIndex((tab) => {
+      return tab.name === activeTab
+    })
+
+    return tabList[activeIndex].content
+  }
+
+  const tabList = [
+    {
+      name: 'ATTENDEES',
+      icon: '',
+      content: (
+        <AttendeesList
+          {...props}
+          accessRepo={accessRepo}
+          chatRepo={chatRepo}
+        />
+      )
+    },
+    {
+      name: 'MESSAGES',
+      icon: '',
+      content: <MessagesList user={user} chatClient={chatClient} />
+    },
+    {
+      name: 'ROOM CHATS',
+      icon: '',
+      content: ''
+    }
+  ]
+
   return (
-    <div>
-      <h3>
-        <b>{props.title}</b>
-      </h3>
-      <Tabs onSelect={handleTabSelect}>
-        <TabList>
-          <Tab>Attendees on this page</Tab>
-          <Tab>Attendees at the show</Tab>
-        </TabList>
-        <TabPanel>
-          <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.PAGE} />
-        </TabPanel>
-        <TabPanel>
-          <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} scope={scopes.SHOW} />
-        </TabPanel>
-      </Tabs>
+    <div className={style.widgetContainer}>
+      <MainBar user={user} onMinimizeButtonClick={() => setMinimized(!isMinimized)} />
+      {!isMinimized && (
+        <div>
+          <Tabs
+            tabList={tabList}
+            activeTab={activeTab}
+            changeActiveTab={changeActiveTab}
+          />
+          <ActiveTabContent key={activeTab} content={activeTabContent()} />
+        </div>
+      )}
     </div>
   )
 }

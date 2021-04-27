@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import debounce from 'lodash.debounce'
 import { useStore } from '../../lib/Store'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
+import { SearchBar } from '../SearchBar/SearchBar'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import style from './style.module.scss'
 
@@ -18,8 +19,9 @@ export const scopes = {
 }
 
 const AttendeesList = (props) => {
-  const { accessRepo, chatRepo, scope, summitId, url } = props
+  const { accessRepo, chatRepo, summitId, url } = props
   const [hasMore, setHasMore] = useState(true)
+  const [currScope, setCurrScope] = useState(scopes.SHOW)
   const [attendeesList, setAttendeesList] = useState([])
 
   const { attendeesNews, chatNotificationsMap } = useStore({
@@ -53,7 +55,7 @@ const AttendeesList = (props) => {
       chatNotificationsMapAux = {...chatNotificationsMap}
     }
 
-    if (scope === scopes.PAGE) {
+    if (currScope === scopes.PAGE) {
       if (attendeesList.length === 0) {                                             
         updateAttendeesList(
           accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
@@ -84,7 +86,7 @@ const AttendeesList = (props) => {
 
   const fetchMoreData = async () => {
     let nextPage
-    if (scope === scopes.PAGE) {
+    if (currScope === scopes.PAGE) {
       nextPage = await accessRepo.fetchCurrentPageAttendees(
         url,
         ++urlAccessesPageIx,
@@ -116,7 +118,7 @@ const AttendeesList = (props) => {
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
       // console.log('value', value)
-      if (scope === scopes.PAGE) {
+      if (currScope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
           ? await accessRepo.findByFullName(value, summitId, url)
@@ -149,18 +151,14 @@ const AttendeesList = (props) => {
     handleSearchDebounce()
   }
 
+  const handleFilterModeChange = (mode) => {
+    setCurrScope(mode === 1 ? scopes.SHOW : scopes.PAGE)
+  }
+
   if (attendeesList) {
     return (
       <div className={style.outerWrapper}>
-        <div className={style.searchWrapper}>
-          <input
-            type='search'
-            className={style.searchInput}
-            onChange={handleSearch}
-            placeholder='Filter attendees'
-          />
-        </div>
-
+        <SearchBar onSearch={handleSearch} onFilterModeChange={handleFilterModeChange} />
         <InfiniteScroll
           dataLength={attendeesList.length}
           next={fetchMoreData}
@@ -185,8 +183,7 @@ const AttendeesList = (props) => {
 
 AttendeesList.propTypes = {
   supabaseUrl: PropTypes.string.isRequired,
-  supabaseKey: PropTypes.string.isRequired,
-  scope: PropTypes.oneOf([scopes.PAGE, scopes.SHOW])
+  supabaseKey: PropTypes.string.isRequired
 }
 
 export default AttendeesList

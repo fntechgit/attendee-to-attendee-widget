@@ -1,12 +1,11 @@
 import React, { useRef, useState } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
-import Modal from 'react-modal'
 import {
-  AttendeeDetail,
   RealTimeAttendeesList,
   SimpleChat,
   Tracker
 } from 'attendee-to-attendee-widget'
+
 import 'attendee-to-attendee-widget/dist/index.css'
 
 function findGetParameter(parameterName) {
@@ -26,17 +25,6 @@ const accessToken = findGetParameter('accessToken')
 const fullName = findGetParameter('fullName')
 const email = findGetParameter('email')
 const idpUserId = findGetParameter('idpUserId')
-
-const customStyles = {
-  content: {
-    top: '20%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)'
-  }
-}
 
 const sbAuthProps = {
   supabaseUrl: process.env.REACT_APP_SUPABASE_URL,
@@ -65,7 +53,15 @@ const widgetProps = {
     email: '',
     company: '',
     title: '',
-    picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
+    picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
+		socialInfo: {
+      githubUser: 'romanetar',	
+      linkedInProfile: 'https://www.linkedin.com/in/rom%C3%A1n-gutierrez-pmp-7a001b6/',
+      twitterName: 'romanetar',
+      wechatUser: ''
+    },
+    badgeFeatures: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
+    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.'
   },
   summitId: 8,
   ...chatProps,
@@ -73,11 +69,7 @@ const widgetProps = {
   ...streamioProps
 }
 
-Modal.setAppElement('#root')
-
 const App = () => {
-  const [modalIsOpen, setIsOpen] = useState(false)
-  const [accessInfo, setAccessInfo] = useState({})
   const trackerRef = useRef()
   const chatRef = useRef()
 
@@ -94,14 +86,6 @@ const App = () => {
   widgetProps.user.title = `Full stack developer`
   widgetProps.user.idpUserId = idpUserId
 
-  const openModal = () => {
-    setIsOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsOpen(false)
-  }
-
   const handleItemClick = (itemInfo) => {
     //setAccessInfo(itemInfo)
     //openModal()
@@ -109,12 +93,6 @@ const App = () => {
     if (itemInfo.attendees.idp_user_id != widgetProps.user.idpUserId) {
       startOneToOneChat(itemInfo.attendees.idp_user_id)
     }
-  }
-
-  const handleCTA = (itemInfo) => {
-    closeModal()
-    //console.log(itemInfo)
-    //startOneToOneChat(11)
   }
 
   const startOneToOneChat = (partnerId) => {
@@ -130,18 +108,13 @@ const App = () => {
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to='/attendance'>Attendees</Link>
-            <Tracker {...widgetProps} />
-          </div>
-        </Route>
-        <Route exact path='/a'>
-          <div>
-            <Link to='/attendance'>Attendees</Link>
+            <Link to='/attendance?accessToken=3D3RXzrkSPp8Hez90xS3lR0Y83qVMLVAyJTa2rO4bitAVxSJo00IdmOYo8UN4eQQV11OWCkBzY2JRhvTsO0xUys0._SLFkq_-4CZcUtIzOGgMDyVVAyufj_jcaY0Kw1r&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
+            <Link to='/attendance?accessToken=&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11'>Attendees 2</Link>
             <Tracker {...widgetProps} />
           </div>
         </Route>
         <Route path='/attendance'>
-          <div style={{ width: '500px', margin: '20px auto' }}>
+          <div style={{ width: '400px', margin: '20px auto', position: 'relative' }}>
             {/* <Link to='/'>Track 1</Link>
             <Link to='/a'>Track 2</Link>
             <button onClick={handleSignOutClick}>SignOut</button> */}
@@ -150,14 +123,6 @@ const App = () => {
               title='Attendance'
               {...widgetProps}
             />
-            <Modal
-              isOpen={modalIsOpen}
-              onRequestClose={closeModal}
-              style={customStyles}
-              contentLabel='Attendee'
-            >
-              <AttendeeDetail accessInfo={accessInfo} onCTA={handleCTA} />
-            </Modal>
             <Tracker {...widgetProps} ref={trackerRef} />
             <SimpleChat {...widgetProps} ref={chatRef} />
           </div>
