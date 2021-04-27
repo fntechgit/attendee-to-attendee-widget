@@ -70,8 +70,7 @@ class SimpleChat extends Component {
           chatClientConnected: false
         })
       }
-      await this._streamChatService.initialiseClient(
-        streamApiKey,
+      await this._streamChatService.initializeClient(
         apiBaseUrl,
         accessToken,
         forumSlug,
