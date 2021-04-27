@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 const Tab = (props) => {
   const { name } = props.tab
@@ -9,7 +9,7 @@ const Tab = (props) => {
       className={name === activeTab ? 'is-active' : ''}
       onClick={() => changeActiveTab(name)}
     >
-      <a>
+      <a style={{textDecoration: 'none'}}>
         <span>{name}</span>
       </a>
     </li>

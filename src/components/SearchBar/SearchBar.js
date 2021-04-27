@@ -20,7 +20,7 @@ export const SearchBar = ({ onSearch, onFilterModeChange }) => {
     <div className='field has-addons'>
       <div className='control has-icons-left is-expanded'>
         <input
-          className='input is-static'
+          className='input is-medium'
           type='search'
           placeholder='Search by name or company'
           onChange={onSearch}
@@ -34,7 +34,7 @@ export const SearchBar = ({ onSearch, onFilterModeChange }) => {
       <div className={`dropdown is-right ${isMenuOpen ? 'is-active' : ''}`}>
         <div className='dropdown-trigger'>
           <button
-            className='button is-white'
+            className='button is-white is-medium'
             aria-haspopup='true'
             aria-controls='search-menu'
             onClick={toggleMenu}

@@ -37,11 +37,11 @@ export const AttendeeInfo = ({
           </div>
           <div className='media-content'>
             <div className='content'>
-              <h2 className='is-size-5 has-text-weight-semibold'>
+              <div className='is-size-3 has-text-weight-semibold'>
                 {fullName}
-              </h2>
-              <div className='is-size-6 has-text-grey'>{title}</div>
-              <div className='is-size-6 has-text-grey'>{company}</div>
+              </div>
+              <div className='is-size-4 has-text-grey'>{title}</div>
+              <div className='is-size-4 has-text-grey'>{company}</div>
             </div>
             <nav className='level is-mobile'>
               <div className='level-left'>
@@ -92,7 +92,11 @@ export const AttendeeInfo = ({
             {badgeFeatures && (
               <nav className='level'>
                 <div className='level-left'>
-                  {badgeFeatures.map((bf) => <span key={bf} className='has-text-grey mr-2'>{bf}</span>)}
+                  {badgeFeatures.map((bf) => (
+                    <span key={bf} className='has-text-grey mr-2'>
+                      {bf}
+                    </span>
+                  ))}
                 </div>
               </nav>
             )}
@@ -101,9 +105,11 @@ export const AttendeeInfo = ({
         {fullMode && (
           <article className='mt-2'>
             <div>
-              <div className='content'>
-                <p>{bio}</p>
-              </div>
+              {bio && (
+                <div className='content'>
+                  <p>{bio}</p>
+                </div>
+              )}
               <nav className='level'>
                 <div className='level-left'>
                   <a className='level-item' onClick={onChatClick}>
