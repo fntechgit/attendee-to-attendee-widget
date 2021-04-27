@@ -2,24 +2,38 @@ import React from 'react'
 import {
   Chat,
   ChannelList,
-  LoadingIndicator,
+  ChannelListMessenger,
+  LoadingIndicator
 } from 'stream-chat-react'
 
-import 'stream-chat-react/dist/css/index.css'
-
-//const filters = { type: 'messaging', members: { $in: ['nameless-hall-2'] } }
-const filters = { type: 'messaging' }
-const sort = { last_message_at: -1 }
+import style from './style.module.scss'
 
 const MessagesList = ({ user, chatClient }) => {
+
   if (!chatClient) {
     return <LoadingIndicator />
   }
 
   return (
-    <Chat client={chatClient} theme='messaging light'>
-      <ChannelList filters={filters} sort={sort} />
-    </Chat>
+    <div className={style.widgetWrapper}>
+      <Chat client={chatClient}>
+        <ChannelList
+          key={`channel-list-users`}
+          filters={{
+            type: 'messaging',
+            //members: { $in: [user.idpUserId] },
+            id: { $nin: [`${user.idpUserId}-help`, `${user.idpUserId}-qa`] }
+          }}
+          sort={{ last_message_at: -1 }}
+          List={ChannelListMessenger}
+          //Preview={CustomChannelPreview}
+          //EmptyStateIndicator={CustomEmptyStateIndicator}
+          //LoadingIndicator={CustomLoadingIndicator}
+          setActiveChannelOnMount={false}
+          me={user}
+        />
+      </Chat>
+    </div>
   )
 }
 
