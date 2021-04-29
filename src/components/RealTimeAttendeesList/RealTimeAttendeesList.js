@@ -5,7 +5,7 @@ import AttendeesList from '../AttendeesList/AttendeesList'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
 import StreamChatService from '../../lib/StreamChatService'
-import MessagesList from '../Chat/MessagesList'
+import ChannelListContainer from '../Chat/ChannelListContainer/ChannelListContainer'
 
 import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
@@ -79,7 +79,7 @@ const RealTimeAttendeesList = (props) => {
     {
       name: 'MESSAGES',
       icon: '',
-      content: <MessagesList user={user} chatClient={chatClient} />
+      content: <ChannelListContainer user={user} chatClient={chatClient} />
     },
     {
       name: 'ROOM CHATS',

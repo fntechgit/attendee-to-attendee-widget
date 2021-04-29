@@ -108,7 +108,7 @@ const App = () => {
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to='/attendance?accessToken=3D3RXzrkSPp8Hez90xS3lR0Y83qVMLVAyJTa2rO4bitAVxSJo00IdmOYo8UN4eQQV11OWCkBzY2JRhvTsO0xUys0._SLFkq_-4CZcUtIzOGgMDyVVAyufj_jcaY0Kw1r&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
+            <Link to='/attendance?accessToken=SmAyjLEmd1o.cQ..csAOHcrrGzcSTkyC3sJSD89nxL_nkP14bIOfN-wPUTXb2X_rYPy60kyrtLm~QGVLPmIJ3R2d2iGJUrw-udO4ZalS8OsQEB-fxrOXlGnIReEy-ZD-&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
             <Link to='/attendance?accessToken=&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11'>Attendees 2</Link>
             <Tracker {...widgetProps} />
           </div>
@@ -123,7 +123,7 @@ const App = () => {
               title='Attendance'
               {...widgetProps}
             />
-            <Tracker {...widgetProps} ref={trackerRef} />
+            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
             <SimpleChat {...widgetProps} ref={chatRef} />
           </div>
         </Route>
