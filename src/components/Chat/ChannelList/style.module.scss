@@ -119,5 +119,25 @@
         }
       }
     }
+
+    .unreadCount {
+      position: absolute;
+      top: 40%;
+      right: 5px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background-color: orangered;
+
+      span {
+        position: absolute;
+        bottom: 10%;
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+      }
+    }
   }
 }

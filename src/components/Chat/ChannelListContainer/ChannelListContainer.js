@@ -9,7 +9,8 @@ import CustomChannelPreview from '../ChannelList/CustomChannelPreview'
 
 import style from './style.module.scss'
 
-const MessagesList = ({ user, chatClient }) => {
+const MessagesList = (props) => {
+  const { user, chatClient } = props
   const filters = {
     type: 'messaging',
     //members: { $in: [user.idpUserId] },
@@ -28,7 +29,7 @@ const MessagesList = ({ user, chatClient }) => {
   }
 
   return (
-    <div className={style.channelsListWrapper}>
+    <div className={style.channelsListWrapper} style={{height: props.height}} >
       <Chat client={chatClient}>
         <ChannelList
           key={`channel-list-users`}

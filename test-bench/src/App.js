@@ -64,6 +64,7 @@ const widgetProps = {
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.'
   },
   summitId: 8,
+  height: 500,
   ...chatProps,
   ...sbAuthProps,
   ...streamioProps
@@ -108,7 +109,7 @@ const App = () => {
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to='/attendance?accessToken=SmAyjLEmd1o.cQ..csAOHcrrGzcSTkyC3sJSD89nxL_nkP14bIOfN-wPUTXb2X_rYPy60kyrtLm~QGVLPmIJ3R2d2iGJUrw-udO4ZalS8OsQEB-fxrOXlGnIReEy-ZD-&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
+            <Link to='/attendance?accessToken=IpIrXazrVufqIWyU.t.3R5lU6oCXk2TR0q9_xedHlj-2UFdA2BNwNwuzPIYXd7BQ-7D9fYan_OYQNYZadTqjx~eqv3EV84-MEJxNTVeTMBIuhpME5LM0BB5VSqdrTCh2&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
             <Link to='/attendance?accessToken=&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11'>Attendees 2</Link>
             <Tracker {...widgetProps} />
           </div>

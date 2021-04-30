@@ -1,8 +1,22 @@
 .channelsListWrapper {
   position: relative;
-  height: 100%;
   display: flex;
   flex-flow: column;
   border: 1px solid #eee;
-  z-index: 5;
+  overflow: hidden;
+
+  :global(.str-chat) {
+    height: 100%;
+  }
+}
+
+:global(.str-chat.messaging) {
+  background-color: #fff;
+}
+
+@media (max-width: 960px) {
+  :global(.str-chat-channel-list.messaging) {
+    position: relative;
+    min-height: unset;
+  }
 }

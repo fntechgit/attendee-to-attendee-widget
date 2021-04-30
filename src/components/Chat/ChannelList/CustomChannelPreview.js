@@ -41,7 +41,7 @@ const UserChannelPreview = ({
               </div>
             )}
           </User>
-          <div className={styles.delete} onClick={onDelete}>
+          {/* <div className={styles.delete} onClick={onDelete}>
             <svg
               width='20'
               height='20'
@@ -55,6 +55,9 @@ const UserChannelPreview = ({
                 d='M15 13.5858L21.364 7.22183L22.7782 8.63604L16.4143 15L22.7782 21.364L21.364 22.7782L15 16.4142L8.63608 22.7782L7.22187 21.364L13.5858 15L7.22187 8.63604L8.63608 7.22183L15 13.5858Z'
               />
             </svg>
+          </div> */}
+          <div className={styles.unreadCount}>
+            <span>{channel.state.unreadCount}</span>
           </div>
         </a>
       </div>

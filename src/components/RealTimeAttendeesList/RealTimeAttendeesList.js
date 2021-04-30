@@ -79,7 +79,7 @@ const RealTimeAttendeesList = (props) => {
     {
       name: 'MESSAGES',
       icon: '',
-      content: <ChannelListContainer user={user} chatClient={chatClient} />
+      content: <ChannelListContainer user={user} chatClient={chatClient} height={props.height} />
     },
     {
       name: 'ROOM CHATS',

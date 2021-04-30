@@ -164,7 +164,7 @@ const AttendeesList = (props) => {
           next={fetchMoreData}
           hasMore={hasMore}
           // loader={<h4>Loading...</h4>}
-          height={350}
+          height={props.height}
         >
           {attendeesList.length > 0 &&
             attendeesList.map((item) => (
