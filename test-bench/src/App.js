@@ -31,13 +31,10 @@ const sbAuthProps = {
   supabaseKey: process.env.REACT_APP_SUPABASE_KEY
 }
 
-const streamioProps = {
+const chatProps = {
   streamApiKey: '29gtgpyz5hht',
   apiBaseUrl: 'https://idp.dev.fnopen.com',
-  forumSlug: 'fnvirtual-poc'
-}
-
-const chatProps = {
+  forumSlug: 'fnvirtual-poc',
   accessToken: accessToken,
   onAuthError: (err, res) => console.log(err),
   openDir: 'left',
@@ -49,6 +46,7 @@ const chatProps = {
 
 const widgetProps = {
   user: {
+    id: null,
     fullName: '',
     email: '',
     company: '',
@@ -66,8 +64,7 @@ const widgetProps = {
   summitId: 8,
   height: 500,
   ...chatProps,
-  ...sbAuthProps,
-  ...streamioProps
+  ...sbAuthProps
 }
 
 const App = () => {
@@ -85,6 +82,7 @@ const App = () => {
   widgetProps.user.email = email
   widgetProps.user.company = `Tipit`
   widgetProps.user.title = `Full stack developer`
+  widgetProps.user.id = idpUserId
   widgetProps.user.idpUserId = idpUserId
 
   const handleItemClick = (itemInfo) => {
@@ -109,7 +107,7 @@ const App = () => {
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to='/attendance?accessToken=IpIrXazrVufqIWyU.t.3R5lU6oCXk2TR0q9_xedHlj-2UFdA2BNwNwuzPIYXd7BQ-7D9fYan_OYQNYZadTqjx~eqv3EV84-MEJxNTVeTMBIuhpME5LM0BB5VSqdrTCh2&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
+            <Link to='/attendance?accessToken=lp41o~1GGG1S4wS_5dOimEMnaUqk6vEze9Rf~P9vWkWL2o.yaBUYCv0PWP4PrjtW~xE-a_c3Tf.FSKcw0K26t0.8T-CqOw-9~8fuBl_b5GTmvB6yE9ibA02PuAylaP-f&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
             <Link to='/attendance?accessToken=&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11'>Attendees 2</Link>
             <Tracker {...widgetProps} />
           </div>

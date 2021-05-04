@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import style from './style.module.scss'
 
-export const MainBar = ({ user, onMinimizeButtonClick }) => {
+export const MainBar = ({ user, onHelpClick, onMinimizeButtonClick }) => {
   const [showAttCard, setShowAttCard] = useState(false)
   let isCardHovered = false
 
@@ -55,7 +55,7 @@ export const MainBar = ({ user, onMinimizeButtonClick }) => {
           <div className={style.title}>Connect</div>
         </div>
         <div className={style.menu}>
-          <button className='button is-white is-large'>
+          <button className='button is-white is-large' onClick={onHelpClick}>
             <span className='icon'>
               <i className='fa fa-question-circle-o' aria-hidden='true'></i>
             </span>

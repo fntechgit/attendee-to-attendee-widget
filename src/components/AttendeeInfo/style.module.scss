@@ -9,3 +9,11 @@
   box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.08),
           0 0 8px 1px rgba(0, 0, 0, 0.08);
 }
+
+@media (max-width: 800px) {
+  .attendeeInfoContainer {
+    right: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+  }
+}

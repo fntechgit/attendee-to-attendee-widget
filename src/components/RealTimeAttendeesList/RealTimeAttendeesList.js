@@ -6,6 +6,7 @@ import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
 import StreamChatService from '../../lib/StreamChatService'
 import ChannelListContainer from '../Chat/ChannelListContainer/ChannelListContainer'
+import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 
 import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
@@ -19,9 +20,18 @@ let streamChatService = null
 const RealTimeAttendeesList = (props) => {
   const [activeTab, setActiveTab] = useState('ATTENDEES')
   const [isMinimized, setMinimized] = useState(false)
-  const [chatClient, setChatClient] = useState(null);
+  const [helpChatOpened, setHelpChatOpened] = useState(false)
+  const [chatClient, setChatClient] = useState(null)
 
-  const { supabaseUrl, supabaseKey, streamApiKey, apiBaseUrl, forumSlug, user, accessToken } = props
+  const {
+    supabaseUrl,
+    supabaseKey,
+    streamApiKey,
+    apiBaseUrl,
+    forumSlug,
+    user,
+    accessToken
+  } = props
   props = { ...props, url: window.location.href.split('?')[0] }
 
   if (!accessRepo) {
@@ -42,15 +52,23 @@ const RealTimeAttendeesList = (props) => {
         apiBaseUrl,
         accessToken,
         forumSlug,
-        (client) => {setChatClient(client)},
+        (client) => {
+          setChatClient(client)
+        },
         (err, res) => console.log(err)
       )
     }
 
     if (accessToken) {
-      initChat();
+      initChat()
     }
-  }, []);
+  }, [])
+
+  const handleHelpClick = () => {
+    if (chatClient) {
+      setHelpChatOpened(true)
+    }
+  }
 
   const changeActiveTab = (tab) => {
     setActiveTab(tab)
@@ -69,17 +87,19 @@ const RealTimeAttendeesList = (props) => {
       name: 'ATTENDEES',
       icon: '',
       content: (
-        <AttendeesList
-          {...props}
-          accessRepo={accessRepo}
-          chatRepo={chatRepo}
-        />
+        <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} />
       )
     },
     {
       name: 'MESSAGES',
       icon: '',
-      content: <ChannelListContainer user={user} chatClient={chatClient} height={props.height} />
+      content: (
+        <ChannelListContainer
+          user={user}
+          chatClient={chatClient}
+          height={props.height}
+        />
+      )
     },
     {
       name: 'ROOM CHATS',
@@ -90,7 +110,11 @@ const RealTimeAttendeesList = (props) => {
 
   return (
     <div className={style.widgetContainer}>
-      <MainBar user={user} onMinimizeButtonClick={() => setMinimized(!isMinimized)} />
+      <MainBar
+        user={user}
+        onHelpClick={handleHelpClick}
+        onMinimizeButtonClick={() => setMinimized(!isMinimized)}
+      />
       {!isMinimized && (
         <div>
           <Tabs
@@ -100,6 +124,17 @@ const RealTimeAttendeesList = (props) => {
           />
           <ActiveTabContent key={activeTab} content={activeTabContent()} />
         </div>
+      )}
+      {chatClient && helpChatOpened && user && (
+        <ConversationBox 
+          chatClient={chatClient}
+          user={user}
+          partnerId='help'
+          openDir={props.openDir}
+          summitId={props.summitId}
+          visible={helpChatOpened}
+          onClose={() => setHelpChatOpened(false)}
+        />
       )}
     </div>
   )

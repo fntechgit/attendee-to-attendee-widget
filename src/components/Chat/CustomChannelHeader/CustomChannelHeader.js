@@ -1,7 +1,7 @@
 import { withChatContext } from 'stream-chat-react'
 import React from 'react'
 import style from './style.module.scss'
-import { allHelpRoles } from '../../models/local_roles'
+import { allHelpRoles } from '../../../models/local_roles'
 
 class CustomHeader extends React.PureComponent {
   render() {

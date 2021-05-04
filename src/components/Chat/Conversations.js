@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Chat, withChatContext } from 'stream-chat-react'
 import ChatChannelsBuilder from '../../lib/builders/ChatChannelsBuilder'
-import ConversationBox from './ConversationBox'
+import ConversationBox from './ConversationBox/ConversationBox'
 import SupportChannelPreview from './SupportChannelPreview'
 import { allHelpRoles, helpRoles, qaRoles } from '../../models/local_roles'
 
@@ -41,45 +41,45 @@ class Conversations extends Component {
     //     this.setState({ helpChannel })
     //   }
     // }
-    this._currChannel = await this._channelsBuilder.startConversation(
-      partnerId,
-      chatClient,
-      user,
-      this.props.setActiveChannel
-    )
+    // this._currChannel = await this._channelsBuilder.startConversation(
+    //   chatClient,
+    //   user,
+    //   partnerId,
+    //   this.props.setActiveChannel
+    // )
 
-    this.props.chatRepo.engage(partnerId, summitId)
+    //this.props.chatRepo.engage(partnerId, summitId)
 
-    this._currChannel.on('message.new', event => { 
-      // console.log('event', event); 
-      // console.log('channel_id', event.channel_id); 
-      // console.log('channel.state', this._currChannel.state); 
-      this.props.chatRepo.notifyNewMessage(partnerId, summitId, event.message.text)
-    });
+    // this._currChannel.on('message.new', event => { 
+    //   // console.log('event', event); 
+    //   // console.log('channel_id', event.channel_id); 
+    //   // console.log('channel.state', this._currChannel.state); 
+    //   this.props.chatRepo.notifyNewMessage(partnerId, summitId, event.message.text)
+    // });
 
     this.setState({ loaded: true })
   }
 
-  getQAChannel = () => {
-    const { user, showQA } = this.props
-    const { qaChannel } = this.state
-    const isSupportUser = allHelpRoles.includes(user.local_role)
+  // getQAChannel = () => {
+  //   const { user, showQA } = this.props
+  //   const { qaChannel } = this.state
+  //   const isSupportUser = allHelpRoles.includes(user.local_role)
 
-    if (!showQA || isSupportUser || !qaChannel) return null
+  //   if (!showQA || isSupportUser || !qaChannel) return null
 
-    return <SupportChannelPreview channel={qaChannel} key='channel-list-qa' />
-  }
+  //   return <SupportChannelPreview channel={qaChannel} key='channel-list-qa' />
+  // }
 
-  getHelpChannel = () => {
-    const { user, showHelp } = this.props
-    const { helpChannel } = this.state
-    const isSupportUser = allHelpRoles.includes(user.local_role)
+  // getHelpChannel = () => {
+  //   const { user, showHelp } = this.props
+  //   const { helpChannel } = this.state
+  //   const isSupportUser = allHelpRoles.includes(user.local_role)
 
-    if (!showHelp || isSupportUser || !helpChannel) return null
+  //   if (!showHelp || isSupportUser || !helpChannel) return null
 
-    return <SupportChannelPreview channel={helpChannel} key='channel-list-help' />
+  //   return <SupportChannelPreview channel={helpChannel} key='channel-list-help' />
     
-  }
+  // }
 
   render() {
     const { partnerId, chatClient, user, openDir } = this.props
