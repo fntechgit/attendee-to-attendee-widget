@@ -62,10 +62,10 @@ const AttendeesListItem = (props) => {
           <div
             className={style.attendeesListItemContent}
             key={`attendee-${props.item.id}`}
+            onClick={() => handleItemClick(props.item)}
           >
             <div
               className={style.picWrapper}
-              onClick={() => handleItemClick(props.item)}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >

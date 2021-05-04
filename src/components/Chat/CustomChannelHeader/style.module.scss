@@ -17,9 +17,20 @@
     display: inline-block;
   }
   
-  .msgIcon {
-    top: 3px;
-    position: relative;
+  .picWrapper {
+    margin-top: -20px;
+    height: 55px;
+    width: 55px;
+    border-radius: 50%;
+    float: left;
+    background-color: lightgrey;
+
+    .pic {
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
+      background-size: cover;
+    }
   }
 
   .close {

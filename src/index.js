@@ -1,5 +1,4 @@
-import RealTimeAttendeesList from './components/RealTimeAttendeesList/RealTimeAttendeesList'
-import SimpleChat from './components/Chat/SimpleChat'
+import AttendeeToAttendeeContainer from './components/AttendeeToAttendeeContainer/AttendeeToAttendeeContainer'
 import Tracker from './components/Tracker'
 
-export { RealTimeAttendeesList, SimpleChat, Tracker }
+export { AttendeeToAttendeeContainer, Tracker }

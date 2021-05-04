@@ -10,17 +10,19 @@ import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 
 import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
+import 'stream-chat-react/dist/css/index.css'
 
 import style from './style.module.scss'
 
 let accessRepo = null
 let chatRepo = null
 let streamChatService = null
+let chatCounterpart = 'help'
 
-const RealTimeAttendeesList = (props) => {
+const AttendeeToAttendeeContainer = (props) => {
   const [activeTab, setActiveTab] = useState('ATTENDEES')
   const [isMinimized, setMinimized] = useState(false)
-  const [helpChatOpened, setHelpChatOpened] = useState(false)
+  const [chatOpened, setChatOpened] = useState(false)
   const [chatClient, setChatClient] = useState(null)
 
   const {
@@ -30,7 +32,9 @@ const RealTimeAttendeesList = (props) => {
     apiBaseUrl,
     forumSlug,
     user,
-    accessToken
+    accessToken,
+    summitId,
+    openDir
   } = props
   props = { ...props, url: window.location.href.split('?')[0] }
 
@@ -59,14 +63,33 @@ const RealTimeAttendeesList = (props) => {
       )
     }
 
+    const cleanUpChat = async () => {
+      if (chatClient) await chatClient.disconnect()
+    }
+
     if (accessToken) {
       initChat()
+      return () => cleanUpChat()
     }
   }, [])
 
   const handleHelpClick = () => {
     if (chatClient) {
-      setHelpChatOpened(true)
+      if (chatOpened) setChatOpened(false)
+      chatCounterpart = 'help'
+      setTimeout(() => {
+        setChatOpened(true)
+      }, 100)
+    }
+  }
+
+  const handleAttendeeClick = (att) => {
+    if (chatClient) {
+      if (chatOpened) setChatOpened(false)
+      chatCounterpart = att.attendees.idp_user_id
+      setTimeout(() => {
+        setChatOpened(true)
+      }, 100)
     }
   }
 
@@ -87,7 +110,12 @@ const RealTimeAttendeesList = (props) => {
       name: 'ATTENDEES',
       icon: '',
       content: (
-        <AttendeesList {...props} accessRepo={accessRepo} chatRepo={chatRepo} />
+        <AttendeesList
+          {...props}
+          accessRepo={accessRepo}
+          chatRepo={chatRepo}
+          onItemClick={handleAttendeeClick}
+        />
       )
     },
     {
@@ -125,19 +153,19 @@ const RealTimeAttendeesList = (props) => {
           <ActiveTabContent key={activeTab} content={activeTabContent()} />
         </div>
       )}
-      {chatClient && helpChatOpened && user && (
-        <ConversationBox 
+      {chatClient && chatOpened && user && (
+        <ConversationBox
           chatClient={chatClient}
           user={user}
-          partnerId='help'
-          openDir={props.openDir}
-          summitId={props.summitId}
-          visible={helpChatOpened}
-          onClose={() => setHelpChatOpened(false)}
+          partnerId={chatCounterpart}
+          openDir={openDir}
+          summitId={summitId}
+          visible={chatOpened}
+          onClose={() => setChatOpened(false)}
         />
       )}
     </div>
   )
 }
 
-export default RealTimeAttendeesList
+export default AttendeeToAttendeeContainer

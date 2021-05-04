@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import {
-  RealTimeAttendeesList,
-  SimpleChat,
+  AttendeeToAttendeeContainer,
   Tracker
 } from 'attendee-to-attendee-widget'
 
@@ -85,14 +84,14 @@ const App = () => {
   widgetProps.user.id = idpUserId
   widgetProps.user.idpUserId = idpUserId
 
-  const handleItemClick = (itemInfo) => {
-    //setAccessInfo(itemInfo)
-    //openModal()
-    //console.log(itemInfo)
-    if (itemInfo.attendees.idp_user_id != widgetProps.user.idpUserId) {
-      startOneToOneChat(itemInfo.attendees.idp_user_id)
-    }
-  }
+  // const handleItemClick = (itemInfo) => {
+  //   //setAccessInfo(itemInfo)
+  //   //openModal()
+  //   //console.log(itemInfo)
+  //   if (itemInfo.attendees.idp_user_id != widgetProps.user.idpUserId) {
+  //     startOneToOneChat(itemInfo.attendees.idp_user_id)
+  //   }
+  // }
 
   const startOneToOneChat = (partnerId) => {
     chatRef.current.startOneToOneChat(partnerId)
@@ -107,7 +106,7 @@ const App = () => {
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to='/attendance?accessToken=lp41o~1GGG1S4wS_5dOimEMnaUqk6vEze9Rf~P9vWkWL2o.yaBUYCv0PWP4PrjtW~xE-a_c3Tf.FSKcw0K26t0.8T-CqOw-9~8fuBl_b5GTmvB6yE9ibA02PuAylaP-f&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
+            <Link to='/attendance?accessToken=cuHu7bVvqgq8M_KniJA8iPl_gyyzHxIGNxOtEoUo6NpLE_isufKX0PIw~V0zN52U6f.3UX-lJ8.9LsKkj_F5B0vnpz5zPgrnKY0~34NG6h4ke_KfrRzg9RNtoIsqZefv&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
             <Link to='/attendance?accessToken=&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11'>Attendees 2</Link>
             <Tracker {...widgetProps} />
           </div>
@@ -117,13 +116,11 @@ const App = () => {
             {/* <Link to='/'>Track 1</Link>
             <Link to='/a'>Track 2</Link>
             <button onClick={handleSignOutClick}>SignOut</button> */}
-            <RealTimeAttendeesList
-              onItemClick={handleItemClick}
+            <AttendeeToAttendeeContainer
               title='Attendance'
               {...widgetProps}
             />
-            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
-            <SimpleChat {...widgetProps} ref={chatRef} />
+            <Tracker {...widgetProps} ref={trackerRef} />
           </div>
         </Route>
         <Route exact path='/untracked'>
