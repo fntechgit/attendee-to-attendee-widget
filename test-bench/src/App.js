@@ -101,13 +101,15 @@ const App = () => {
     trackerRef.current.signOut()
   }
 
+  const token = 'CfJ611zdrvpr77EA.PnZIpvaOQt-Wwvk.M.4Y7DfLkjqUdcmgLaMCXcr5i39oBH6MCSpWRRhmz~c~NGkOggcQv~2NhDFWqS7EeT3r9EoaTwMPcIrJP7a7HYMa8VboJut'
+
   return (
     <Router>
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to='/attendance?accessToken=cuHu7bVvqgq8M_KniJA8iPl_gyyzHxIGNxOtEoUo6NpLE_isufKX0PIw~V0zN52U6f.3UX-lJ8.9LsKkj_F5B0vnpz5zPgrnKY0~34NG6h4ke_KfrRzg9RNtoIsqZefv&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13'>Attendees 1</Link>
-            <Link to='/attendance?accessToken=&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11'>Attendees 2</Link>
+            <Link to={`/attendance?accessToken=${token}&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13`}>Attendees 1</Link>
+            <Link to={`/attendance?accessToken=${token}&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11`}>Attendees 2</Link>
             <Tracker {...widgetProps} />
           </div>
         </Route>

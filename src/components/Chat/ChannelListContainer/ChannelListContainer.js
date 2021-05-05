@@ -3,7 +3,8 @@ import {
   Chat,
   ChannelList,
   ChannelListMessenger,
-  LoadingIndicator
+  LoadingIndicator,
+  withChatContext
 } from 'stream-chat-react'
 import CustomChannelPreview from '../ChannelList/CustomChannelPreview'
 
@@ -18,11 +19,11 @@ const CustomLoadingIndicator = () => {
 }
 
 const MessagesList = (props) => {
-  const { user, chatClient } = props
+  const { user, chatClient, onItemClick } = props
   const filters = {
     type: 'messaging',
-    members: { $in: [user.idpUserId] },
-    id: { $nin: [`${user.idpUserId}-help`, `${user.idpUserId}-qa`] }
+    members: { $in: [user.id] },
+    id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
   }
   const sort = {
     //last_message_at: -1
@@ -36,7 +37,7 @@ const MessagesList = (props) => {
   if (!chatClient) {
     return <LoadingIndicator />
   }
-
+  
   return (
     <div className={style.channelsListWrapper} style={{ height: props.height }}>
       <Chat client={chatClient}>
@@ -46,7 +47,9 @@ const MessagesList = (props) => {
           options={options}
           sort={sort}
           List={ChannelListMessenger}
-          Preview={CustomChannelPreview}
+          Preview={(previewProps) => (
+            <CustomChannelPreview {...previewProps} onItemClick={onItemClick} />
+          )}
           EmptyStateIndicator={CustomEmptyStateIndicator}
           LoadingIndicator={CustomLoadingIndicator}
           setActiveChannelOnMount={false}

@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
 import User from './User'
-import styles from './style.module.scss'
-
 import { allHelpRoles } from '../../../models/local_roles'
+
+import styles from './style.module.scss'
 
 const UserChannelPreview = ({
   client,
@@ -56,24 +56,47 @@ const UserChannelPreview = ({
               />
             </svg>
           </div> */}
-          <div className={styles.unreadCount}>
-            <span>{channel.state.unreadCount}</span>
-          </div>
+          {channel.state.unreadCount > 0 && (
+            <div className={styles.unreadCount}>
+              <span>{channel.state.unreadCount}</span>
+            </div>
+          )}
         </a>
       </div>
     </div>
   )
 }
 
-class CustomChannelPreview extends React.Component {
-  onChannelClick = (ev) => {
-    const { setActiveChannel, channel } = this.props
-    ev.preventDefault()
-    setActiveChannel(channel)
+const CustomChannelPreview = (props) => {
+  const {
+    channel,
+    activeChannel,
+    setActiveChannel,
+    latestMessage,
+    unread,
+    client,
+    onItemClick
+  } = props
+  const isSupportUser = allHelpRoles.includes(client.user.local_role)
+
+  const memberLookup = (m) => {
+    if (isSupportUser) {
+      return m.role === 'owner'
+    } else {
+      return m.user.id !== client.user.id
+    }
   }
 
-  onDelete = async (ev) => {
-    const { channel, setActiveChannel } = this.props
+  const member = Object.values(channel.state.members).find(memberLookup)
+
+  const onChannelClick = async (ev) => {
+    ev.preventDefault()
+    await channel.markRead()
+    setActiveChannel(channel)
+    if (onItemClick) onItemClick(channel)
+  }
+
+  const onDelete = async (ev) => {
     ev.preventDefault()
     ev.stopPropagation()
     setActiveChannel(null)
@@ -82,39 +105,25 @@ class CustomChannelPreview extends React.Component {
     await channel.stopWatching()
   }
 
-  render() {
-    const { channel, latestMessage, unread, client } = this.props
-    const isSupportUser = allHelpRoles.includes(client.user.local_role)
-    const memberLookup = (m) => {
-      if (isSupportUser) {
-        return m.role === 'owner'
-      } else {
-        return m.user.id !== client.user.id
-      }
-    }
-    const member = Object.values(channel.state.members).find(memberLookup)
+  if (!member) return null
 
-    if (!member) return null
-
-    if (
-      isSupportUser ||
-      (!channel.id.includes('-qa') && !channel.id.includes('-help'))
-    ) {
-      return (
-        <UserChannelPreview
-          client={client}
-          channel={channel}
-          member={member}
-          latestMessage={latestMessage}
-          unread={unread}
-          onDelete={this.onDelete}
-          onClick={this.onChannelClick}
-        />
-      )
-    }
-
-    return null
+  if (
+    isSupportUser ||
+    (!channel.id.includes('-qa') && !channel.id.includes('-help'))
+  ) {
+    return (
+      <UserChannelPreview
+        client={client}
+        channel={channel}
+        member={member}
+        latestMessage={latestMessage}
+        unread={unread}
+        onDelete={onDelete}
+        onClick={onChannelClick}
+      />
+    )
   }
+  return null
 }
 
 export default withChatContext(CustomChannelPreview)

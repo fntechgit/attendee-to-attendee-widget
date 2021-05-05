@@ -18,6 +18,7 @@ import style from './style.module.scss'
 const ConversationBox = ({
   partnerId,
   chatClient,
+  activeChannel,
   user,
   openDir,
   setActiveChannel,
@@ -29,29 +30,34 @@ const ConversationBox = ({
 
   useEffect(() => {
     const initChannel = async () => {
-      if (partnerId === 'qa') {
-        // create QA channel between this user and qa users
-        const qaChannel = await ChatChannelsBuilder.createSupportChannel(
-          chatClient,
-          user,
-          'qa'
-        )
-        setChannel(qaChannel)
-      } else if (partnerId === 'help') {
-        // create Help channel between this user and help user
-        const helpChannel = await ChatChannelsBuilder.createSupportChannel(
-          chatClient,
-          user,
-          'help'
-        )
-        setChannel(helpChannel)
+      console.log('activeChannel', activeChannel)
+      if (!activeChannel) {
+        if (partnerId === 'qa') {
+          // create QA channel between this user and qa users
+          const qaChannel = await ChatChannelsBuilder.createSupportChannel(
+            chatClient,
+            user,
+            'qa'
+          )
+          setChannel(qaChannel)
+        } else if (partnerId === 'help') {
+          // create Help channel between this user and help user
+          const helpChannel = await ChatChannelsBuilder.createSupportChannel(
+            chatClient,
+            user,
+            'help'
+          )
+          setChannel(helpChannel)
+        } else {
+          const res = await ChatChannelsBuilder.getChannel(
+            partnerId,
+            chatClient,
+            user
+          )
+          setChannel(res)
+        }
       } else {
-        const res = await ChatChannelsBuilder.getChannel(
-          partnerId,
-          chatClient,
-          user
-        )
-        setChannel(res)
+        setChannel(activeChannel)
       }
       setIsLoading(false)
     }
@@ -78,7 +84,11 @@ const ConversationBox = ({
   return (
     channel && (
       <div className={`${style.conversation} ${style[openDir]}`}>
-        <Chat client={chatClient} theme='messaging light' initialNavOpen={false}>
+        <Chat
+          client={chatClient}
+          theme='messaging light'
+          initialNavOpen={false}
+        >
           <Channel channel={channel}>
             <Window hideOnThread={true}>
               <CustomChannelHeader

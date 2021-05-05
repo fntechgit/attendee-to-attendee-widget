@@ -18,6 +18,7 @@ let accessRepo = null
 let chatRepo = null
 let streamChatService = null
 let chatCounterpart = 'help'
+let activeChannel = null
 
 const AttendeeToAttendeeContainer = (props) => {
   const [activeTab, setActiveTab] = useState('ATTENDEES')
@@ -73,24 +74,29 @@ const AttendeeToAttendeeContainer = (props) => {
     }
   }, [])
 
-  const handleHelpClick = () => {
+  const showChatWindow = (preloadedChannel, counterpart) => {
     if (chatClient) {
       if (chatOpened) setChatOpened(false)
-      chatCounterpart = 'help'
+      activeChannel = preloadedChannel
+      chatCounterpart = counterpart
       setTimeout(() => {
         setChatOpened(true)
       }, 100)
     }
   }
 
+  const handleHelpClick = () => {
+    showChatWindow(null, 'help')
+  }
+
   const handleAttendeeClick = (att) => {
-    if (chatClient) {
-      if (chatOpened) setChatOpened(false)
-      chatCounterpart = att.attendees.idp_user_id
-      setTimeout(() => {
-        setChatOpened(true)
-      }, 100)
+    if (att.attendees.idp_user_id != user.idpUserId) {
+      showChatWindow(null, att.attendees.idp_user_id)
     }
+  }
+
+  const handleMessageClick = (channel) => {
+    showChatWindow(channel, null)
   }
 
   const changeActiveTab = (tab) => {
@@ -126,6 +132,7 @@ const AttendeeToAttendeeContainer = (props) => {
           user={user}
           chatClient={chatClient}
           height={props.height}
+          onItemClick={handleMessageClick}
         />
       )
     },
@@ -156,6 +163,7 @@ const AttendeeToAttendeeContainer = (props) => {
       {chatClient && chatOpened && user && (
         <ConversationBox
           chatClient={chatClient}
+          activeChannel={activeChannel}
           user={user}
           partnerId={chatCounterpart}
           openDir={openDir}
