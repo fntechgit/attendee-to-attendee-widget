@@ -5,7 +5,9 @@ import AttendeesList from '../AttendeesList/AttendeesList'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
 import StreamChatService from '../../lib/StreamChatService'
-import ChannelListContainer from '../Chat/ChannelListContainer/ChannelListContainer'
+import ChannelListContainer, {
+  channelType
+} from '../Chat/ChannelListContainer/ChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 
 import 'font-awesome/css/font-awesome.min.css'
@@ -129,6 +131,7 @@ const AttendeeToAttendeeContainer = (props) => {
       icon: '',
       content: (
         <ChannelListContainer
+          channelType={channelType.DIRECT_MESSAGE}
           user={user}
           chatClient={chatClient}
           height={props.height}
@@ -139,7 +142,25 @@ const AttendeeToAttendeeContainer = (props) => {
     {
       name: 'ROOM CHATS',
       icon: '',
-      content: ''
+      content: (
+        <div>
+          <ChannelListContainer
+            channelType={channelType.ROOM}
+            user={user}
+            chatClient={chatClient}
+            height={props.height}
+            onItemClick={handleMessageClick}
+          />
+          <div className='has-text-centered'>
+            <button className='button is-large'>
+              <span className='icon'>
+                <i className='fa fa-plus'></i>
+              </span>
+              <span>New Custom Room</span>
+            </button>
+          </div>
+        </div>
+      )
     }
   ]
 

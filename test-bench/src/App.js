@@ -101,15 +101,16 @@ const App = () => {
     trackerRef.current.signOut()
   }
 
-  const token = 'CfJ611zdrvpr77EA.PnZIpvaOQt-Wwvk.M.4Y7DfLkjqUdcmgLaMCXcr5i39oBH6MCSpWRRhmz~c~NGkOggcQv~2NhDFWqS7EeT3r9EoaTwMPcIrJP7a7HYMa8VboJut'
+  const token1 = 'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
+  const token2 = 'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
 
   return (
     <Router>
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to={`/attendance?accessToken=${token}&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13`}>Attendees 1</Link>
-            <Link to={`/attendance?accessToken=${token}&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11`}>Attendees 2</Link>
+            <Link to={`/attendance?accessToken=${token1}&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13`}>Attendees 1</Link>
+            <Link to={`/attendance?accessToken=${token2}&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11`}>Attendees 2</Link>
             <Tracker {...widgetProps} />
           </div>
         </Route>
@@ -122,7 +123,7 @@ const App = () => {
               title='Attendance'
               {...widgetProps}
             />
-            <Tracker {...widgetProps} ref={trackerRef} />
+            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
           </div>
         </Route>
         <Route exact path='/untracked'>

@@ -3,6 +3,7 @@
   display: flex;
   flex-flow: column;
   border: 1px solid #eee;
+  background-color: #fff;
   overflow: hidden;
 
   :global(.str-chat) {
@@ -14,9 +15,14 @@
   background-color: #fff;
 }
 
+:global(.str-chat-channel-list) {
+  background-color: #fff;
+}
+
 @media (max-width: 960px) {
   :global(.str-chat-channel-list.messaging) {
     position: relative;
     min-height: unset;
+    left: 0;
   }
 }
