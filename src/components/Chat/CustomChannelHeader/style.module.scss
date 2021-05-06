@@ -33,9 +33,11 @@
     }
   }
 
-  .close {
+  .close,
+  .more {
     float: right;
     position: relative;
     top: 3px;
+    margin-left: 10px;
   }
 }

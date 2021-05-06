@@ -44,14 +44,13 @@ export const SearchBar = ({ onSearch, onFilterModeChange }) => {
             </span>
           </button>
         </div>
-        <div
-          className='dropdown-menu'
-          style={{ textDecoration: 'none' }}
-          id='search-menu'
-          role='menu'
-        >
+        <div className='dropdown-menu' id='search-menu' role='menu'>
           <div className='dropdown-content'>
-            <a className='dropdown-item' onClick={() => handleMenuSelection(1)}>
+            <a
+              className='dropdown-item'
+              style={{ textDecoration: 'none' }}
+              onClick={() => handleMenuSelection(1)}
+            >
               <span className='icon-text is-size-4 has-text-grey'>
                 <span>All Attendees</span>
                 {selectedIndex === 1 && (
