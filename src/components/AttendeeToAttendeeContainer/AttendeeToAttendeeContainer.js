@@ -5,9 +5,8 @@ import AttendeesList from '../AttendeesList/AttendeesList'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
 import StreamChatService from '../../lib/StreamChatService'
-import ChannelListContainer, {
-  channelType
-} from '../Chat/ChannelListContainer/ChannelListContainer'
+import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
+import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 
 import 'font-awesome/css/font-awesome.min.css'
@@ -87,7 +86,7 @@ const AttendeeToAttendeeContainer = (props) => {
     }
   }
 
-  const handleHelpClick = () => {
+  const handleHelpClick = async () => {
     showChatWindow(null, 'help')
   }
 
@@ -130,12 +129,13 @@ const AttendeeToAttendeeContainer = (props) => {
       name: 'MESSAGES',
       icon: '',
       content: (
-        <ChannelListContainer
-          channelType={channelType.DIRECT_MESSAGE}
+        <DMChannelListContainer
           user={user}
+          summitId={summitId}
           chatClient={chatClient}
-          height={props.height}
+          accessRepo={accessRepo}
           onItemClick={handleMessageClick}
+          height={props.height}
         />
       )
     },
@@ -143,23 +143,13 @@ const AttendeeToAttendeeContainer = (props) => {
       name: 'ROOM CHATS',
       icon: '',
       content: (
-        <div>
-          <ChannelListContainer
-            channelType={channelType.ROOM}
-            user={user}
-            chatClient={chatClient}
-            height={props.height}
-            onItemClick={handleMessageClick}
-          />
-          <div className='has-text-centered'>
-            <button className='button is-large'>
-              <span className='icon'>
-                <i className='fa fa-plus'></i>
-              </span>
-              <span>New Custom Room</span>
-            </button>
-          </div>
-        </div>
+        <RoomChannelListContainer
+          user={user}
+          summitId={summitId}
+          chatClient={chatClient}
+          onItemClick={handleMessageClick}
+          height={props.height}
+        />
       )
     }
   ]

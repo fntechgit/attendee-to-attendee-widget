@@ -121,7 +121,7 @@ const AttendeesList = (props) => {
       if (currScope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByFullName(value, summitId, url)
+          ? await accessRepo.findByAttendeeFullName(value, summitId, url)
           : await accessRepo.fetchCurrentPageAttendees(
               url,
               urlAccessesPageIx,
@@ -135,7 +135,7 @@ const AttendeesList = (props) => {
       } else {
         showAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByFullName(value, summitId, '')
+          ? await accessRepo.findByAttendeeFullName(value, summitId, '')
           : await accessRepo.fetchCurrentShowAttendees(
               summitId,
               showAccessesPageIx,
@@ -152,13 +152,13 @@ const AttendeesList = (props) => {
   }
 
   const handleFilterModeChange = (mode) => {
-    setCurrScope(mode === 1 ? scopes.SHOW : scopes.PAGE)
+    setCurrScope(mode === 0 ? scopes.SHOW : scopes.PAGE)
   }
 
   if (attendeesList) {
     return (
       <div className={style.outerWrapper}>
-        <SearchBar onSearch={handleSearch} onFilterModeChange={handleFilterModeChange} />
+        <SearchBar onSearch={handleSearch} onFilterModeChange={handleFilterModeChange} filterMenuOptions={['All Attendees', 'On this Room']} />
         <InfiniteScroll
           dataLength={attendeesList.length}
           next={fetchMoreData}

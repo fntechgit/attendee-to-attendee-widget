@@ -274,17 +274,12 @@ export default class AttendeeRepository {
     }
   }
 
-  async findByFullName(filter, summitId, url) {
+  async findByFullName(filter) {
     try {
-      const { scopeFieldName, scopeFieldVal } = url
-        ? { scopeFieldName: 'current_url', scopeFieldVal: url }
-        : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
-
       const { data, error } = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
-        .eq(scopeFieldName, scopeFieldVal)
-        .ilike('attendees.full_name', `%${filter}%`)
+        .from('attendees')
+        .select(`*`)
+        .ilike('full_name', `%${filter}%`)
       if (error) throw new Error(error)
       return data
     } catch (error) {
