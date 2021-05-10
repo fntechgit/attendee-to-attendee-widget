@@ -33,8 +33,9 @@ const sbAuthProps = {
 const chatProps = {
   streamApiKey: '29gtgpyz5hht',
   apiBaseUrl: 'https://idp.dev.fnopen.com',
+  chatApiBaseUrl: 'https://chat-api.dev.fnopen.com',
   forumSlug: 'fnvirtual-poc',
-  accessToken: accessToken,
+  getAccessToken: async () => accessToken,
   onAuthError: (err, res) => console.log(err),
   openDir: 'left',
   title: '',
@@ -51,16 +52,18 @@ const widgetProps = {
     company: '',
     title: '',
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
-		socialInfo: {
-      githubUser: 'romanetar',	
-      linkedInProfile: 'https://www.linkedin.com/in/rom%C3%A1n-gutierrez-pmp-7a001b6/',
+    socialInfo: {
+      githubUser: 'romanetar',
+      linkedInProfile:
+        'https://www.linkedin.com/in/rom%C3%A1n-gutierrez-pmp-7a001b6/',
       twitterName: 'romanetar',
       wechatUser: ''
     },
     badgeFeatures: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
-    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.'
+    bio:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.'
   },
-  summitId: 8,
+  summitId: 17,
   height: 500,
   ...chatProps,
   ...sbAuthProps
@@ -101,28 +104,41 @@ const App = () => {
     trackerRef.current.signOut()
   }
 
-  const token1 = 'ogUTQxPIHjOfHxuJhgK_HUr.tQVd01_VZOCG4B61lB54N7iwtQ0ljAcT_Z0xAG5uM~fW718GHWyj4kK_59zdAAFWNQDp8VEKeU5wez~lYww-4_zBTRGk1chU67byp~-.'
-  const token2 = 'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
+  const token1 =
+    '3ZFtGNLbXPWlD8McJDWpkQXH6Wv6x4nhYbxzsa8QtH5LE6-NUMViZaMrPgqss2qZ-1hODNvMiNHe4.jeSI9y30nLvJM-u06QA3KiBLyaGtSHA3gBfW898-iHCef1sjuW'
+  const token2 =
+    'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
 
   return (
     <Router>
       <Switch>
         <Route exact path='/'>
           <div>
-            <Link to={`/attendance?accessToken=${token1}&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13`}>Attendees 1</Link>
-            <Link to={`/attendance?accessToken=${token2}&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11`}>Attendees 2</Link>
+            <Link
+              to={`/attendance?accessToken=${token1}&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13`}
+            >
+              Attendees 1
+            </Link>
+            <Link
+              to={`/attendance?accessToken=${token2}&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11`}
+            >
+              Attendees 2
+            </Link>
             <Tracker {...widgetProps} />
           </div>
         </Route>
         <Route path='/attendance'>
-          <div style={{ width: '400px', margin: '20px auto', position: 'relative' }}>
+          <div
+            style={{
+              width: '400px',
+              margin: '20px auto',
+              position: 'relative'
+            }}
+          >
             {/* <Link to='/'>Track 1</Link>
             <Link to='/a'>Track 2</Link>
             <button onClick={handleSignOutClick}>SignOut</button> */}
-            <AttendeeToAttendeeContainer
-              title='Attendance'
-              {...widgetProps}
-            />
+            <AttendeeToAttendeeContainer title='Attendance' {...widgetProps} />
             {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
           </div>
         </Route>

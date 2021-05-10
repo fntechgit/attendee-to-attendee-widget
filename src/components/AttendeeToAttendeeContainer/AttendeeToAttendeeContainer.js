@@ -4,7 +4,7 @@ import ChatRepository from '../../lib/repository/ChatRepository'
 import AttendeesList from '../AttendeesList/AttendeesList'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
-import StreamChatService from '../../lib/StreamChatService'
+import StreamChatService from '../../lib/services/StreamChatService'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
@@ -32,11 +32,12 @@ const AttendeeToAttendeeContainer = (props) => {
     supabaseKey,
     streamApiKey,
     apiBaseUrl,
+    chatApiBaseUrl,
     forumSlug,
     user,
-    accessToken,
     summitId,
-    openDir
+    openDir,
+    getAccessToken
   } = props
   props = { ...props, url: window.location.href.split('?')[0] }
 
@@ -54,6 +55,7 @@ const AttendeeToAttendeeContainer = (props) => {
 
   useEffect(() => {
     const initChat = async () => {
+      const accessToken = await getAccessToken()
       await streamChatService.initializeClient(
         apiBaseUrl,
         accessToken,
@@ -63,16 +65,22 @@ const AttendeeToAttendeeContainer = (props) => {
         },
         (err, res) => console.log(err)
       )
+
+      await streamChatService.seedChannelTypes(
+        chatApiBaseUrl, 
+        summitId,
+        accessToken,
+        (res) => console.log(res),
+        (err, res) => console.log(err)
+      )
     }
 
     const cleanUpChat = async () => {
       if (chatClient) await chatClient.disconnect()
     }
 
-    if (accessToken) {
-      initChat()
-      return () => cleanUpChat()
-    }
+    initChat()
+    return () => cleanUpChat()
   }, [])
 
   const showChatWindow = (preloadedChannel, counterpart) => {

@@ -14,8 +14,15 @@ export const channelType = {
   ROOM: 'room'
 }
 
-const CustomEmptyStateIndicator = () => {
-  return <div className={styles.noChannels}>No active conversations</div>
+const CustomEmptyStateIndicator = (selectedChannelType) => {
+  return (
+    <div className={style.noChannels}>
+      No active{' '}
+      {selectedChannelType === channelType.DIRECT_MESSAGE
+        ? 'conversations'
+        : 'rooms'}
+    </div>
+  )
 }
 
 const CustomLoadingIndicator = () => {
@@ -60,7 +67,11 @@ const ChannelListContainer = ({
             <RoomChannelPreview {...previewProps} onItemClick={onItemClick} />
           )
         }
-        EmptyStateIndicator={CustomEmptyStateIndicator}
+        EmptyStateIndicator={() => (
+          <CustomEmptyStateIndicator
+            selectedChannelType={selectedChannelType}
+          />
+        )}
         LoadingIndicator={CustomLoadingIndicator}
         setActiveChannelOnMount={false}
         me={user}

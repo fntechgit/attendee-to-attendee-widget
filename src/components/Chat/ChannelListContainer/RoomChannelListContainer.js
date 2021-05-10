@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Chat } from 'stream-chat-react'
 import { SearchBar } from '../../SearchBar/SearchBar'
 import ChannelListContainer, { channelType } from './ChannelListContainer'
@@ -12,25 +12,21 @@ const RoomChannelListContainer = ({
   onItemClick,
   height
 }) => {
-  const filters = {
-    type: 'messaging',
-    members: { $in: [user.id] },
-    id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
-  }
+  let curMode = 0
+  const [currFilters, setCurrFilters] = useState([])
 
-  const [currFilters, setCurrFilters] = useState([filters])
+  useEffect(() => {
+    setUpMode(0)
+  }, [])
 
-  const handleSearch = async (e) => {
-    const { value } = e.target
-
-    //TODO: Debounce search
-
-    switch (expresión) {
+  const setUpMode = (mode) => {
+    switch (mode) {
       case 1:
         setCurrFilters([
           {
             type: 'activity_room',
-            members: { $in: [user.id] }
+            members: { $in: [user.id] },
+            id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
           }
         ])
         break
@@ -38,7 +34,8 @@ const RoomChannelListContainer = ({
         setCurrFilters([
           {
             type: 'custom_room',
-            members: { $in: [user.id] }
+            members: { $in: [user.id] },
+            id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
           }
         ])
         break
@@ -46,22 +43,45 @@ const RoomChannelListContainer = ({
         //All Chat Rooms
         setCurrFilters([
           {
+            type: 'help_room',
+            //members: { $in: [user.id] }
+          },
+          {
+            type: 'qa_room',
+            //members: { $in: [user.id] }
+          },
+          {
             type: 'activity_room',
-            members: { $in: [user.id] }
+            members: { $in: [user.id] },
+            id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
           },
           {
             type: 'custom_room',
-            members: { $in: [user.id] }
+            members: { $in: [user.id] },
+            id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
           }
         ])
         break
     }
   }
 
-  const handleFilterModeChange = (mode) => {
-    console.log('mode', mode)
+  const handleSearch = async (e) => {
+    const { value } = e.target
+
+    
   }
-  console.log('currFilters', currFilters)
+
+  const handleFilterModeChange = (mode) => {
+    //TODO: Debounce search
+    curMode = mode
+    setUpMode(mode)
+    
+  }
+
+  const handleRoomCreateClick = () => {
+
+  }
+
   return (
     <div style={{ height: height }}>
       <SearchBar
@@ -71,12 +91,9 @@ const RoomChannelListContainer = ({
       />
       <div className={style.channelsListWrapper}>
         <Chat client={chatClient}>
-          {currFilters.forEach((filtersItem) => {
-            console.log('filtersItem', filtersItem)
-            return <div>{filtersItem.type}</div>
-          })}
-          {/* {currFilters.forEach((filtersItem) => (
+          {currFilters.map((filtersItem, ix) => (
             <ChannelListContainer
+              key={ix}
               selectedChannelType={channelType.ROOM}
               filters={filtersItem}
               user={user}
@@ -84,11 +101,11 @@ const RoomChannelListContainer = ({
               chatClient={chatClient}
               onItemClick={onItemClick}
             />
-          ))} */}
+          ))}
         </Chat>
       </div>
       <div className='has-text-centered mt-2'>
-        <button className='button is-large'>
+        <button className='button is-large' onClick={handleRoomCreateClick}>
           <span className='icon'>
             <i className='fa fa-plus'></i>
           </span>
