@@ -19,30 +19,30 @@ export const RoomsManager = ({ openDir, onBack }) => {
         <div className='card-content'>
           <div className='content'>
             <div className='field'>
-              <label className='label'>Name</label>
+              <label className='label has-text-grey'>Name</label>
               <div className='control'>
                 <input
-                  className='input is-medium'
+                  className='input is-large'
                   type='text'
                   placeholder='Name your chat room'
                 />
               </div>
             </div>
             <div className='field'>
-              <label className='label'>Description</label>
+              <label className='label has-text-grey'>Description</label>
               <div className='control'>
                 <input
-                  className='input is-medium'
+                  className='input is-large'
                   type='text'
                   placeholder='What is this room about?'
                 />
               </div>
             </div>
             <div className='field'>
-              <label className='label'>Members</label>
+              <label className='label has-text-grey'>Members</label>
               <div className='control has-icons-right is-expanded'>
                 <input
-                  className='input is-medium'
+                  className='input is-large'
                   type='search'
                   placeholder='Search by Name'
                   onChange={handleSearch}
@@ -55,7 +55,7 @@ export const RoomsManager = ({ openDir, onBack }) => {
               </div>
             </div>
             <div className='field'>
-              <label className='label'>Chat image</label>
+              <label className='label has-text-grey'>Chat image</label>
               <div className='file is-large'>
                 <label className='file-label'>
                   <input className='file-input' type='file' name='resume' />

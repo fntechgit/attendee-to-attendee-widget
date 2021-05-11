@@ -53,12 +53,12 @@ export const SearchBar = ({
             <div className='dropdown-content'>
               {filterMenuOptions.map((item, ix) => (
                 <a
-                  className='dropdown-item mt-2'
+                  className='dropdown-item mt-2 pr-0'
                   style={{ textDecoration: 'none' }}
                   key={ix}
                   onClick={() => handleMenuSelection(ix)}
                 >
-                  <span className='icon-text is-size-4 has-text-grey'>
+                  <span className='icon-text is-size-5 has-text-grey'>
                     <span>
                       {item}
                     </span>
