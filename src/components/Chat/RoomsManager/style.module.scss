@@ -1,0 +1,25 @@
+.roomsManagerWrapper {
+  position: absolute;
+  top: -1px;
+  width: 400px;
+  height: auto;
+  border-radius: 5px;
+  z-index: 50;
+  box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.08), 0 0 8px 1px rgba(0, 0, 0, 0.08);
+
+  &.left {
+    left: -400px;
+  }
+
+  &.right {
+    right: -400px;
+  }
+}
+
+@media (max-width: 800px) {
+  .attendeeInfoContainer {
+    right: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+  }
+}

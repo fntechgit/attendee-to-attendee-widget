@@ -14,10 +14,12 @@ import 'bulma/css/bulma.css'
 import 'stream-chat-react/dist/css/index.css'
 
 import style from './style.module.scss'
+import ChatAPIService from '../../lib/services/ChatAPIService'
 
 let accessRepo = null
 let chatRepo = null
 let streamChatService = null
+let chatAPIService = null
 let chatCounterpart = 'help'
 let activeChannel = null
 
@@ -49,6 +51,10 @@ const AttendeeToAttendeeContainer = (props) => {
     streamChatService = new StreamChatService(streamApiKey)
   }
 
+  if (!chatAPIService) {
+    chatAPIService = new ChatAPIService()
+  }
+
   if (!chatRepo) {
     chatRepo = new ChatRepository(supabaseUrl, supabaseKey, user)
   }
@@ -66,13 +72,13 @@ const AttendeeToAttendeeContainer = (props) => {
         (err, res) => console.log(err)
       )
 
-      await streamChatService.seedChannelTypes(
-        chatApiBaseUrl, 
-        summitId,
-        accessToken,
-        (res) => console.log(res),
-        (err, res) => console.log(err)
-      )
+      // await chatAPIService.seedChannelTypes(
+      //   chatApiBaseUrl, 
+      //   summitId,
+      //   accessToken,
+      //   (res) => console.log(res),
+      //   (err, res) => console.log(err)
+      // )
     }
 
     const cleanUpChat = async () => {
@@ -157,6 +163,7 @@ const AttendeeToAttendeeContainer = (props) => {
           chatClient={chatClient}
           onItemClick={handleMessageClick}
           height={props.height}
+          openDir={props.openDir}
         />
       )
     }
