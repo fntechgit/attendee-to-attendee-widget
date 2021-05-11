@@ -60,7 +60,10 @@ export const MainBar = ({ user, onHelpClick, onMinimizeButtonClick }) => {
               <i className='fa fa-question-circle-o' aria-hidden='true'></i>
             </span>
           </button>
-          <button className='button is-white is-large' onClick={onMinimizeButtonClick}>
+          <button
+            className='button is-white is-large'
+            onClick={onMinimizeButtonClick}
+          >
             <span className='icon'>
               <i className='fa fa-chevron-down' aria-hidden='true'></i>
             </span>

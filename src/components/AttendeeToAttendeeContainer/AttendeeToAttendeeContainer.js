@@ -161,6 +161,7 @@ const AttendeeToAttendeeContainer = (props) => {
           user={user}
           summitId={summitId}
           chatClient={chatClient}
+          accessRepo={accessRepo}
           onItemClick={handleMessageClick}
           height={props.height}
           openDir={props.openDir}
