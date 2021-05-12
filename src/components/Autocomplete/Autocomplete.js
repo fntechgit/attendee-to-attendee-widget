@@ -54,14 +54,17 @@ class Autocomplete extends React.Component {
   }
 
   handleSelection(event, selection) {
+    const { onSelect } = this.props
     event.preventDefault()
 
     this.setState({
       activeIndex: 0,
-      query: selection,
+      query: selection.text,
       matches: [],
       selected: true
     })
+
+    if (onSelect) onSelect(selection)
   }
 
   async updateQuery(e) {
@@ -133,7 +136,7 @@ class Autocomplete extends React.Component {
                       href='/'
                       key={match.value}
                       onClick={(event) =>
-                        this.handleSelection(event, match.text)
+                        this.handleSelection(event, match)
                       }
                     >
                       <div

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Chat } from 'stream-chat-react'
 import { SearchBar } from '../../SearchBar/SearchBar'
-import { RoomsManager } from '../RoomsManager/RoomsManager'
+import RoomsManager from '../RoomsManager/RoomsManager'
 import ChannelListContainer, { channelType } from './ChannelListContainer'
 
 import style from './style.module.scss'

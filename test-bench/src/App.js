@@ -60,8 +60,7 @@ const widgetProps = {
       wechatUser: ''
     },
     badgeFeatures: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
-    bio:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.'
+    bio: '# This is my bio, *in MD*!'
   },
   summitId: 17,
   height: 500,
