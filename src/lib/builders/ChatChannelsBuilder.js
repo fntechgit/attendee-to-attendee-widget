@@ -1,7 +1,6 @@
 import { helpRoles, qaRoles } from '../../models/local_roles'
 
 export default class ChatChannelsBuilder {
-
   static async _setUpChannel(channel, callback) {
     const response = await channel.create()
     await channel.watch()
@@ -18,7 +17,7 @@ export default class ChatChannelsBuilder {
       const channel = foundChannels[0]
       if (callback) callback(channel)
       return channel
-    } 
+    }
     const supportUsers = await client.queryUsers({
       local_role: { $in: supportRoles }
     })
@@ -75,7 +74,12 @@ export default class ChatChannelsBuilder {
     return null
   }
 
-  static async startConversation(chatClient, user, partnerId, setActiveChannel) {
+  static async startConversation(
+    chatClient,
+    user,
+    partnerId,
+    setActiveChannel
+  ) {
     const isHelpUser = helpRoles.includes(user.local_role)
     const isQAUser = qaRoles.includes(user.local_role)
 
@@ -83,7 +87,7 @@ export default class ChatChannelsBuilder {
       return _setUpSupportChannel(helpRoles, 'help', setActiveChannel)
     } else if (isQAUser) {
       return _setUpSupportChannel(qaRoles, 'qa', setActiveChannel)
-    } 
+    }
     // get/create 1 to 1 channel
     const filter = {
       type: 'messaging',
@@ -95,7 +99,7 @@ export default class ChatChannelsBuilder {
       const channel = foundChannels[0]
       setActiveChannel(channel)
       return channel
-    } 
+    }
     const channel = chatClient.channel('messaging', `${user.id}-${partnerId}`, {
       name: `${user.id}-${partnerId}`,
       members: [`${user.id}`, `${partnerId}`]
@@ -114,5 +118,21 @@ export default class ChatChannelsBuilder {
       return foundChannels[0]
     }
     return null
+  }
+
+  static async createCustomChannel(
+    chatClient,
+    type,
+    name,
+    description,
+    members,
+    image
+  ) {
+    const channel = chatClient.channel(type, name, {
+      name: name,
+      image: image,
+      members: members
+    })
+    await channel.create()
   }
 }

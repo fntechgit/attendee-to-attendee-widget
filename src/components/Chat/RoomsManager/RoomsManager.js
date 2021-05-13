@@ -3,14 +3,24 @@ import { withFormik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Autocomplete from '../../Autocomplete/Autocomplete'
 import AttendeePill from '../AttendeePill/AttendeePill'
+import ChatChannelsBuilder from '../../../lib/builders/ChatChannelsBuilder'
 
 import style from './style.module.scss'
 
 const RoomsManager = (props) => {
-  const { onBack, accessRepo, errors, touched, isSubmitting } = props
+  const {
+    onBack,
+    accessRepo,
+    chatRepo,
+    chatClient,
+    errors,
+    touched,
+    isSubmitting,
+    setFieldValue
+  } = props
 
   const [selectedAttendees, setSelectedAttendees] = useState([])
-  const [selectedFileName, setSelectedFileName] = useState(null)
+  const [selectedImageFileName, setSelectedImageFileName] = useState(null)
 
   const handleSearch = async (query) => {
     return (await accessRepo.findByFullName(query)).map((item) => {
@@ -23,16 +33,19 @@ const RoomsManager = (props) => {
   }
 
   const handleSelect = (selection) => {
-    setSelectedAttendees([...selectedAttendees, selection])
+    const members = [...selectedAttendees, selection]
+    setSelectedAttendees(members)
+    setFieldValue('members', members)
   }
 
   const dismissSelection = (id) => {
     setSelectedAttendees(selectedAttendees.filter((item) => item.value !== id))
   }
 
-  const handleFileChange = event => {
-    const fileInfo = event.target.files[0]
-    setSelectedFileName(fileInfo.name)
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0]
+    setFieldValue('roomImg', file)
+    setSelectedImageFileName(file.name)
   }
 
   return (
@@ -55,11 +68,11 @@ const RoomsManager = (props) => {
                   className='input is-large'
                   type='text'
                   maxLength='20'
-                  name='roomname'
+                  name='roomName'
                   placeholder='Name your chat room'
                 />
-                {touched.roomname && errors.roomname && (
-                  <p className='has-text-danger'>{errors.roomname}</p>
+                {touched.roomName && errors.roomName && (
+                  <p className='has-text-danger'>{errors.roomName}</p>
                 )}
               </div>
             </div>
@@ -72,11 +85,11 @@ const RoomsManager = (props) => {
                   className='input is-large'
                   type='text'
                   maxLength='50'
-                  name='roomdesc'
+                  name='roomDesc'
                   placeholder='What is this room about?'
                 />
-                {touched.roomdesc && errors.roomdesc && (
-                  <p className='has-text-danger'>{errors.roomdesc}</p>
+                {touched.roomDesc && errors.roomDesc && (
+                  <p className='has-text-danger'>{errors.roomDesc}</p>
                 )}
               </div>
             </div>
@@ -117,18 +130,22 @@ const RoomsManager = (props) => {
                     </span>
                     <span className='file-label'>Upload</span>
                   </span>
-                  {selectedFileName && (
-                    <span className='file-name'>{selectedFileName}</span>
+                  {selectedImageFileName && (
+                    <span className='file-name'>{selectedImageFileName}</span>
                   )}
                 </label>
               </div>
             </div>
             <button
+              type='submit'
               className='button is-primary is-large is-fullwidth'
               disabled={isSubmitting}
             >
               Create
             </button>
+            {errors.globalError && (
+              <p className='has-text-danger mt-1'>{errors.globalError}</p>
+            )}
           </Form>
         </div>
       </div>
@@ -137,28 +154,86 @@ const RoomsManager = (props) => {
 }
 
 export default withFormik({
-  mapPropsToValues({ roomname, roomdesc }) {
+  mapPropsToValues({
+    chatRepo,
+    chatClient,
+    roomName,
+    roomDesc,
+    roomImg,
+    members
+  }) {
     return {
-      roomname: roomname || '',
-      roomdesc: roomdesc || ''
+      chatRepo: chatRepo,
+      chatClient: chatClient,
+      roomName: roomName || '',
+      roomDesc: roomDesc || '',
+      roomImg: roomImg || '',
+      members: members || []
     }
   },
   validationSchema: Yup.object().shape({
-    roomname: Yup.string()
+    roomName: Yup.string()
       .min(3, 'Room name must be 3 characters or longer')
       .required('Room name is required'),
-    roomdesc: Yup.string()
+    roomDesc: Yup.string()
       .min(5, 'Room description must be 5 characters or longer')
       .required('Room description is required')
   }),
-  handleSubmit(values, { resetForm, setErrors, setSubmitting }) {
-    setTimeout(() => {
-      if (values.roomname === 'test') {
-        setErrors({ roomname: 'That room name is already taken' })
-      } else {
-        resetForm()
+  async handleSubmit(values, { resetForm, setErrors, setSubmitting }) {
+    // setTimeout(() => {
+    //   if (values.roomName === 'test') {
+    //     setErrors({ roomName: 'That room name is already taken' })
+    //   } else {
+    //     resetForm()
+    //   }
+    //   setSubmitting(false)
+    // }, 2000)
+
+    //TODO: Check if room exists
+
+    const {
+      chatRepo,
+      chatClient,
+      roomName,
+      roomDesc,
+      roomImg,
+      members
+    } = values
+
+    if (!chatClient) {
+      setErrors({ globalError: 'The room cannot be created right now' })
+    } else {
+      let roomPicURL
+
+      if (roomImg) {
+        const res = await chatRepo.uploadRoomImage(
+          `${roomName}_${roomImg.name}`,
+          roomImg
+        )
+        roomPicURL = res?.signedURL
       }
-      setSubmitting(false)
-    }, 2000)
+
+      const memberIds = members.map((m) => `${m.value}`)
+
+      console.log('chatClient', chatClient)
+      console.log('roomName', roomName)
+      console.log('roomDesc', roomDesc)
+      console.log('roomImg', roomImg)
+      console.log('members', memberIds)
+      console.log('image url', roomPicURL)
+
+      // //Create channel
+      // ChatChannelsBuilder.createCustomChannel(
+      //   chatClient,
+      //   'custom_room',
+      //   roomName,
+      //   roomDesc,
+      //   members,
+      //   res.signedURL
+      // )
+
+      resetForm()
+    }
+    setSubmitting(false)
   }
 })(RoomsManager)

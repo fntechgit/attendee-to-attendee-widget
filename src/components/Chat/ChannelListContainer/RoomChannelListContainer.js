@@ -11,6 +11,7 @@ const RoomChannelListContainer = ({
   summitId,
   chatClient,
   accessRepo,
+  chatRepo,
   onItemClick,
   height,
   openDir
@@ -127,7 +128,13 @@ const RoomChannelListContainer = ({
         </div>
       )}
       {showRoomsManager && (
-        <RoomsManager openDir={openDir} onBack={handleBackClick} accessRepo={accessRepo} />
+        <RoomsManager
+          openDir={openDir}
+          onBack={handleBackClick}
+          accessRepo={accessRepo}
+          chatRepo={chatRepo}
+          chatClient={chatClient}
+        />
       )}
     </div>
   )
