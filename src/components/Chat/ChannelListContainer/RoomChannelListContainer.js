@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Chat } from 'stream-chat-react'
 import { SearchBar } from '../../SearchBar/SearchBar'
 import RoomsManager from '../RoomsManager/RoomsManager'
-import ChannelListContainer, { channelType } from './ChannelListContainer'
+import ChannelListContainer from './ChannelListContainer'
+import StreamChatService from '../../../lib/services/StreamChatService'
+import { channelTypes } from '../../../models/channel_types'
 
 import style from './style.module.scss'
 
@@ -29,18 +31,16 @@ const RoomChannelListContainer = ({
       case 1:
         setCurrFilters([
           {
-            type: 'activity_room',
-            members: { $in: [user.id] },
-            id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
+            type: channelTypes.ACTIVITY_ROOM,
+            members: { $in: [user.id] }
           }
         ])
         break
       case 2:
         setCurrFilters([
           {
-            type: 'custom_room',
-            members: { $in: [user.id] },
-            id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
+            type: channelTypes.CUSTOM_ROOM,
+            members: { $in: [user.id] }
           }
         ])
         break
@@ -48,22 +48,20 @@ const RoomChannelListContainer = ({
         //All Chat Rooms
         setCurrFilters([
           {
-            type: 'help_room'
+            type: channelTypes.HELP_ROOM,
+            members: { $in: [user.id] }
+          },
+          {
+            type: channelTypes.QA_ROOM,
+            members: { $in: [user.id] }
+          },
+          {
+            type: channelTypes.ACTIVITY_ROOM,
+            members: { $in: [user.id] }
+          },
+          {
+            type: channelTypes.CUSTOM_ROOM
             //members: { $in: [user.id] }
-          },
-          {
-            type: 'qa_room'
-            //members: { $in: [user.id] }
-          },
-          {
-            type: 'activity_room',
-            members: { $in: [user.id] },
-            id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
-          },
-          {
-            type: 'custom_room',
-            members: { $in: [user.id] },
-            id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
           }
         ])
         break
@@ -107,7 +105,7 @@ const RoomChannelListContainer = ({
               {currFilters.map((filtersItem, ix) => (
                 <ChannelListContainer
                   key={ix}
-                  selectedChannelType={channelType.ROOM}
+                  selectedChannelType={channelTypes.CUSTOM_ROOM}
                   filters={filtersItem}
                   user={user}
                   summitId={summitId}
@@ -123,6 +121,17 @@ const RoomChannelListContainer = ({
                 <i className='fa fa-plus'></i>
               </span>
               <span>New Custom Room</span>
+            </button>
+          </div>
+          <div className='has-text-centered mt-2'>
+            <button
+              className='button is-primary is-large is-fullwidth'
+              onClick={async () => {
+                await StreamChatService.deleteChannel(chatClient, 'test')
+                await StreamChatService.deleteChannel(chatClient, 'test2')
+              }}
+            >
+              Remove all custom rooms
             </button>
           </div>
         </div>

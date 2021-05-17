@@ -11,7 +11,8 @@ import {
   withChatContext
 } from 'stream-chat-react'
 import CustomChannelHeader from '../CustomChannelHeader/CustomChannelHeader'
-import ChatChannelsBuilder from '../../../lib/builders/ChatChannelsBuilder'
+import StreamChatService from '../../../lib/services/StreamChatService'
+import { channelTypes } from '../../../models/channel_types'
 
 import style from './style.module.scss'
 
@@ -34,25 +35,26 @@ const ConversationBox = ({
       if (!activeChannel) {
         if (partnerId === 'qa') {
           // create QA channel between this user and qa users
-          const qaChannel = await ChatChannelsBuilder.createSupportChannel(
+          const qaChannel = await StreamChatService.createSupportChannel(
             chatClient,
             user,
-            'qa'
+            channelTypes.QA_ROOM
           )
           setChannel(qaChannel)
         } else if (partnerId === 'help') {
           // create Help channel between this user and help user
-          const helpChannel = await ChatChannelsBuilder.createSupportChannel(
+          const helpChannel = await StreamChatService.createSupportChannel(
             chatClient,
             user,
-            'help'
+            channelTypes.HELP_ROOM
           )
           setChannel(helpChannel)
         } else {
-          const res = await ChatChannelsBuilder.getChannel(
-            partnerId,
+          const res = await StreamChatService.getChannel(
             chatClient,
-            user
+            channelTypes.MESSAGING,
+            user,
+            partnerId
           )
           setChannel(res)
         }

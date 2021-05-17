@@ -1,17 +1,13 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
+import StreamChatService from '../../../lib/services/StreamChatService'
+import { channelTypes } from '../../../models/channel_types'
+//import { allHelpRoles } from '../../../models/local_roles'
 import style from './style.module.scss'
-import { allHelpRoles } from '../../../models/local_roles'
 
-const CustomHeader = (props) => {
+const CustomChannelHeader = (props) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
-  const {
-    me,
-    channel: {
-      state: { members }
-    },
-    onClose
-  } = props
+  const { me, channel, onClose } = props
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen)
@@ -19,10 +15,25 @@ const CustomHeader = (props) => {
 
   const handleMenuSelection = (index) => {
     setMenuOpen(false)
+    switch (index) {
+      case 1:
+        StreamChatService.removeMember(channel, me.id)
+        break
+      case 2:
+        console.log('INVITE LINK')
+        break
+      case 3:
+        console.log('QA')
+        break
+    }
   }
 
   const renderMoreMenu = () => (
-    <div className={`dropdown is-right ${style.more} ${isMenuOpen ? 'is-active' : ''}`}>
+    <div
+      className={`dropdown is-right ${style.more} ${
+        isMenuOpen ? 'is-active' : ''
+      }`}
+    >
       <div className='dropdown-trigger'>
         <a onClick={toggleMenu}>
           <div className={style.icon}>
@@ -39,59 +50,69 @@ const CustomHeader = (props) => {
           </div>
         </a>
       </div>
-      <div
-        className='dropdown-menu'
-        id='search-menu'
-        role='menu'
-      >
+      <div className='dropdown-menu' id='search-menu' role='menu'>
         <div className='dropdown-content'>
-          <a className='dropdown-item' style={{ textDecoration: 'none' }} onClick={() => handleMenuSelection(1)}>
-            Leave chat room
+          <a
+            className='dropdown-item'
+            style={{ textDecoration: 'none' }}
+            onClick={() => handleMenuSelection(1)}
+          >
+            <span className='is-size-5 has-text-grey'>Leave chat room</span>
           </a>
           <a
             className='dropdown-item mt-2'
             style={{ textDecoration: 'none' }}
             onClick={() => handleMenuSelection(2)}
           >
-            Copy Invite Link
+            <span className='is-size-5 has-text-grey'>Copy Invite Link</span>
           </a>
           <a
             className='dropdown-item mt-2'
             style={{ textDecoration: 'none' }}
-            onClick={() => handleMenuSelection(2)}
+            onClick={() => handleMenuSelection(3)}
           >
-            Q&A
+            <span className='is-size-5 has-text-grey'>Q&A</span>
           </a>
         </div>
       </div>
     </div>
   )
 
-  const isHelpUser = allHelpRoles.includes(me.local_role)
-  const memberLookup = (m) =>
-    isHelpUser ? m.role === 'owner' : m.user.id !== me.id
+  // const isHelpUser = allHelpRoles.includes(me.local_role)
+  // const memberLookup = (m) =>
+  //   isHelpUser ? m.role === 'owner' : m.user.id !== me.id
 
-  const member = Object.values(members).find(memberLookup)
+  // const member = Object.values(members).find(memberLookup)
 
-  let headerTitle = member.user.name
+  // let headerTitle = member.user.name
 
-  if (isHelpUser) {
-    const channelType = props.channel.id.includes('help') ? 'Help' : 'Q&A'
-    headerTitle = `${channelType} - ${member.user.name}`
-  } else {
-    if (props.channel.id === `${me.id}-help`) {
-      headerTitle = 'Support'
-    } else if (props.channel.id === `${me.id}-qa`) {
-      headerTitle = 'Q&A'
-    }
-  }
+  // if (isHelpUser) {
+  //   const channelType = props.channel.id.includes('help') ? 'Help' : 'Q&A'
+  //   headerTitle = `${channelType} - ${member.user.name}`
+  // } else {
+  //   if (props.channel.id === `${me.id}-help`) {
+  //     headerTitle = 'Support'
+  //   } else if (props.channel.id === `${me.id}-qa`) {
+  //     headerTitle = 'Q&A'
+  //   }
+  // }
+
+  console.log('channel type', channel.type)
+
+  const member = Object.values(channel.state.members).find(
+    (m) => m.user.id !== me.id
+  )
+
+  const headerImage = channel.data.image ?? member?.user.image
+
+  const headerTitle = channel.name
 
   return (
     <div className={style.header}>
       <div className={style.picWrapper}>
         <div
           className={style.pic}
-          style={{ backgroundImage: `url(${member.user.image})` }}
+          style={{ backgroundImage: `url(${headerImage})` }}
         />
       </div>
       <span className={style.name}>{headerTitle}</span>
@@ -107,9 +128,11 @@ const CustomHeader = (props) => {
           </svg>
         </div>
       </a>
-      {renderMoreMenu()}
+      {(channel.type === channelTypes.CUSTOM_ROOM ||
+        channel.type === channelTypes.ACTIVITY_ROOM) &&
+        renderMoreMenu()}
     </div>
   )
 }
 
-export default withChatContext(CustomHeader)
+export default withChatContext(CustomChannelHeader)

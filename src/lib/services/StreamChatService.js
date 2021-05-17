@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 import { StreamChat } from 'stream-chat'
+import { channelTypes } from '../../models/channel_types'
+import { helpRoles, qaRoles } from '../../models/local_roles'
 
 export default class StreamChatService {
   constructor(streamApiKey) {
@@ -54,28 +56,97 @@ export default class StreamChatService {
     return { chatClient: this.chatClient, user: { ...streamServerInfo } }
   }
 
-  seedChannelTypes = async (
-    apiBaseUrl,
-    summitId,
-    accessToken,
-    callback,
-    onAuthError
-  ) => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
+  static async getChannel(chatClient, type, user, partnerId) {
+    const filter = {
+      type: type,
+      id: { $in: [`${user.id}-${partnerId}`, `${partnerId}-${user.id}`] }
     }
+    const foundChannels = await chatClient.queryChannels(filter, {}, {})
+    if (foundChannels.length > 0) {
+      return foundChannels[0]
+    }
+    return null
+  }
 
-    fetch(
-      `${apiBaseUrl}/api/v1/channel-types/seed?access_token=${accessToken}&summit_id=${summitId}`,
-      requestOptions
-    ).then(async (response) => {
-      const res = await response.json()
-      if (response.status === 200) {
-        callback(res)
-      } else {
-        onAuthError(res, response)
-      }
+  static async createChannel(
+    chatClient,
+    type,
+    name,
+    description,
+    members,
+    image
+  ) {
+    const channel = chatClient.channel(type, name, {
+      name: name,
+      image: image,
+      members: members
     })
+
+    //await channel.addModerators([]);
+
+    //await channel.create()
+    await channel.watch()
+    await channel.show()
+
+    return channel
+  }
+
+  static async createSupportChannel(chatClient, user, type) {
+    const roles = type === channelTypes.QA_ROOM ? qaRoles : helpRoles
+    const supportType = channelTypes.QA_ROOM ? 'qa' : 'help'
+
+    const supportUsers = await chatClient.queryUsers({
+      local_role: { $in: roles }
+    })
+
+    if (supportUsers.users.length > 0) {
+      const channelUsers = supportUsers.users.map((u) => u.id)
+      channelUsers.push(user.id)
+
+      const channel = chatClient.channel(type, `${user.id}-${supportType}`, {
+        name: `${user.id}-${supportType}`,
+        members: channelUsers,
+        supporttype: supportType
+      })
+
+      const response = await channel.create()
+      const membersInChannel = response.members.map((m) => m.user.id)
+
+      const membersToRemove = response.members
+        .filter((m) => !roles.includes(m.user.local_role) && m.role !== 'owner')
+        .map((u) => u.user.id)
+
+      if (membersToRemove.length > 0) {
+        await channel.removeMembers(membersToRemove)
+      }
+
+      if (channelUsers.some((mid) => !membersInChannel.includes(mid))) {
+        await channel.addMembers(channelUsers)
+      }
+
+      await channel.watch()
+      await channel.show()
+
+      return channel
+    }
+    return null
+  }
+
+  static async deleteChannel(chatClient, id) {
+    const filter = { type: channelTypes.CUSTOM_ROOM, id: id }
+    const channels = await chatClient.queryChannels(filter, {}, {})
+    if (channels && channels.length > 0) {
+      await channels[0].delete()
+    }
+  }
+
+  static async removeMember(channel, memberId) {
+    if (channel) {
+      await channel.removeMembers([memberId])
+      const remainingMembers = await channel.queryMembers({})
+      if (remainingMembers.members.length == 0) {
+        channel.delete()
+      }
+    }
   }
 }

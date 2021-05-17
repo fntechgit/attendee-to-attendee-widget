@@ -6,23 +6,15 @@ import {
 } from 'stream-chat-react'
 import DirectMessageChannelPreview from '../ChannelPreview/DirectMessageChannelPreview'
 import RoomChannelPreview from '../ChannelPreview/RoomChannelPreview'
+import { channelTypes } from '../../../models/channel_types'
 
 import style from './style.module.scss'
 
-export const channelType = {
-  DIRECT_MESSAGE: 'direct_message',
-  ROOM: 'room'
-}
-
 const CustomEmptyStateIndicator = (selectedChannelType) => {
-  return (
-    <div className={style.noChannels}>
-      No active{' '}
-      {selectedChannelType === channelType.DIRECT_MESSAGE
-        ? 'conversations'
-        : 'rooms'}
-    </div>
-  )
+  if (selectedChannelType !== channelTypes.MESSAGING) {
+    return <div />
+  }
+  return <div className={style.noChannels}>No active conversations</div>
 }
 
 const CustomLoadingIndicator = () => {
@@ -58,7 +50,7 @@ const ChannelListContainer = ({
         sort={sort}
         List={ChannelListMessenger}
         Preview={(previewProps) =>
-          selectedChannelType === channelType.DIRECT_MESSAGE ? (
+          selectedChannelType === channelTypes.MESSAGING ? (
             <DirectMessageChannelPreview
               {...previewProps}
               onItemClick={onItemClick}

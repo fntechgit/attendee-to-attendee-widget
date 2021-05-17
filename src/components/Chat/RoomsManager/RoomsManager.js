@@ -3,7 +3,8 @@ import { withFormik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Autocomplete from '../../Autocomplete/Autocomplete'
 import AttendeePill from '../AttendeePill/AttendeePill'
-import ChatChannelsBuilder from '../../../lib/builders/ChatChannelsBuilder'
+import StreamChatService from '../../../lib/services/StreamChatService'
+import { channelTypes } from '../../../models/channel_types'
 
 import style from './style.module.scss'
 
@@ -222,15 +223,15 @@ export default withFormik({
       console.log('members', memberIds)
       console.log('image url', roomPicURL)
 
-      // //Create channel
-      // ChatChannelsBuilder.createCustomChannel(
-      //   chatClient,
-      //   'custom_room',
-      //   roomName,
-      //   roomDesc,
-      //   members,
-      //   res.signedURL
-      // )
+      //Create channel
+      StreamChatService.createChannel(
+        chatClient,
+        channelTypes.CUSTOM_ROOM,
+        roomName,
+        roomDesc,
+        memberIds,
+        roomPicURL
+      )
 
       resetForm()
     }

@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { Chat } from 'stream-chat-react'
 import { SearchBar } from '../../SearchBar/SearchBar'
-import ChannelListContainer, {
-  channelType
-} from './ChannelListContainer'
+import ChannelListContainer from './ChannelListContainer'
+import { channelTypes } from '../../../models/channel_types'
 
 import style from './style.module.scss'
 
@@ -47,7 +46,7 @@ const DMChannelListContainer = ({
       <div className={style.channelsListWrapper}>
         <Chat client={chatClient}>
           <ChannelListContainer
-            selectedChannelType={channelType.DIRECT_MESSAGE}
+            selectedChannelType={channelTypes.MESSAGING}
             filters={currFilters}
             user={user}
             summitId={summitId}
