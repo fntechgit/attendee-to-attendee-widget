@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Chat } from 'stream-chat-react'
+import debounce from 'lodash.debounce'
 import { SearchBar } from '../../SearchBar/SearchBar'
 import RoomsManager from '../RoomsManager/RoomsManager'
 import ChannelListContainer from './ChannelListContainer'
@@ -7,6 +8,8 @@ import StreamChatService from '../../../lib/services/StreamChatService'
 import { channelTypes } from '../../../models/channel_types'
 
 import style from './style.module.scss'
+
+let handleSearchDebounce = null
 
 const RoomChannelListContainer = ({
   user,
@@ -61,6 +64,24 @@ const RoomChannelListContainer = ({
 
   const handleSearch = async (e) => {
     const { value } = e.target
+
+    if (handleSearchDebounce) handleSearchDebounce.cancel()
+    handleSearchDebounce = debounce(async () => {
+      setCurrFilters({
+        type: {
+          $in: [channelTypes.CUSTOM_ROOM]
+        }
+        //name: { $in: [value] }
+      })
+    }, 300)
+
+    if (value && value.length > 2) {
+      handleSearchDebounce()
+    }
+  }
+
+  const handleSearchClear = async () => {
+    setCurrFilters(defaultFilters)
   }
 
   const handleFilterModeChange = (mode) => {
@@ -84,6 +105,7 @@ const RoomChannelListContainer = ({
         <div>
           <SearchBar
             onSearch={handleSearch}
+            onClear={handleSearchClear}
             onFilterModeChange={handleFilterModeChange}
             filterMenuOptions={[
               'All Chat Rooms',
@@ -112,7 +134,7 @@ const RoomChannelListContainer = ({
             </button>
           </div>
 
-          {/* <div className='has-text-centered mt-2'>
+          <div className='has-text-centered mt-2'>
             <button
               className='button is-primary is-large is-fullwidth'
               onClick={async () => {
@@ -124,7 +146,7 @@ const RoomChannelListContainer = ({
             >
               Remove all rooms
             </button>
-          </div> */}
+          </div>
         </div>
       )}
       {showRoomsManager && (

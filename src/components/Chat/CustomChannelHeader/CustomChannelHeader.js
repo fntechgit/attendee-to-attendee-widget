@@ -91,9 +91,13 @@ const CustomChannelHeader = (props) => {
     (m) => m.user.id !== me.id
   )
 
-  const headerImage = channel.data.image ?? member?.user.image
+  let headerImage = channel.data.image
+  let headerTitle = channel.data.name
 
-  const headerTitle = channel.data.name
+  if (channel.type === channelTypes.MESSAGING && member) {
+    headerImage = member.user.image
+    headerTitle = member.user.name
+  }
 
   return (
     <div className={style.header}>

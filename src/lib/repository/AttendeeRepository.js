@@ -178,7 +178,7 @@ export default class AttendeeRepository {
         idp_user_id: idpUserId,
         is_online: isOnline,
         social_info: socialInfo,
-        badge_info: badgeFeatures,
+        badges_info: badgeFeatures,
         bio
       }
     ])

@@ -61,6 +61,7 @@ const widgetProps = {
     },
     badgeFeatures: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
     bio: '# This is my bio, *in MD*!'
+    //bio: '<p><span>This is my bio in HTML</span></p>'
   },
   summitId: 17,
   height: 500,
@@ -104,8 +105,10 @@ const App = () => {
   }
 
   const token1 =
-    '1bty19a9LS4pvL5IaC5aG5jeWmJSvmKiwUmDzgYhEAglEW1rBeEqiBIbN_fhmxBenLG2MurI-wE6Nz0llUTzaHBrex9tN-i-rRuHuTrYN8B4_LZuB2egHqbcSIZ~Q0LM'
+    'wXcxR93cuB91Gl2SsP~qBw_tp.Hn5ds1Nhzm7yqD8JJyrez65vzkMl_CFlIyABKB0dKczkVoXMmupVKeMBpoeMsXJKV-SEDU~E.~zud-se_zuSZbT6_FBrhqHMe18eRj'
   const token2 =
+    'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
+  const token3 =
     'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
 
   return (
@@ -119,9 +122,14 @@ const App = () => {
               Attendees 1
             </Link>
             <Link
-              to={`/attendance?accessToken=${token2}&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11`}
+              to={`/attendance?accessToken=${token2}&fullName=Johnny Nimbus&email=cespin+1@gmail.com&idpUserId=6`}
             >
               Attendees 2
+            </Link>
+            <Link
+              to={`/attendance?accessToken=${token3}&fullName=Jethro Stratus&email=cespin+2@gmail.com&idpUserId=7`}
+            >
+              Attendees 3
             </Link>
             <Tracker {...widgetProps} />
           </div>

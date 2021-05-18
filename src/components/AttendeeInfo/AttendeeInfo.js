@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 
 import style from './style.module.scss'
 
@@ -108,7 +109,9 @@ export const AttendeeInfo = ({
             <div>
               {bio && (
                 <div className='content'>
-                  <ReactMarkdown>{bio}</ReactMarkdown>
+                  <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                    {bio}
+                  </ReactMarkdown>
                 </div>
               )}
               <nav className='level'>
