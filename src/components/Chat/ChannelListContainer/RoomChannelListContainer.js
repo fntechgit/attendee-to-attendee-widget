@@ -123,7 +123,7 @@ const RoomChannelListContainer = ({
               <span>New Custom Room</span>
             </button>
           </div>
-          <div className='has-text-centered mt-2'>
+          {/* <div className='has-text-centered mt-2'>
             <button
               className='button is-primary is-large is-fullwidth'
               onClick={async () => {
@@ -135,7 +135,7 @@ const RoomChannelListContainer = ({
             >
               Remove all rooms
             </button>
-          </div>
+          </div> */}
         </div>
       )}
       {showRoomsManager && (
