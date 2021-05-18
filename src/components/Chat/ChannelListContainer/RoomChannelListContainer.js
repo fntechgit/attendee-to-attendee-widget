@@ -19,7 +19,17 @@ const RoomChannelListContainer = ({
   openDir
 }) => {
   let curMode = 0
-  const [currFilters, setCurrFilters] = useState([])
+  const defaultFilters = {
+    type: {
+      $in: [
+        channelTypes.ACTIVITY_ROOM,
+        channelTypes.HELP_ROOM,
+        channelTypes.QA_ROOM,
+        channelTypes.CUSTOM_ROOM
+      ]
+    }
+  }
+  const [currFilters, setCurrFilters] = useState(defaultFilters)
   const [showRoomsManager, setShowRoomsManager] = useState(false)
 
   useEffect(() => {
@@ -29,41 +39,22 @@ const RoomChannelListContainer = ({
   const setUpMode = (mode) => {
     switch (mode) {
       case 1:
-        setCurrFilters([
-          {
-            type: channelTypes.ACTIVITY_ROOM,
-            members: { $in: [user.id] }
+        setCurrFilters({
+          type: {
+            $in: [channelTypes.ACTIVITY_ROOM]
           }
-        ])
+        })
         break
       case 2:
-        setCurrFilters([
-          {
-            type: channelTypes.CUSTOM_ROOM,
-            members: { $in: [user.id] }
+        setCurrFilters({
+          type: {
+            $in: [channelTypes.CUSTOM_ROOM]
           }
-        ])
+        })
         break
       default:
         //All Chat Rooms
-        setCurrFilters([
-          {
-            type: channelTypes.HELP_ROOM,
-            members: { $in: [user.id] }
-          },
-          {
-            type: channelTypes.QA_ROOM,
-            members: { $in: [user.id] }
-          },
-          {
-            type: channelTypes.ACTIVITY_ROOM,
-            members: { $in: [user.id] }
-          },
-          {
-            type: channelTypes.CUSTOM_ROOM
-            //members: { $in: [user.id] }
-          }
-        ])
+        setCurrFilters(defaultFilters)
         break
     }
   }
@@ -102,17 +93,14 @@ const RoomChannelListContainer = ({
           />
           <div className={style.channelsListWrapper}>
             <Chat client={chatClient}>
-              {currFilters.map((filtersItem, ix) => (
-                <ChannelListContainer
-                  key={ix}
-                  selectedChannelType={channelTypes.CUSTOM_ROOM}
-                  filters={filtersItem}
-                  user={user}
-                  summitId={summitId}
-                  chatClient={chatClient}
-                  onItemClick={onItemClick}
-                />
-              ))}
+              <ChannelListContainer
+                selectedChannelType={channelTypes.CUSTOM_ROOM}
+                filters={currFilters}
+                user={user}
+                summitId={summitId}
+                chatClient={chatClient}
+                onItemClick={onItemClick}
+              />
             </Chat>
           </div>
           <div className='has-text-centered mt-2'>

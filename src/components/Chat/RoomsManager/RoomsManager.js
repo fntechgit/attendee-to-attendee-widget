@@ -63,7 +63,7 @@ const RoomsManager = (props) => {
         <div className='content'>
           <Form>
             <div className='field'>
-              <label className='label is-large has-text-grey mb-4'>Name</label>
+              <label className='label is-large has-text-grey'>Name</label>
               <div className='control'>
                 <Field
                   className='input is-large'
@@ -78,7 +78,7 @@ const RoomsManager = (props) => {
               </div>
             </div>
             <div className='field'>
-              <label className='label is-large has-text-grey mb-4'>
+              <label className='label is-large has-text-grey'>
                 Description
               </label>
               <div className='control'>
@@ -116,9 +116,7 @@ const RoomsManager = (props) => {
                 ))}
             </div>
             <div className='field'>
-              <label className='label is-large has-text-grey mb-4'>
-                Chat image
-              </label>
+              <label className='label is-large has-text-grey'>Chat image</label>
               <div className='file is-large has-name'>
                 <label className='file-label'>
                   <input
@@ -160,6 +158,7 @@ export default withFormik({
   mapPropsToValues({
     chatRepo,
     chatClient,
+    onBack,
     roomName,
     roomDesc,
     roomImg,
@@ -168,6 +167,7 @@ export default withFormik({
     return {
       chatRepo: chatRepo,
       chatClient: chatClient,
+      onBack: onBack,
       roomName: roomName || '',
       roomDesc: roomDesc || '',
       roomImg: roomImg || '',
@@ -197,6 +197,7 @@ export default withFormik({
     const {
       chatRepo,
       chatClient,
+      onBack,
       roomName,
       roomDesc,
       roomImg,
@@ -218,15 +219,8 @@ export default withFormik({
 
       const memberIds = members.map((m) => `${m.value}`)
 
-      console.log('chatClient', chatClient)
-      console.log('roomName', roomName)
-      console.log('roomDesc', roomDesc)
-      console.log('roomImg', roomImg)
-      console.log('members', memberIds)
-      console.log('image url', roomPicURL)
-
       //Create channel
-      StreamChatService.createChannel(
+      const channel = await StreamChatService.createChannel(
         chatClient,
         channelTypes.CUSTOM_ROOM,
         roomName,
@@ -234,8 +228,12 @@ export default withFormik({
         memberIds,
         roomPicURL
       )
-
-      resetForm()
+      if (!channel) {
+        setErrors({ globalError: 'The room cannot be created right now' })
+      } else {
+        resetForm()
+        onBack()
+      }
     }
     setSubmitting(false)
   }

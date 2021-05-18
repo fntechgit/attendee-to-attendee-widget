@@ -112,7 +112,7 @@ class Autocomplete extends React.Component {
             <div className='dropdown-trigger'>
               <div className='control has-icons-right is-expanded'>
                 <input
-                  className='input is-large is-expanded'
+                  className='input is-large'
                   type='text'
                   name={name}
                   value={query}

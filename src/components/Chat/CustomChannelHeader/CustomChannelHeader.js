@@ -87,9 +87,6 @@ const CustomChannelHeader = (props) => {
   //   }
   // }
 
-  console.log('channel type', channel.type)
-  console.log('channel', channel)
-
   const member = Object.values(channel.state.members).find(
     (m) => m.user.id !== me.id
   )
