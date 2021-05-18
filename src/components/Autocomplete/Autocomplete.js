@@ -105,14 +105,14 @@ class Autocomplete extends React.Component {
     return (
       <div className='field'>
         {label && (
-          <label className='label is-large has-text-grey'>{label}</label>
+          <label className='label is-large has-text-grey mb-4'>{label}</label>
         )}
         <div className='control'>
           <div className={`dropdown ${matches.length > 0 ? 'is-active' : ''}`}>
             <div className='dropdown-trigger'>
               <div className='control has-icons-right is-expanded'>
                 <input
-                  className='input is-large'
+                  className='input is-large is-expanded'
                   type='text'
                   name={name}
                   value={query}
@@ -135,9 +135,7 @@ class Autocomplete extends React.Component {
                       className={`dropdown-item ${style.autocompleteItem}`}
                       href='/'
                       key={match.value}
-                      onClick={(event) =>
-                        this.handleSelection(event, match)
-                      }
+                      onClick={(event) => this.handleSelection(event, match)}
                     >
                       <div
                         className={style.autocompleteItemContent}

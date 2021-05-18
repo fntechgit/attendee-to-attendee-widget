@@ -42,7 +42,7 @@ const ConversationBox = ({
           const supportChannel = await StreamChatService.createSupportChannel(
             chatClient,
             user,
-            channelTypes.QA_ROOM
+            partnerId
           )
           setChannel(supportChannel)
         } else {

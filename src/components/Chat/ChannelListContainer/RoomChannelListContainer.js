@@ -123,6 +123,7 @@ const RoomChannelListContainer = ({
               <span>New Custom Room</span>
             </button>
           </div>
+
           {/* <div className='has-text-centered mt-2'>
             <button
               className='button is-primary is-large is-fullwidth'

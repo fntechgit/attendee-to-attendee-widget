@@ -63,7 +63,7 @@ const RoomsManager = (props) => {
         <div className='content'>
           <Form>
             <div className='field'>
-              <label className='label is-large has-text-grey'>Name</label>
+              <label className='label is-large has-text-grey mb-4'>Name</label>
               <div className='control'>
                 <Field
                   className='input is-large'
@@ -78,7 +78,7 @@ const RoomsManager = (props) => {
               </div>
             </div>
             <div className='field'>
-              <label className='label is-large has-text-grey'>
+              <label className='label is-large has-text-grey mb-4'>
                 Description
               </label>
               <div className='control'>
@@ -116,7 +116,9 @@ const RoomsManager = (props) => {
                 ))}
             </div>
             <div className='field'>
-              <label className='label is-large has-text-grey'>Chat image</label>
+              <label className='label is-large has-text-grey mb-4'>
+                Chat image
+              </label>
               <div className='file is-large has-name'>
                 <label className='file-label'>
                   <input
@@ -139,7 +141,7 @@ const RoomsManager = (props) => {
             </div>
             <button
               type='submit'
-              className='button is-primary is-large is-fullwidth'
+              className='button is-primary is-large is-fullwidth mt-6'
               disabled={isSubmitting}
             >
               Create

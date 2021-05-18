@@ -23,7 +23,6 @@ let streamChatService = null
 let chatAPIService = null
 let chatCounterpart = channelTypes.HELP_ROOM
 let activeChannel = null
-let activeQAChannel = null
 
 const AttendeeToAttendeeContainer = (props) => {
   const [activeTab, setActiveTab] = useState('ATTENDEES')
@@ -104,13 +103,7 @@ const AttendeeToAttendeeContainer = (props) => {
   }
 
   const handleHelpClick = async () => {
-    if (chatClient && chatOpened) {
-      activeQAChannel = preloadedChannel
-      chatCounterpart = channelTypes.QA_ROOM
-      setTimeout(() => {
-        setQAChatOpened(true)
-      }, 100)
-    }
+    showChatWindow(null, channelTypes.HELP_ROOM)
   }
 
   const handleChatMenuSelection = (index) => {

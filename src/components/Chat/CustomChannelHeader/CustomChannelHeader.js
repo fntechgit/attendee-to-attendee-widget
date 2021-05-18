@@ -88,6 +88,7 @@ const CustomChannelHeader = (props) => {
   // }
 
   console.log('channel type', channel.type)
+  console.log('channel', channel)
 
   const member = Object.values(channel.state.members).find(
     (m) => m.user.id !== me.id
@@ -95,7 +96,7 @@ const CustomChannelHeader = (props) => {
 
   const headerImage = channel.data.image ?? member?.user.image
 
-  const headerTitle = channel.name
+  const headerTitle = channel.data.name
 
   return (
     <div className={style.header}>
