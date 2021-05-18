@@ -7,7 +7,7 @@ import style from './style.module.scss'
 
 const CustomChannelHeader = (props) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
-  const { me, channel, onClose } = props
+  const { me, channel, onClose, onMenuSelected } = props
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen)
@@ -15,17 +15,7 @@ const CustomChannelHeader = (props) => {
 
   const handleMenuSelection = (index) => {
     setMenuOpen(false)
-    switch (index) {
-      case 1:
-        StreamChatService.removeMember(channel, me.id)
-        break
-      case 2:
-        console.log('INVITE LINK')
-        break
-      case 3:
-        console.log('QA')
-        break
-    }
+    if (onMenuSelected) onMenuSelected(index)
   }
 
   const renderMoreMenu = () => (

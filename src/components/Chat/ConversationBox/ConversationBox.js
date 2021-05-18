@@ -24,46 +24,42 @@ const ConversationBox = ({
   openDir,
   setActiveChannel,
   onClose,
-  visible
+  visible,
+  onChatMenuSelected
 }) => {
   const [channel, setChannel] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const initChannel = async () => {
-      console.log('activeChannel', activeChannel)
+      //console.log('activeChannel', activeChannel)
       if (!activeChannel) {
-        if (partnerId === 'qa') {
-          // create QA channel between this user and qa users
-          const qaChannel = await StreamChatService.createSupportChannel(
+        if (
+          partnerId === channelTypes.QA_ROOM ||
+          partnerId === channelTypes.HELP_ROOM
+        ) {
+          // create Help/QA channel between this user and help/qa users
+          const supportChannel = await StreamChatService.createSupportChannel(
             chatClient,
             user,
             channelTypes.QA_ROOM
           )
-          setChannel(qaChannel)
-        } else if (partnerId === 'help') {
-          // create Help channel between this user and help user
-          const helpChannel = await StreamChatService.createSupportChannel(
-            chatClient,
-            user,
-            channelTypes.HELP_ROOM
-          )
-          setChannel(helpChannel)
+          setChannel(supportChannel)
         } else {
-          const res = await StreamChatService.getChannel(
+          const dmChannel = await StreamChatService.getChannel(
             chatClient,
             channelTypes.MESSAGING,
             user,
             partnerId
           )
-          setChannel(res)
+          setChannel(dmChannel)
         }
       } else {
         setChannel(activeChannel)
       }
       setIsLoading(false)
     }
-    console.log('initChannel', visible)
+    //console.log('initChannel', visible)
     if (visible) initChannel()
   }, [partnerId, visible])
 
@@ -97,6 +93,7 @@ const ConversationBox = ({
                 me={chatClient.user}
                 channel={channel}
                 onClose={handleClose}
+                onMenuSelected={onChatMenuSelected}
               />
               <MessageList client={chatClient} closeThread={console.log} />
               <MessageInput focus />

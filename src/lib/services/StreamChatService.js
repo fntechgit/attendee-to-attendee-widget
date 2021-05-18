@@ -93,7 +93,9 @@ export default class StreamChatService {
 
   static async createSupportChannel(chatClient, user, type) {
     const roles = type === channelTypes.QA_ROOM ? qaRoles : helpRoles
-    const supportType = channelTypes.QA_ROOM ? 'qa' : 'help'
+    const supportType = type === channelTypes.QA_ROOM ? 'qa' : 'help'
+    const displaySupportType =
+      type === channelTypes.QA_ROOM ? 'Q & A' : 'Help Desk'
 
     const supportUsers = await chatClient.queryUsers({
       local_role: { $in: roles }
@@ -102,14 +104,18 @@ export default class StreamChatService {
     if (supportUsers.users.length > 0) {
       const channelUsers = supportUsers.users.map((u) => u.id)
       channelUsers.push(user.id)
+      const imageURL = supportUsers.users[0].image
 
       const channel = chatClient.channel(type, `${user.id}-${supportType}`, {
-        name: `${user.id}-${supportType}`,
+        //name: `${user.id}-${supportType}`,
+        name: displaySupportType,
         members: channelUsers,
+        image: imageURL,
         supporttype: supportType
       })
 
       const response = await channel.create()
+
       const membersInChannel = response.members.map((m) => m.user.id)
 
       const membersToRemove = response.members
@@ -133,7 +139,8 @@ export default class StreamChatService {
   }
 
   static async deleteChannel(chatClient, id) {
-    const filter = { type: channelTypes.CUSTOM_ROOM, id: id }
+    // const filter = { type: channelTypes.CUSTOM_ROOM, id: id }
+    const filter = { id: id }
     const channels = await chatClient.queryChannels(filter, {}, {})
     if (channels && channels.length > 0) {
       await channels[0].delete()

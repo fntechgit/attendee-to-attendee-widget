@@ -129,9 +129,11 @@ const RoomChannelListContainer = ({
               onClick={async () => {
                 await StreamChatService.deleteChannel(chatClient, 'test')
                 await StreamChatService.deleteChannel(chatClient, 'test2')
+                await StreamChatService.deleteChannel(chatClient, '13-qa')
+                await StreamChatService.deleteChannel(chatClient, '13-help')
               }}
             >
-              Remove all custom rooms
+              Remove all rooms
             </button>
           </div>
         </div>

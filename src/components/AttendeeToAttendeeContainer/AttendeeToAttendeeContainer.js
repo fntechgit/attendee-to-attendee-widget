@@ -8,6 +8,7 @@ import StreamChatService from '../../lib/services/StreamChatService'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
+import { channelTypes } from '../../models/channel_types'
 
 import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
@@ -20,13 +21,15 @@ let accessRepo = null
 let chatRepo = null
 let streamChatService = null
 let chatAPIService = null
-let chatCounterpart = 'help'
+let chatCounterpart = channelTypes.HELP_ROOM
 let activeChannel = null
+let activeQAChannel = null
 
 const AttendeeToAttendeeContainer = (props) => {
   const [activeTab, setActiveTab] = useState('ATTENDEES')
   const [isMinimized, setMinimized] = useState(false)
   const [chatOpened, setChatOpened] = useState(false)
+  const [qaChatOpened, setQAChatOpened] = useState(false)
   const [chatClient, setChatClient] = useState(null)
 
   const {
@@ -73,7 +76,7 @@ const AttendeeToAttendeeContainer = (props) => {
       )
 
       // await chatAPIService.seedChannelTypes(
-      //   chatApiBaseUrl, 
+      //   chatApiBaseUrl,
       //   summitId,
       //   accessToken,
       //   (res) => console.log(res),
@@ -101,7 +104,27 @@ const AttendeeToAttendeeContainer = (props) => {
   }
 
   const handleHelpClick = async () => {
-    showChatWindow(null, 'help')
+    if (chatClient && chatOpened) {
+      activeQAChannel = preloadedChannel
+      chatCounterpart = channelTypes.QA_ROOM
+      setTimeout(() => {
+        setQAChatOpened(true)
+      }, 100)
+    }
+  }
+
+  const handleChatMenuSelection = (index) => {
+    switch (index) {
+      case 1:
+        StreamChatService.removeMember(channel, me.id)
+        break
+      case 2:
+        console.log('INVITE LINK')
+        break
+      case 3:
+        console.log('QA')
+        break
+    }
   }
 
   const handleAttendeeClick = (att) => {
@@ -198,6 +221,7 @@ const AttendeeToAttendeeContainer = (props) => {
           summitId={summitId}
           visible={chatOpened}
           onClose={() => setChatOpened(false)}
+          onChatMenuSelected={handleChatMenuSelection}
         />
       )}
     </div>
