@@ -65,6 +65,16 @@ class Autocomplete extends React.Component {
     })
 
     if (onSelect) onSelect(selection)
+
+    this.resetState()
+  }
+
+  resetState() {
+    this.setState({
+      matches: [],
+      query: '',
+      selected: false
+    })
   }
 
   async updateQuery(e) {
@@ -89,78 +99,67 @@ class Autocomplete extends React.Component {
       this.handleSearchDebounce()
     } else {
       if (e.nativeEvent.inputType === 'deleteContentBackward') {
-        this.setState({
-          matches: [],
-          query: '',
-          selected: false
-        })
+        this.resetState()
       }
     }
   }
 
   render() {
-    const { label, name, placeholder } = this.props
+    const { name, placeholder } = this.props
     const { activeIndex, matches, query } = this.state
 
     return (
-      <div className='field'>
-        {label && (
-          <label className='label is-large has-text-grey mb-4'>{label}</label>
-        )}
-        <div className='control'>
-          <div className={`dropdown ${matches.length > 0 ? 'is-active' : ''}`}>
-            <div className='dropdown-trigger'>
-              <div className='control has-icons-right is-expanded'>
-                <input
-                  className='input is-large'
-                  type='text'
-                  name={name}
-                  value={query}
-                  onChange={this.updateQuery}
-                  onKeyDown={this.handleKeyPress}
-                  placeholder={placeholder}
-                />
-                <span className='icon is-right'>
-                  <span className='icon'>
-                    <i className='fa fa-search' aria-hidden='true'></i>
-                  </span>
-                </span>
-              </div>
-            </div>
-            <div className='dropdown-menu'>
-              {matches.length > 0 && (
-                <div className='dropdown-content'>
-                  {matches.map((match, index) => (
-                    <a
-                      className={`dropdown-item ${style.autocompleteItem}`}
-                      href='/'
-                      key={match.value}
-                      onClick={(event) => this.handleSelection(event, match)}
-                    >
-                      <div
-                        className={style.autocompleteItemContent}
-                        key={`attendee-${match.value}`}
-                      >
-                        {match.heading && (
-                          <div className={style.picWrapper}>
-                            <div
-                              className={style.pic}
-                              style={{
-                                backgroundImage: `url(${match.heading})`
-                              }}
-                            />
-                          </div>
-                        )}
-                        <div className={style.textWrapper}>
-                          <div className={style.title}>{match.text}</div>
-                        </div>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
+      <div className={`dropdown ${matches.length > 0 ? 'is-active' : ''}`}>
+        <div className='dropdown-trigger'>
+          <div className='control has-icons-right is-expanded'>
+            <input
+              className='input is-large'
+              type='text'
+              name={name}
+              value={query}
+              onChange={this.updateQuery}
+              onKeyDown={this.handleKeyPress}
+              placeholder={placeholder}
+            />
+            <span className='icon is-right'>
+              <span className='icon'>
+                <i className='fa fa-search' aria-hidden='true'></i>
+              </span>
+            </span>
           </div>
+        </div>
+        <div className='dropdown-menu'>
+          {matches.length > 0 && (
+            <div className='dropdown-content'>
+              {matches.map((match, index) => (
+                <a
+                  className={`dropdown-item ${style.autocompleteItem}`}
+                  href='/'
+                  key={match.value}
+                  onClick={(event) => this.handleSelection(event, match)}
+                >
+                  <div
+                    className={style.autocompleteItemContent}
+                    key={`attendee-${match.value}`}
+                  >
+                    {match.heading && (
+                      <div className={style.picWrapper}>
+                        <div
+                          className={style.pic}
+                          style={{
+                            backgroundImage: `url(${match.heading})`
+                          }}
+                        />
+                      </div>
+                    )}
+                    <div className={style.textWrapper}>
+                      <div className={style.title}>{match.text}</div>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     )

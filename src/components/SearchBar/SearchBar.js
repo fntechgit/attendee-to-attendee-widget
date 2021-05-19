@@ -6,7 +6,8 @@ export const SearchBar = ({
   onSearch,
   onClear,
   onFilterModeChange,
-  filterMenuOptions
+  filterMenuOptions,
+  placeholder
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -40,7 +41,7 @@ export const SearchBar = ({
         <input
           className='input is-medium'
           type='search'
-          placeholder='Search by name or company'
+          placeholder={placeholder || 'Search by name or company'}
           onChange={handleSearch}
         />
         <span className='icon is-left'>

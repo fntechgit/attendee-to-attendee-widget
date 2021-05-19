@@ -1,9 +1,8 @@
 import AttendeeRepository from './AttendeeRepository'
 
 export default class AccessRepository extends AttendeeRepository {
-
-  constructor(supabaseUrl, supabaseKey) {
-    super(supabaseUrl, supabaseKey, null)
+  constructor(supabaseService) {
+    super(supabaseService, null)
   }
 
   async _logAccess(accessEntry) {
@@ -124,7 +123,7 @@ export default class AccessRepository extends AttendeeRepository {
       console.log('error', error)
     }
   }
-  
+
   async mergeChanges(attendeesListLocal, attendeesNews, url) {
     const mustCheckURL = arguments.length > 2
     let oldItem = null

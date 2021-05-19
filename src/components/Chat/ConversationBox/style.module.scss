@@ -13,6 +13,10 @@
     right: -400px;
   }
 
+  &.parentLeft {
+    left: -800px;
+  }
+
   :global(.str-chat-channel) {
     background-color: transparent;
     height: 100%;

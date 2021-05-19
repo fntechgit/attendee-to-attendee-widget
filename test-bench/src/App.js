@@ -105,7 +105,7 @@ const App = () => {
   }
 
   const token1 =
-    'wXcxR93cuB91Gl2SsP~qBw_tp.Hn5ds1Nhzm7yqD8JJyrez65vzkMl_CFlIyABKB0dKczkVoXMmupVKeMBpoeMsXJKV-SEDU~E.~zud-se_zuSZbT6_FBrhqHMe18eRj'
+    '2AuzBAGBr1rHenL6xRv8CQiuq1DzRNDTtO8E-oEugwUvjGm2Af4ve9QT6bE-DjYBFNOCtfAf3VvvwcuFrXGi-Vry~Y_KFbqFbTLp6sJnpRRMKL72A0H-VLrqDHmDleDr'
   const token2 =
     'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
   const token3 =
@@ -146,7 +146,7 @@ const App = () => {
             <Link to='/a'>Track 2</Link>
             <button onClick={handleSignOutClick}>SignOut</button> */}
             <AttendeeToAttendeeContainer title='Attendance' {...widgetProps} />
-            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
+            <Tracker {...widgetProps} ref={trackerRef} />
           </div>
         </Route>
         <Route exact path='/untracked'>

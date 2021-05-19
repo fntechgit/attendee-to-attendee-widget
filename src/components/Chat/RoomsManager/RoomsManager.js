@@ -50,106 +50,103 @@ const RoomsManager = (props) => {
   }
 
   return (
-    <div className='card'>
-      <header className='card-header'>
-        <a className='card-header-icon' onClick={onBack}>
-          <span className='icon'>
-            <i className='fa fa-arrow-left' aria-hidden='true'></i>
-          </span>
-        </a>
-        <p className='card-header-title'>New Chat Room</p>
-      </header>
-      <div className='card-content'>
-        <div className='content'>
-          <Form>
-            <div className='field'>
-              <label className='label is-large has-text-grey'>Name</label>
-              <div className='control'>
-                <Field
-                  className='input is-large'
-                  type='text'
-                  maxLength='20'
-                  name='roomName'
-                  placeholder='Name your chat room'
-                />
-                {touched.roomName && errors.roomName && (
-                  <p className='has-text-danger'>{errors.roomName}</p>
-                )}
-              </div>
-            </div>
-            <div className='field'>
-              <label className='label is-large has-text-grey'>
-                Description
-              </label>
-              <div className='control'>
-                <Field
-                  className='input is-large'
-                  type='text'
-                  maxLength='50'
-                  name='roomDesc'
-                  placeholder='What is this room about?'
-                />
-                {touched.roomDesc && errors.roomDesc && (
-                  <p className='has-text-danger'>{errors.roomDesc}</p>
-                )}
-              </div>
-            </div>
+    <div className='box'>
+      <span className='icon-text'>
+        <span className='icon has-text-black' onClick={onBack}>
+          <i className='fa fa-arrow-left'></i>
+        </span>
+        <label className='label is-large has-text-black'>New Chat Room</label>
+      </span>
+      <hr />
+      <Form>
+        <div className='field'>
+          <label className='label is-large has-text-black'>Name</label>
+          <div className='control'>
+            <Field
+              className='input is-large'
+              type='text'
+              maxLength='20'
+              name='roomName'
+              placeholder='Name your chat room'
+            />
+            {touched.roomName && errors.roomName && (
+              <p className='has-text-danger'>{errors.roomName}</p>
+            )}
+          </div>
+        </div>
+        <div className='field'>
+          <label className='label is-large has-text-black'>Description</label>
+          <div className='control'>
+            <Field
+              className='input is-large'
+              type='text'
+              maxLength='50'
+              name='roomDesc'
+              placeholder='What is this room about?'
+            />
+            {touched.roomDesc && errors.roomDesc && (
+              <p className='has-text-danger'>{errors.roomDesc}</p>
+            )}
+          </div>
+        </div>
+        <div className='field'>
+          <label className='label is-large has-text-black'>Members</label>
+          <div className='control'>
             <Autocomplete
               name='members'
-              label='Members'
               placeholder='Search by Name'
               dataSource={handleSearch}
               onSelect={handleSelect}
             />
-            <div className={style.selectedAttendees}>
-              {selectedAttendees &&
-                selectedAttendees.map((item, ix) => (
-                  <AttendeePill
-                    key={ix}
-                    attendee={{
-                      id: item.value,
-                      full_name: item.text,
-                      pic_url: item.heading
-                    }}
-                    onClose={dismissSelection}
-                  />
-                ))}
-            </div>
-            <div className='field'>
-              <label className='label is-large has-text-grey'>Chat image</label>
-              <div className='file is-large has-name'>
-                <label className='file-label'>
-                  <input
-                    className='file-input'
-                    type='file'
-                    name='roomimg'
-                    onChange={handleFileChange}
-                  />
-                  <span className='file-cta'>
-                    <span className='file-icon'>
-                      <i className='fa fa-upload'></i>
-                    </span>
-                    <span className='file-label'>Upload</span>
-                  </span>
-                  {selectedImageFileName && (
-                    <span className='file-name'>{selectedImageFileName}</span>
-                  )}
-                </label>
-              </div>
-            </div>
-            <button
-              type='submit'
-              className='button is-primary is-large is-fullwidth mt-6'
-              disabled={isSubmitting}
-            >
-              Create
-            </button>
-            {errors.globalError && (
-              <p className='has-text-danger mt-1'>{errors.globalError}</p>
-            )}
-          </Form>
+          </div>
         </div>
-      </div>
+        <div className={style.selectedAttendees}>
+          {selectedAttendees &&
+            selectedAttendees.map((item, ix) => (
+              <AttendeePill
+                key={ix}
+                attendee={{
+                  id: item.value,
+                  full_name: item.text,
+                  pic_url: item.heading
+                }}
+                onClose={dismissSelection}
+              />
+            ))}
+        </div>
+        <div className='field'>
+          <label className='label is-large has-text-black'>Chat image</label>
+          <div className='file is-large has-name'>
+            <label className='file-label'>
+              <input
+                className='file-input'
+                type='file'
+                name='roomimg'
+                onChange={handleFileChange}
+              />
+              <span className='file-cta'>
+                <span className='file-icon'>
+                  <i className='fa fa-upload'></i>
+                </span>
+                <span className='file-label'>Upload</span>
+              </span>
+              {selectedImageFileName && (
+                <span className='file-name'>{selectedImageFileName}</span>
+              )}
+            </label>
+          </div>
+        </div>
+        <button
+          type='submit'
+          className='button is-primary is-large is-fullwidth mt-6'
+          disabled={isSubmitting}
+        >
+          Create
+        </button>
+        {errors.globalError && (
+          <p className='has-text-danger mt-1'>{errors.globalError}</p>
+        )}
+      </Form>
     </div>
   )
 }
@@ -183,17 +180,6 @@ export default withFormik({
       .required('Room description is required')
   }),
   async handleSubmit(values, { resetForm, setErrors, setSubmitting }) {
-    // setTimeout(() => {
-    //   if (values.roomName === 'test') {
-    //     setErrors({ roomName: 'That room name is already taken' })
-    //   } else {
-    //     resetForm()
-    //   }
-    //   setSubmitting(false)
-    // }, 2000)
-
-    //TODO: Check if room exists
-
     const {
       chatRepo,
       chatClient,

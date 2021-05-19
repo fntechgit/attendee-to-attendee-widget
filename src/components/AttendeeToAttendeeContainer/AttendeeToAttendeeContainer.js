@@ -4,7 +4,9 @@ import ChatRepository from '../../lib/repository/ChatRepository'
 import AttendeesList from '../AttendeesList/AttendeesList'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
+import ChatAPIService from '../../lib/services/ChatAPIService'
 import StreamChatService from '../../lib/services/StreamChatService'
+import SupabaseClientBuilder from '../../lib/SupabaseClientBuilder'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
@@ -15,12 +17,9 @@ import 'bulma/css/bulma.css'
 import 'stream-chat-react/dist/css/index.css'
 
 import style from './style.module.scss'
-import ChatAPIService from '../../lib/services/ChatAPIService'
 
 let accessRepo = null
 let chatRepo = null
-let streamChatService = null
-let chatAPIService = null
 let chatCounterpart = channelTypes.HELP_ROOM
 let activeChannel = null
 
@@ -46,25 +45,23 @@ const AttendeeToAttendeeContainer = (props) => {
   props = { ...props, url: window.location.href.split('?')[0] }
 
   if (!accessRepo) {
-    accessRepo = new AccessRepository(supabaseUrl, supabaseKey)
-  }
-
-  if (!streamChatService) {
-    streamChatService = new StreamChatService(streamApiKey)
-  }
-
-  if (!chatAPIService) {
-    chatAPIService = new ChatAPIService()
+    accessRepo = new AccessRepository(
+      SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
+    )
   }
 
   if (!chatRepo) {
-    chatRepo = new ChatRepository(supabaseUrl, supabaseKey, user)
+    chatRepo = new ChatRepository(
+      SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
+      new StreamChatService(streamApiKey),
+      new ChatAPIService()
+    )
   }
 
   useEffect(() => {
     const initChat = async () => {
       const accessToken = await getAccessToken()
-      await streamChatService.initializeClient(
+      await chatRepo.initializeClient(
         apiBaseUrl,
         accessToken,
         forumSlug,
@@ -74,7 +71,8 @@ const AttendeeToAttendeeContainer = (props) => {
         (err, res) => console.log(err)
       )
 
-      // await chatAPIService.seedChannelTypes(
+      //TODO: Uncomment
+      // await chatRepo.seedChannelTypes(
       //   chatApiBaseUrl,
       //   summitId,
       //   accessToken,
@@ -115,7 +113,11 @@ const AttendeeToAttendeeContainer = (props) => {
         console.log('INVITE LINK')
         break
       case 3:
-        console.log('QA')
+        if (!qaChatOpened) {
+          setTimeout(() => {
+            setQAChatOpened(true)
+          }, 100)
+        }
         break
     }
   }
@@ -215,6 +217,17 @@ const AttendeeToAttendeeContainer = (props) => {
           visible={chatOpened}
           onClose={() => setChatOpened(false)}
           onChatMenuSelected={handleChatMenuSelection}
+        />
+      )}
+      {chatClient && chatOpened && qaChatOpened && user && (
+        <ConversationBox
+          chatClient={chatClient}
+          user={user}
+          partnerId={channelTypes.QA_ROOM}
+          openDir='parentLeft'
+          summitId={summitId}
+          visible={qaChatOpened}
+          onClose={() => setQAChatOpened(false)}
         />
       )}
     </div>

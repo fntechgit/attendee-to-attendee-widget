@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Chat } from 'stream-chat-react'
 import debounce from 'lodash.debounce'
 import { SearchBar } from '../../SearchBar/SearchBar'
@@ -21,45 +21,42 @@ const RoomChannelListContainer = ({
   height,
   openDir
 }) => {
-  let curMode = 0
+  const defaultScope = [
+    channelTypes.ACTIVITY_ROOM,
+    channelTypes.HELP_ROOM,
+    channelTypes.QA_ROOM,
+    channelTypes.CUSTOM_ROOM
+  ]
+
+  let currentScope = defaultScope
+
   const defaultFilters = {
     type: {
-      $in: [
-        channelTypes.ACTIVITY_ROOM,
-        channelTypes.HELP_ROOM,
-        channelTypes.QA_ROOM,
-        channelTypes.CUSTOM_ROOM
-      ]
+      $in: defaultScope
     }
   }
   const [currFilters, setCurrFilters] = useState(defaultFilters)
   const [showRoomsManager, setShowRoomsManager] = useState(false)
 
-  useEffect(() => {
-    setUpMode(0)
-  }, [])
+  const getScope = (mode) => {
+    if (mode === 1) return [channelTypes.ACTIVITY_ROOM]
+    if (mode === 2) return [channelTypes.CUSTOM_ROOM]
+    return defaultScope
+  }
 
-  const setUpMode = (mode) => {
-    switch (mode) {
-      case 1:
-        setCurrFilters({
+  const buildFilter = (scope, name) => {
+    return name
+      ? {
           type: {
-            $in: [channelTypes.ACTIVITY_ROOM]
-          }
-        })
-        break
-      case 2:
-        setCurrFilters({
+            $in: scope
+          },
+          id: { $in: [name] }
+        }
+      : {
           type: {
-            $in: [channelTypes.CUSTOM_ROOM]
+            $in: scope
           }
-        })
-        break
-      default:
-        //All Chat Rooms
-        setCurrFilters(defaultFilters)
-        break
-    }
+        }
   }
 
   const handleSearch = async (e) => {
@@ -67,12 +64,7 @@ const RoomChannelListContainer = ({
 
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
-      setCurrFilters({
-        type: {
-          $in: [channelTypes.CUSTOM_ROOM]
-        }
-        //name: { $in: [value] }
-      })
+      setCurrFilters(buildFilter(currentScope, value))
     }, 300)
 
     if (value && value.length > 2) {
@@ -85,9 +77,8 @@ const RoomChannelListContainer = ({
   }
 
   const handleFilterModeChange = (mode) => {
-    //TODO: Debounce search
-    curMode = mode
-    setUpMode(mode)
+    currentScope = getScope(mode)
+    setCurrFilters(buildFilter(currentScope, null))
   }
 
   const handleRoomCreateClick = () => {
@@ -112,6 +103,7 @@ const RoomChannelListContainer = ({
               'Activity Rooms',
               'Custom Rooms'
             ]}
+            placeholder='Search by room name'
           />
           <div className={style.channelsListWrapper}>
             <Chat client={chatClient}>

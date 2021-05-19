@@ -1,10 +1,9 @@
 import { DateTime } from 'luxon'
 import { signIn, signUp } from '../Auth'
-import SupabaseClientBuilder from '../builders/SupabaseClientBuilder'
 
 export default class AttendeeRepository {
-  constructor(supabaseUrl, supabaseKey, user) {
-    this._client = SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
+  constructor(supabaseService, user) {
+    this._client = supabaseService
     this._sbUser = null
     if (user) {
       this._fetchExistingAttendeeUser(user).then((u) => (this._sbUser = u))
