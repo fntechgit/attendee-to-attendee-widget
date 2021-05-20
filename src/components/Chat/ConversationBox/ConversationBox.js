@@ -10,7 +10,8 @@ import {
   Window,
   withChatContext
 } from 'stream-chat-react'
-import CustomChannelHeader from '../CustomChannelHeader/CustomChannelHeader'
+import SimpleChannelHeader from '../CustomChannelHeader/SimpleChannelHeader'
+import CustomRoomChannelHeader from '../CustomChannelHeader/CustomRoomChannelHeader'
 import StreamChatService from '../../../lib/services/StreamChatService'
 import { channelTypes } from '../../../models/channel_types'
 
@@ -71,6 +72,29 @@ const ConversationBox = ({
     onClose()
   }
 
+  const buildChannelHeader = () => {
+    if (
+      activeChannel.type === channelTypes.QA_ROOM ||
+      activeChannel.type === channelTypes.HELP_ROOM
+    ) {
+      return (
+        <SimpleChannelHeader
+          me={chatClient.user}
+          channel={channel}
+          onClose={handleClose}
+        />
+      )
+    }
+    return (
+      <CustomRoomChannelHeader
+        me={chatClient.user}
+        channel={channel}
+        onClose={handleClose}
+        onMenuSelected={onChatMenuSelected}
+      />
+    )
+  }
+
   if (isLoading) {
     return (
       <div className={`${style.conversation} ${style[openDir]}`}>
@@ -89,12 +113,7 @@ const ConversationBox = ({
         >
           <Channel channel={channel}>
             <Window hideOnThread={true}>
-              <CustomChannelHeader
-                me={chatClient.user}
-                channel={channel}
-                onClose={handleClose}
-                onMenuSelected={onChatMenuSelected}
-              />
+              {buildChannelHeader()}
               <MessageList client={chatClient} closeThread={console.log} />
               <MessageInput focus />
             </Window>

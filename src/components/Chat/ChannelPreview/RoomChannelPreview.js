@@ -1,5 +1,6 @@
 import React from 'react'
 import { withChatContext } from 'stream-chat-react'
+import { channelTypes } from '../../../models/channel_types'
 
 import styles from './style.module.scss'
 
@@ -21,12 +22,13 @@ const RoomChannelPreview = ({ channel, setActiveChannel, onItemClick }) => {
               <div className={styles.status} />
             </div>
             <div className={styles.info}>
-              <div>
-                <div className={styles.name}>{channel.data.name}</div>
-              </div>
-              <div className={styles.participants}>
-                {channel.data.member_count} Participants
-              </div>
+              <div className={styles.name}>{channel.data.name}</div>
+              {channel.type !== channelTypes.QA_ROOM &&
+                channel.type !== channelTypes.HELP_ROOM && (
+                  <div className={styles.participants}>
+                    {channel.data.member_count} Participants
+                  </div>
+                )}
             </div>
           </div>
           {channel.state.unreadCount > 0 && (

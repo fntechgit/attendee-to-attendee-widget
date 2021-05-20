@@ -51,7 +51,7 @@ const RoomsManager = (props) => {
 
   return (
     <div className={`${style.roomsManager}`}>
-      <span className='icon-text'>
+      <span className={`${style.header} icon-text`}>
         <span className={`${style.backBtn} icon`} onClick={onBack}>
           <i className='fa fa-arrow-left'></i>
         </span>

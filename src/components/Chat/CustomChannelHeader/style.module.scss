@@ -1,21 +1,36 @@
-.header {
+.simpleHeader,
+.customRoomHeader {
+  display: flex;
   background-color: white;
-  box-shadow: 0 7px 9px 0 rgba(0, 0, 0, 0.03), 0 1px 0 0 rgba(0, 0, 0, 0.03);
-  height: 50px;
   z-index: 1;
   padding: 10px;
 
-  .name {
-    margin: 0 10px;
-    font-size: 16px;
+  .textWrapper {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    .title {
+      font-size: 22px;
+    }
+    .subtitle {
+      font-size: 14px;
+    }
   }
-
-  .icon {
-    height: 20px;
-    width: 20px;
-    display: inline-block;
+  .controls {
+    margin-left: auto;
+    top: 3px;
+    .close {
+      height: 20px;
+      width: 20px;
+      display: inline-block;
+      margin-left: 10px;
+      cursor: pointer;
+    }
   }
+}
 
+.simpleHeader {
+  height: 60px;
   .picWrapper {
     margin-top: -20px;
     height: 55px;
@@ -31,12 +46,21 @@
       background-size: cover;
     }
   }
+}
+.customRoomHeader {
+  height: 80px;
+  .picWrapper {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    float: left;
+    background-color: #eee;
 
-  .close,
-  .more {
-    float: right;
-    position: relative;
-    top: 3px;
-    margin-left: 10px;
+    .pic {
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
+      background-size: cover;
+    }
   }
 }
