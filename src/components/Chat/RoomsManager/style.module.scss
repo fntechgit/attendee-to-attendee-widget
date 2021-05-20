@@ -1,10 +1,17 @@
 .roomsManager {
+  $base-color: #555;
+  color: $base-color;
   padding: 0 5px 0 5px;
   .title {
+    color: $base-color;
     margin-bottom: 25px;
   }
-  .field label {
-    margin-bottom: 15px;
+  .fieldTitle {
+    color: $base-color;
+    margin: 25px 0 25px 0;
+  }
+  .backBtn {
+    cursor: pointer;
   }
   .selectedAttendees {
     width: 100%;
@@ -14,8 +21,5 @@
     overflow-y: auto;
     margin-top: 15px;
     margin-bottom: 25px;
-  }
-  a {
-    text-decoration: none;
   }
 }

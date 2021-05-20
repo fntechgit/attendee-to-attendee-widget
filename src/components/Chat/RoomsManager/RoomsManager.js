@@ -52,16 +52,14 @@ const RoomsManager = (props) => {
   return (
     <div className={`${style.roomsManager}`}>
       <span className='icon-text'>
-        <a className='icon has-text-black' onClick={onBack}>
+        <span className={`${style.backBtn} icon`} onClick={onBack}>
           <i className='fa fa-arrow-left'></i>
-        </a>
-        <label className={`${style.title} label is-large has-text-black`}>
-          New Chat Room
-        </label>
+        </span>
+        <label className={`${style.title} label is-large`}>New Chat Room</label>
       </span>
       <Form>
         <div className={`${style.field} field`}>
-          <label className='label is-large has-text-black'>Name</label>
+          <label className={`${style.fieldTitle} label is-large`}>Name</label>
           <div className='control'>
             <Field
               className='input is-large'
@@ -76,7 +74,9 @@ const RoomsManager = (props) => {
           </div>
         </div>
         <div className={`${style.field} field`}>
-          <label className='label is-large has-text-black'>Description</label>
+          <label className={`${style.fieldTitle} label is-large`}>
+            Description
+          </label>
           <div className='control'>
             <Field
               className='input is-large'
@@ -91,7 +91,9 @@ const RoomsManager = (props) => {
           </div>
         </div>
         <div className={`${style.field} field`}>
-          <label className='label is-large has-text-black'>Members</label>
+          <label className={`${style.fieldTitle} label is-large`}>
+            Members
+          </label>
           <Autocomplete
             name='members'
             placeholder='Search by Name'
@@ -113,8 +115,10 @@ const RoomsManager = (props) => {
               />
             ))}
         </div>
-        <div className={`${style.field} field`}>
-          <label className='label is-large has-text-black'>Chat image</label>
+        <div className='field'>
+          <label className={`${style.fieldTitle} label is-large`}>
+            Chat image
+          </label>
           <div className='file is-large has-name'>
             <label className='file-label'>
               <input

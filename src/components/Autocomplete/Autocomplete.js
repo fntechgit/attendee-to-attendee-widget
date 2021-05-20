@@ -109,7 +109,11 @@ class Autocomplete extends React.Component {
     const { activeIndex, matches, query } = this.state
 
     return (
-      <div className={`dropdown ${matches.length > 0 ? 'is-active' : ''}`}>
+      <div
+        className={`${style.dropdown} dropdown ${
+          matches.length > 0 ? 'is-active' : ''
+        }`}
+      >
         <div className='dropdown-trigger'>
           <div className='control has-icons-right is-expanded'>
             <input
