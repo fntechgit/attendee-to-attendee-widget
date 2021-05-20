@@ -50,16 +50,17 @@ const RoomsManager = (props) => {
   }
 
   return (
-    <div className='box'>
+    <div className={`${style.roomsManager}`}>
       <span className='icon-text'>
-        <span className='icon has-text-black' onClick={onBack}>
+        <a className='icon has-text-black' onClick={onBack}>
           <i className='fa fa-arrow-left'></i>
-        </span>
-        <label className='label is-large has-text-black'>New Chat Room</label>
+        </a>
+        <label className={`${style.title} label is-large has-text-black`}>
+          New Chat Room
+        </label>
       </span>
-      <hr />
       <Form>
-        <div className='field'>
+        <div className={`${style.field} field`}>
           <label className='label is-large has-text-black'>Name</label>
           <div className='control'>
             <Field
@@ -74,7 +75,7 @@ const RoomsManager = (props) => {
             )}
           </div>
         </div>
-        <div className='field'>
+        <div className={`${style.field} field`}>
           <label className='label is-large has-text-black'>Description</label>
           <div className='control'>
             <Field
@@ -89,16 +90,14 @@ const RoomsManager = (props) => {
             )}
           </div>
         </div>
-        <div className='field'>
+        <div className={`${style.field} field`}>
           <label className='label is-large has-text-black'>Members</label>
-          <div className='control'>
-            <Autocomplete
-              name='members'
-              placeholder='Search by Name'
-              dataSource={handleSearch}
-              onSelect={handleSelect}
-            />
-          </div>
+          <Autocomplete
+            name='members'
+            placeholder='Search by Name'
+            dataSource={handleSearch}
+            onSelect={handleSelect}
+          />
         </div>
         <div className={style.selectedAttendees}>
           {selectedAttendees &&
@@ -114,7 +113,7 @@ const RoomsManager = (props) => {
               />
             ))}
         </div>
-        <div className='field'>
+        <div className={`${style.field} field`}>
           <label className='label is-large has-text-black'>Chat image</label>
           <div className='file is-large has-name'>
             <label className='file-label'>

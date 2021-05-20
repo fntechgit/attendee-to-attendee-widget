@@ -15,7 +15,7 @@ const CustomChannelHeader = (props) => {
 
   const handleMenuSelection = (index) => {
     setMenuOpen(false)
-    if (onMenuSelected) onMenuSelected(index)
+    if (onMenuSelected) onMenuSelected(index, channel)
   }
 
   const renderMoreMenu = () => (

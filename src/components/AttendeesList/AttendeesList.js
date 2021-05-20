@@ -10,7 +10,6 @@ import style from './style.module.scss'
 let urlAccessesPageIx = 0
 let showAccessesPageIx = 0
 const pageSize = 6
-let firstNewsUpdate = true
 
 export const scopes = {
   PAGE: 'page',
@@ -42,11 +41,6 @@ const AttendeesList = (props) => {
 
   // handle real-time updates
   useEffect(() => {
-    if (firstNewsUpdate) {
-      firstNewsUpdate = false
-      return
-    }
-
     if (currScope === scopes.PAGE) {
       if (attendeesList.length === 0) {
         updateAttendeesList(
@@ -108,29 +102,25 @@ const AttendeesList = (props) => {
       if (currScope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByAttendeeFullName(value, summitId, url)
+          ? await accessRepo.findByAttendeeNameOrCompany(value, summitId, url)
           : await accessRepo.fetchCurrentPageAttendees(
               url,
               urlAccessesPageIx,
               pageSize
             )
-        if (res && res.length > 0) {
-          setAttendeesList([...res])
-        }
+        setAttendeesList(res && res.length > 0 ? [...res] : [])
       } else {
         showAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByAttendeeFullName(value, summitId, '')
+          ? await accessRepo.findByAttendeeNameOrCompany(value, summitId, '')
           : await accessRepo.fetchCurrentShowAttendees(
               summitId,
               showAccessesPageIx,
               pageSize
             )
-        if (res && res.length > 0) {
-          setAttendeesList([...res])
-        }
+        setAttendeesList(res && res.length > 0 ? [...res] : [])
       }
-    }, 150)
+    }, 300)
     handleSearchDebounce()
   }
 

@@ -26,11 +26,12 @@ const DMChannelListContainer = ({
 
   const handleSearch = async (e) => {
     const { value } = e.target
-
+    if (!value) return
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
       //Fetch attendee info for matched user names
       const res = await accessRepo.findByFullName(value)
+
       if (res && res.length > 0) {
         let channelIds = res.map((att) => `${user.id}-${att.idp_user_id}`)
         channelIds = [
@@ -39,17 +40,16 @@ const DMChannelListContainer = ({
         ]
         setCurrFilters({
           type: channelTypes.MESSAGING,
-          id: { $in: channelIds }
+          id: { $in: channelIds },
+          members: { $in: [user.id] }
         })
       }
     }, 300)
 
-    if (value && value.length > 2) {
-      handleSearchDebounce()
-    }
+    handleSearchDebounce()
   }
 
-  const handleSearchClear = async () => {
+  const handleSearchClear = () => {
     setCurrFilters(defaultFilters)
   }
 

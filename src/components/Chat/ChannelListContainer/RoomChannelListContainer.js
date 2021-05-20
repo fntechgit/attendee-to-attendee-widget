@@ -61,15 +61,13 @@ const RoomChannelListContainer = ({
 
   const handleSearch = async (e) => {
     const { value } = e.target
-
+    if (!value) return
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
       setCurrFilters(buildFilter(currentScope, value))
     }, 300)
 
-    if (value && value.length > 2) {
-      handleSearchDebounce()
-    }
+    handleSearchDebounce()
   }
 
   const handleSearchClear = async () => {

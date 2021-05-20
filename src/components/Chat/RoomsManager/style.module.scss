@@ -1,9 +1,21 @@
-.selectedAttendees {
-  width: 100%;
-  max-height: 100px;
-  display: flex;
-  flex-wrap: wrap;
-  overflow-y: auto;
-  margin-top: 15px;
-  margin-bottom: 15px;
+.roomsManager {
+  padding: 0 5px 0 5px;
+  .title {
+    margin-bottom: 25px;
+  }
+  .field label {
+    margin-bottom: 15px;
+  }
+  .selectedAttendees {
+    width: 100%;
+    max-height: 100px;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    margin-top: 15px;
+    margin-bottom: 25px;
+  }
+  a {
+    text-decoration: none;
+  }
 }

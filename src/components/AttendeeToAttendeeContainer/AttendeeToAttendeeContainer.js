@@ -10,6 +10,7 @@ import SupabaseClientBuilder from '../../lib/SupabaseClientBuilder'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
+import { copyToClipboard } from '../../utils/clipboard-helper'
 import { channelTypes } from '../../models/channel_types'
 
 import 'font-awesome/css/font-awesome.min.css'
@@ -104,13 +105,15 @@ const AttendeeToAttendeeContainer = (props) => {
     showChatWindow(null, channelTypes.HELP_ROOM)
   }
 
-  const handleChatMenuSelection = (index) => {
+  const handleChatMenuSelection = (index, channel) => {
     switch (index) {
       case 1:
         StreamChatService.removeMember(channel, me.id)
         break
       case 2:
-        console.log('INVITE LINK')
+        copyToClipboard(
+          `${window.location.href.split('?')[0]}?gotoroom=${channel.id}`
+        )
         break
       case 3:
         if (!qaChatOpened) {
@@ -123,13 +126,15 @@ const AttendeeToAttendeeContainer = (props) => {
   }
 
   const handleAttendeeClick = (att) => {
-    if (att.attendees.idp_user_id != user.idpUserId) {
+    if (att.attendees.idp_user_id != user.idpUserId && user.canChat) {
       showChatWindow(null, att.attendees.idp_user_id)
     }
   }
 
   const handleMessageClick = (channel) => {
-    showChatWindow(channel, null)
+    if (user.canChat) {
+      showChatWindow(channel, null)
+    }
   }
 
   const changeActiveTab = (tab) => {

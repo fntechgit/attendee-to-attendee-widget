@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import AttendeeRepository from './AttendeeRepository'
 
 export default class AccessRepository extends AttendeeRepository {
@@ -91,22 +92,98 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  async findByAttendeeFullName(filter, summitId, url) {
+  async fetchCurrentPageAttendees(
+    url,
+    pageIx = 0,
+    pageSize = 6,
+    ageMinutesBackward = 5
+  ) {
+    try {
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
+
+      const lowerIx = pageIx * pageSize
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
+      const { data, error } = await this._client
+        .from('accesses')
+        .select(`*, attendees(*)`)
+        .eq('current_url', url)
+        .eq('attendees.is_online', true)
+        .gt('updated_at', ageTreshold)
+        .order('updated_at', { ascending: false })
+        .range(lowerIx, upperIx)
+
+      if (error) throw new Error(error)
+      return data
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  async fetchCurrentShowAttendees(
+    summitId,
+    pageIx = 0,
+    pageSize = 6,
+    ageMinutesBackward = 5
+  ) {
+    try {
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
+      const lowerIx = pageIx * pageSize
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
+
+      const { data, error } = await this._client
+        .from('accesses')
+        .select(`*, attendees(*)`)
+        .eq('summit_id', summitId)
+        .eq('attendees.is_online', true)
+        .gt('updated_at', ageTreshold)
+        .order('updated_at', { ascending: false })
+        .range(lowerIx, upperIx)
+      if (error) throw new Error(error)
+      return data
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  async findByAttendeeNameOrCompany(filter, summitId, url) {
     try {
       const { scopeFieldName, scopeFieldVal } = url
         ? { scopeFieldName: 'current_url', scopeFieldVal: url }
         : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
 
-      const { data, error } = await this._client
+      const byNameRes = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
         .eq(scopeFieldName, scopeFieldVal)
         .eq('attendees.is_online', true)
         .ilike('attendees.full_name', `%${filter}%`)
-      if (error) throw new Error(error)
-      return data
+      if (byNameRes.error) throw new Error(byNameRes.error)
+
+      const byCompanyRes = await this._client
+        .from('accesses')
+        .select(`*, attendees(*)`)
+        .eq(scopeFieldName, scopeFieldVal)
+        .eq('attendees.is_online', true)
+        .ilike('attendees.company', `%${filter}%`)
+      if (byCompanyRes.error) throw new Error(byCompanyRes.error)
+
+      const attByName = byNameRes.data.filter((el) => el.attendees)
+      const attByCompany = byCompanyRes.data.filter((el) => el.attendees)
+
+      const seen = new Set()
+      const res = [...attByName, ...attByCompany].filter((el) => {
+        const duplicate = seen.has(el.id)
+        seen.add(el.id)
+        return !duplicate
+      })
+      return res
     } catch (error) {
       console.log('error', error)
+      return []
     }
   }
 

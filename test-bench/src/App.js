@@ -41,7 +41,8 @@ const chatProps = {
   title: '',
   showHelp: true,
   showQA: true,
-  hideUsers: false
+  hideUsers: false,
+  activityName: 'dev-keynote' //Widget will create this activity room or add members to it
 }
 
 const widgetProps = {
@@ -60,8 +61,8 @@ const widgetProps = {
       wechatUser: ''
     },
     badgeFeatures: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
-    bio: '# This is my bio, *in MD*!'
-    //bio: '<p><span>This is my bio in HTML</span></p>'
+    bio: '# This is my bio, *in MD*!', //bio: '<p><span>This is my bio in HTML</span></p>'
+    canChat: true //based on badge features
   },
   summitId: 17,
   height: 500,
@@ -96,6 +97,9 @@ const App = () => {
   //   }
   // }
 
+  //From INVITE LINK
+  const openChatRoom = (roomId) => {}
+
   const startOneToOneChat = (partnerId) => {
     chatRef.current.startOneToOneChat(partnerId)
   }
@@ -105,7 +109,7 @@ const App = () => {
   }
 
   const token1 =
-    '2AuzBAGBr1rHenL6xRv8CQiuq1DzRNDTtO8E-oEugwUvjGm2Af4ve9QT6bE-DjYBFNOCtfAf3VvvwcuFrXGi-Vry~Y_KFbqFbTLp6sJnpRRMKL72A0H-VLrqDHmDleDr'
+    '9Diu_Q9X_7J~75aCJf5JJotPpj1e~_UOIgW.JocdWQR069je2Fg2B_oBnHto4e8ria2APrLbdMIfJ0lteBtiQ3V-pja6W8ZHCmgkEx2eu6JlogdQ~3sFqKgj6A6BVNDl'
   const token2 =
     'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
   const token3 =
@@ -146,7 +150,7 @@ const App = () => {
             <Link to='/a'>Track 2</Link>
             <button onClick={handleSignOutClick}>SignOut</button> */}
             <AttendeeToAttendeeContainer title='Attendance' {...widgetProps} />
-            <Tracker {...widgetProps} ref={trackerRef} />
+            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
           </div>
         </Route>
         <Route exact path='/untracked'>
