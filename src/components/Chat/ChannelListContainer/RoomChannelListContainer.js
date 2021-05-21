@@ -6,6 +6,7 @@ import RoomsManager from '../RoomsManager/RoomsManager'
 import ChannelListContainer from './ChannelListContainer'
 import StreamChatService from '../../../lib/services/StreamChatService'
 import { channelTypes } from '../../../models/channel_types'
+import { adminRole } from '../../../models/local_roles'
 
 import style from './style.module.scss'
 
@@ -29,6 +30,8 @@ const RoomChannelListContainer = ({
   ]
 
   let currentScope = defaultScope
+
+  const allowRoomsManagement = user.role === adminRole
 
   const defaultFilters = {
     type: {
@@ -84,8 +87,11 @@ const RoomChannelListContainer = ({
   }
 
   const handleBackClick = () => {
-    console.log('handleBackClick')
     setShowRoomsManager(false)
+  }
+
+  const handleRoomDelete = async (channel) => {
+    await StreamChatService.deleteChannel(chatClient, channel.id)
   }
 
   return (
@@ -112,31 +118,23 @@ const RoomChannelListContainer = ({
                 summitId={summitId}
                 chatClient={chatClient}
                 onItemClick={onItemClick}
+                onDelete={handleRoomDelete}
               />
             </Chat>
           </div>
-          <div className='has-text-centered mt-2'>
-            <button className='button is-large' onClick={handleRoomCreateClick}>
-              <span className='icon'>
-                <i className='fa fa-plus'></i>
-              </span>
-              <span>New Custom Room</span>
-            </button>
-          </div>
-
-          <div className='has-text-centered mt-2'>
-            <button
-              className='button is-primary is-large is-fullwidth'
-              onClick={async () => {
-                await StreamChatService.deleteChannel(chatClient, 'test')
-                await StreamChatService.deleteChannel(chatClient, 'test2')
-                await StreamChatService.deleteChannel(chatClient, '13-qa')
-                await StreamChatService.deleteChannel(chatClient, '13-help')
-              }}
-            >
-              Remove all rooms
-            </button>
-          </div>
+          {allowRoomsManagement && (
+            <div className='has-text-centered mt-2'>
+              <button
+                className='button is-large'
+                onClick={handleRoomCreateClick}
+              >
+                <span className='icon'>
+                  <i className='fa fa-plus'></i>
+                </span>
+                <span>New Custom Room</span>
+              </button>
+            </div>
+          )}
         </div>
       )}
       {showRoomsManager && (

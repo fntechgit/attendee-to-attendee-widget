@@ -50,6 +50,7 @@ const widgetProps = {
     id: null,
     fullName: '',
     email: '',
+    role: 'admin',
     company: '',
     title: '',
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
@@ -109,7 +110,7 @@ const App = () => {
   }
 
   const token1 =
-    'r2_xlOK8CGzSIqVhMR-lfjLUuFOMZhyq_P_CCVSMv7DNrv~xAR_ndscFolOcqtk8OvpqGJyrQ1obkXiPKeo~vNjonHQbVo-VPZjqOmU1yB-jTqH-zK88vlCJi.w7nKh7'
+    'W.HIaeH1cFMWM35Y_CN5Tx.BXQZJVxwAkEhrT5kP1U0Aq9r6eYwpGa.bpilPHifCsBf36FcS~zsE9tAeJT6tAzMlZN~PObS.ygV8CwZQ-zSA-AingoLbe1QLQur3R-b0'
   const token2 =
     'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
   const token3 =

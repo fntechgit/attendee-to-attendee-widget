@@ -25,6 +25,7 @@ const ChannelListContainer = ({
   user,
   chatClient,
   onItemClick,
+  onDelete,
   selectedChannelType,
   filters
 }) => {
@@ -56,7 +57,11 @@ const ChannelListContainer = ({
               onItemClick={onItemClick}
             />
           ) : (
-            <RoomChannelPreview {...previewProps} onItemClick={onItemClick} />
+            <RoomChannelPreview
+              {...previewProps}
+              onItemClick={onItemClick}
+              onDelete={onDelete}
+            />
           )
         }
         EmptyStateIndicator={() => (

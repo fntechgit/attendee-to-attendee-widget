@@ -92,8 +92,6 @@ export default class StreamChatService {
   }
 
   static async createSupportChannel(chatClient, user, type) {
-    console.log('viene', type)
-
     const roles = type === channelTypes.QA_ROOM ? qaRoles : helpRoles
     const supportType = type === channelTypes.QA_ROOM ? 'qa' : 'help'
     const displaySupportType =
@@ -109,7 +107,6 @@ export default class StreamChatService {
       const imageURL = supportUsers.users[0].image
 
       const channel = chatClient.channel(type, `${user.id}-${supportType}`, {
-        //name: `${user.id}-${supportType}`,
         name: displaySupportType,
         members: channelUsers,
         image: imageURL,

@@ -56,4 +56,9 @@ export default class ChatRepository {
       console.log('error', error)
     }
   }
+
+  async setUpActivityRoom(name, user) {
+    //create channel
+    //add user as a member
+  }
 }
