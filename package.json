@@ -61,6 +61,7 @@
     "public-ip": "^4.0.3",
     "react-infinite-scroll-component": "^6.0.0",
     "react-markdown": "^6.0.2",
+    "react-tooltip": "^4.2.19",
     "rehype-raw": "^5.1.0",
     "stream-chat": "2.7.4",
     "stream-chat-react": "3.2.2",

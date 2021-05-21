@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
+import ReactTooltip from 'react-tooltip'
 import { channelTypes } from '../../../models/channel_types'
 
 import style from './style.module.scss'
@@ -20,7 +21,7 @@ const CustomRoomChannelHeader = (props) => {
   const renderMoreMenu = () => (
     <div className={`dropdown is-right ${isMenuOpen ? 'is-active' : ''}`}>
       <div className='dropdown-trigger'>
-        <a onClick={toggleMenu}>
+        <a onClick={toggleMenu} data-tip='Chat Room Options'>
           <div className={style.icon}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -60,6 +61,7 @@ const CustomRoomChannelHeader = (props) => {
           </a>
         </div>
       </div>
+      <ReactTooltip place='bottom' effect='solid' />
     </div>
   )
 
@@ -68,7 +70,8 @@ const CustomRoomChannelHeader = (props) => {
   )
 
   let headerImage = channel.data.image
-  let headerTitle = channel.data.name
+  let headerTitle =
+    'Texto realmente largo que necesito salte a la siguiente linea' //channel.data.name
   let headerSubTitle = `${channel.data.member_count} participants`
 
   if (channel.type === channelTypes.MESSAGING && member) {
