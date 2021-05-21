@@ -60,7 +60,7 @@ const RoomsManager = (props) => {
       <Form>
         <div className={`${style.field} field`}>
           <label className={`${style.fieldTitle} label is-large`}>Name</label>
-          <div className='control'>
+          <div className={`${style.fieldInput} control`}>
             <Field
               className='input is-large'
               type='text'
@@ -77,7 +77,7 @@ const RoomsManager = (props) => {
           <label className={`${style.fieldTitle} label is-large`}>
             Description
           </label>
-          <div className='control'>
+          <div className={`${style.fieldInput} control`}>
             <Field
               className='input is-large'
               type='text'
@@ -94,12 +94,14 @@ const RoomsManager = (props) => {
           <label className={`${style.fieldTitle} label is-large`}>
             Members
           </label>
-          <Autocomplete
-            name='members'
-            placeholder='Search by Name'
-            dataSource={handleSearch}
-            onSelect={handleSelect}
-          />
+          <div className={`${style.fieldInput}`}>
+            <Autocomplete
+              name='members'
+              placeholder='Search by Name'
+              dataSource={handleSearch}
+              onSelect={handleSelect}
+            />
+          </div>
         </div>
         <div className={style.selectedAttendees}>
           {selectedAttendees &&
@@ -119,7 +121,7 @@ const RoomsManager = (props) => {
           <label className={`${style.fieldTitle} label is-large`}>
             Chat image
           </label>
-          <div className='file is-large has-name'>
+          <div className={`${style.fieldInput} file is-large has-name`}>
             <label className='file-label'>
               <input
                 className='file-input'

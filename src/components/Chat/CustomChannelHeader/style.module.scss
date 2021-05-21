@@ -8,13 +8,17 @@
   .textWrapper {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     margin-left: 20px;
     max-width: 200px;
     .title {
-      font-size: 20px;
-    }
-    .subtitle {
-      font-size: 14px;
+      font-size: 19px;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* number of lines to show */
+      -webkit-box-orient: vertical;
     }
   }
   .controls {
@@ -32,6 +36,9 @@
 
 .simpleHeader {
   height: 60px;
+  .textWrapper {
+    margin-top: -20px;
+  }
   .picWrapper {
     margin-top: -20px;
     height: 55px;
@@ -49,7 +56,14 @@
   }
 }
 .customRoomHeader {
-  height: 80px;
+  height: 90px;
+  .textWrapper {
+    .subtitle {
+      margin-top: 2px;
+      font-size: 14px;
+      color: #777;
+    }
+  }
   .picWrapper {
     height: 60px;
     width: 60px;

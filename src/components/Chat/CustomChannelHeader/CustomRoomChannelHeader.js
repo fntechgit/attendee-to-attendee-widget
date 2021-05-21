@@ -70,8 +70,7 @@ const CustomRoomChannelHeader = (props) => {
   )
 
   let headerImage = channel.data.image
-  let headerTitle =
-    'Texto realmente largo que necesito salte a la siguiente linea' //channel.data.name
+  let headerTitle = channel.data.name
   let headerSubTitle = `${channel.data.member_count} participants`
 
   if (channel.type === channelTypes.MESSAGING && member) {

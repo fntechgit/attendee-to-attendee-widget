@@ -74,9 +74,11 @@ const ConversationBox = ({
 
   const buildChannelHeader = () => {
     const channelType = activeChannel ? activeChannel.type : partnerId
+
     if (
       channelType === channelTypes.QA_ROOM ||
-      channelType === channelTypes.HELP_ROOM
+      channelType === channelTypes.HELP_ROOM ||
+      channelType === channelTypes.MESSAGING
     ) {
       return (
         <SimpleChannelHeader

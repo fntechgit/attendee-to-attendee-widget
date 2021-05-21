@@ -19,6 +19,10 @@
   background-color: #fff;
 }
 
+:global(.str-chat__channel-list-messenger) {
+  background-color: #fff;
+}
+
 @media (max-width: 960px) {
   :global(.str-chat-channel-list.messaging) {
     position: relative;

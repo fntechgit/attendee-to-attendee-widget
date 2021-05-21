@@ -10,7 +10,10 @@
   }
   .fieldTitle {
     color: $base-color;
-    margin: 25px 0 25px 0;
+    margin-top: 25px;
+  }
+  .fieldInput {
+    margin-top: 25px;
   }
   .backBtn {
     cursor: pointer;
