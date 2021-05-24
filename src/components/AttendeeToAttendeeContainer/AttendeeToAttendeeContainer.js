@@ -10,7 +10,7 @@ import SupabaseClientBuilder from '../../lib/SupabaseClientBuilder'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
-import { copyToClipboard } from '../../utils/clipboard-helper'
+import { copyToClipboard } from '../../utils/clipboardHelper'
 import { channelTypes } from '../../models/channel_types'
 
 import 'font-awesome/css/font-awesome.min.css'
@@ -41,6 +41,7 @@ const AttendeeToAttendeeContainer = (props) => {
     user,
     summitId,
     openDir,
+    activityName,
     getAccessToken
   } = props
   props = { ...props, url: window.location.href.split('?')[0] }
@@ -80,6 +81,8 @@ const AttendeeToAttendeeContainer = (props) => {
       //   (res) => console.log(res),
       //   (err, res) => console.log(err)
       // )
+
+      await chatRepo.setUpActivityRoom(activityName, user)
     }
 
     const cleanUpChat = async () => {
@@ -93,6 +96,7 @@ const AttendeeToAttendeeContainer = (props) => {
   const showChatWindow = (preloadedChannel, counterpart) => {
     if (chatClient) {
       if (chatOpened) setChatOpened(false)
+      if (qaChatOpened) setQAChatOpened(false)
       activeChannel = preloadedChannel
       chatCounterpart = counterpart
       setTimeout(() => {
@@ -108,7 +112,7 @@ const AttendeeToAttendeeContainer = (props) => {
   const handleChatMenuSelection = (index, channel) => {
     switch (index) {
       case 1:
-        StreamChatService.removeMember(channel, me.id)
+        chatRepo.removeMember(channel, me.id)
         break
       case 2:
         copyToClipboard(
@@ -214,6 +218,7 @@ const AttendeeToAttendeeContainer = (props) => {
       {chatClient && chatOpened && user && (
         <ConversationBox
           chatClient={chatClient}
+          chatRepo={chatRepo}
           activeChannel={activeChannel}
           user={user}
           partnerId={chatCounterpart}
@@ -227,6 +232,7 @@ const AttendeeToAttendeeContainer = (props) => {
       {chatClient && chatOpened && qaChatOpened && user && (
         <ConversationBox
           chatClient={chatClient}
+          chatRepo={chatRepo}
           user={user}
           partnerId={channelTypes.QA_ROOM}
           openDir='parentLeft'

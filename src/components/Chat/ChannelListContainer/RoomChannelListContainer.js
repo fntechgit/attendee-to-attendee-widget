@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce'
 import { SearchBar } from '../../SearchBar/SearchBar'
 import RoomsManager from '../RoomsManager/RoomsManager'
 import ChannelListContainer from './ChannelListContainer'
-import StreamChatService from '../../../lib/services/StreamChatService'
+import { nameToId } from '../../../utils/stringHelper'
 import { channelTypes } from '../../../models/channel_types'
 import { adminRole } from '../../../models/local_roles'
 
@@ -47,13 +47,13 @@ const RoomChannelListContainer = ({
     return defaultScope
   }
 
-  const buildFilter = (scope, name) => {
-    return name
+  const buildFilter = (scope, id) => {
+    return id
       ? {
           type: {
             $in: scope
           },
-          id: { $in: [name] }
+          id: { $in: [id] }
         }
       : {
           type: {
@@ -64,10 +64,11 @@ const RoomChannelListContainer = ({
 
   const handleSearch = async (e) => {
     const { value } = e.target
-    if (!value) return
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
-      setCurrFilters(buildFilter(currentScope, value))
+      const roomId = nameToId(value)
+      console.log('roomId', roomId)
+      setCurrFilters(value ? buildFilter(currentScope, roomId) : defaultFilters)
     }, 300)
 
     handleSearchDebounce()
@@ -91,7 +92,7 @@ const RoomChannelListContainer = ({
   }
 
   const handleRoomDelete = async (channel) => {
-    await StreamChatService.deleteChannel(chatClient, channel.id)
+    await chatRepo.deleteChannel(channel.id)
   }
 
   return (

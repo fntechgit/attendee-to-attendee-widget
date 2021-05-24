@@ -3,17 +3,16 @@ import { withFormik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Autocomplete from '../../Autocomplete/Autocomplete'
 import AttendeePill from '../AttendeePill/AttendeePill'
-import StreamChatService from '../../../lib/services/StreamChatService'
 import { channelTypes } from '../../../models/channel_types'
 
 import style from './style.module.scss'
+import { nameToId } from '../../../utils/stringHelper'
 
 const RoomsManager = (props) => {
   const {
     onBack,
     accessRepo,
     chatRepo,
-    chatClient,
     errors,
     touched,
     isSubmitting,
@@ -157,18 +156,9 @@ const RoomsManager = (props) => {
 }
 
 export default withFormik({
-  mapPropsToValues({
-    chatRepo,
-    chatClient,
-    onBack,
-    roomName,
-    roomDesc,
-    roomImg,
-    members
-  }) {
+  mapPropsToValues({ chatRepo, onBack, roomName, roomDesc, roomImg, members }) {
     return {
       chatRepo: chatRepo,
-      chatClient: chatClient,
       onBack: onBack,
       roomName: roomName || '',
       roomDesc: roomDesc || '',
@@ -185,46 +175,35 @@ export default withFormik({
       .required('Room description is required')
   }),
   async handleSubmit(values, { resetForm, setErrors, setSubmitting }) {
-    const {
-      chatRepo,
-      chatClient,
-      onBack,
+    const { chatRepo, onBack, roomName, roomDesc, roomImg, members } = values
+
+    let roomPicURL
+
+    const roomId = nameToId(value)
+
+    if (roomImg) {
+      const res = await chatRepo.uploadRoomImage(
+        `${roomId}_${roomImg.name}`,
+        roomImg
+      )
+      roomPicURL = res?.signedURL
+    }
+
+    const memberIds = members.map((m) => `${m.value}`)
+
+    //Create channel
+    const channel = await chatRepo.createChannel(
+      channelTypes.CUSTOM_ROOM,
       roomName,
       roomDesc,
-      roomImg,
-      members
-    } = values
-
-    if (!chatClient) {
+      memberIds,
+      roomPicURL
+    )
+    if (!channel) {
       setErrors({ globalError: 'The room cannot be created right now' })
     } else {
-      let roomPicURL
-
-      if (roomImg) {
-        const res = await chatRepo.uploadRoomImage(
-          `${roomName}_${roomImg.name}`,
-          roomImg
-        )
-        roomPicURL = res?.signedURL
-      }
-
-      const memberIds = members.map((m) => `${m.value}`)
-
-      //Create channel
-      const channel = await StreamChatService.createChannel(
-        chatClient,
-        channelTypes.CUSTOM_ROOM,
-        roomName,
-        roomDesc,
-        memberIds,
-        roomPicURL
-      )
-      if (!channel) {
-        setErrors({ globalError: 'The room cannot be created right now' })
-      } else {
-        resetForm()
-        onBack()
-      }
+      resetForm()
+      onBack()
     }
     setSubmitting(false)
   }

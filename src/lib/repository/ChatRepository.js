@@ -1,3 +1,5 @@
+import { nameToId } from '../../utils/stringHelper'
+
 export default class ChatRepository {
   constructor(supabaseService, streamChatService, chatAPIService) {
     this._supabaseService = supabaseService
@@ -57,8 +59,49 @@ export default class ChatRepository {
     }
   }
 
+  async createSupportChannel(user, partnerId) {
+    await this._streamChatService(user, partnerId)
+  }
+
+  async createChannel(type, name, description, members, image) {
+    const id = nameToId(name)
+    return this._streamChatService.createChannel(
+      type,
+      id,
+      name,
+      description,
+      members,
+      image
+    )
+  }
+
+  async getChannel(type, user, partnerId) {
+    await this._streamChatService.getChannel(type, user, partnerId)
+  }
+
+  async deleteChannel(id) {
+    await this._streamChatService.deleteChannel(id)
+  }
+
+  async removeMember(channel, memberId) {
+    await this._streamChatService.removeMember(channel, memberId)
+  }
+
   async setUpActivityRoom(name, user) {
     //create channel
     //add user as a member
+    //Get default image
+    const id = nameToId(name)
+
+    console.log('setUpActivityRoom', name, user)
+
+    // await this._streamChatService.createChannel(
+    //   type,
+    //   id,
+    //   name,
+    //   description,
+    //   members,
+    //   image
+    // )
   }
 }

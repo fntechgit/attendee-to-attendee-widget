@@ -41,7 +41,7 @@ export default class StreamChatService {
     })
   }
 
-  getClient = () => {
+  getClient() {
     const streamServerInfo = JSON.parse(localStorage.getItem(this.flag))
 
     this.chatClient.setUser(
@@ -56,33 +56,26 @@ export default class StreamChatService {
     return { chatClient: this.chatClient, user: { ...streamServerInfo } }
   }
 
-  static async getChannel(chatClient, type, user, partnerId) {
+  async getChannel(type, user, partnerId) {
     const filter = {
       type: type,
       id: { $in: [`${user.id}-${partnerId}`, `${partnerId}-${user.id}`] }
     }
-    const foundChannels = await chatClient.queryChannels(filter, {}, {})
+    const foundChannels = await this.chatClient.queryChannels(filter, {}, {})
     if (foundChannels.length > 0) {
       return foundChannels[0]
     }
     return null
   }
 
-  static async getChannelsOfType(chatClient, type) {
+  async getChannelsOfType(chatClient, type) {
     if (chatClient)
       return await chatClient.queryChannels({ type: type }, {}, {})
     return null
   }
 
-  static async createChannel(
-    chatClient,
-    type,
-    name,
-    description,
-    members,
-    image
-  ) {
-    const channel = chatClient.channel(type, name, {
+  async createChannel(type, id, name, description, members, image) {
+    const channel = this.chatClient.channel(type, id, {
       name: name,
       image: image,
       members: members
@@ -97,13 +90,13 @@ export default class StreamChatService {
     return channel
   }
 
-  static async createSupportChannel(chatClient, user, type) {
+  async createSupportChannel(user, type) {
     const roles = type === channelTypes.QA_ROOM ? qaRoles : helpRoles
     const supportType = type === channelTypes.QA_ROOM ? 'qa' : 'help'
     const displaySupportType =
       type === channelTypes.QA_ROOM ? 'Q & A' : 'Help Desk'
 
-    const supportUsers = await chatClient.queryUsers({
+    const supportUsers = await this.chatClient.queryUsers({
       local_role: { $in: roles }
     })
 
@@ -112,12 +105,16 @@ export default class StreamChatService {
       channelUsers.push(user.id)
       const imageURL = supportUsers.users[0].image
 
-      const channel = chatClient.channel(type, `${user.id}-${supportType}`, {
-        name: displaySupportType,
-        members: channelUsers,
-        image: imageURL,
-        supporttype: supportType
-      })
+      const channel = this.chatClient.channel(
+        type,
+        `${user.id}-${supportType}`,
+        {
+          name: displaySupportType,
+          members: channelUsers,
+          image: imageURL,
+          supporttype: supportType
+        }
+      )
 
       const response = await channel.create()
 
@@ -143,16 +140,16 @@ export default class StreamChatService {
     return null
   }
 
-  static async deleteChannel(chatClient, id) {
+  async deleteChannel(id) {
     // const filter = { type: channelTypes.CUSTOM_ROOM, id: id }
     const filter = { id: id }
-    const channels = await chatClient.queryChannels(filter, {}, {})
+    const channels = await this.chatClient.queryChannels(filter, {}, {})
     if (channels && channels.length > 0) {
       await channels[0].delete()
     }
   }
 
-  static async removeMember(channel, memberId) {
+  async removeMember(channel, memberId) {
     if (channel) {
       await channel.removeMembers([memberId])
       const remainingMembers = await channel.queryMembers({})
