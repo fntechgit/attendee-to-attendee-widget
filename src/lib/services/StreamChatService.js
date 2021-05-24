@@ -68,6 +68,12 @@ export default class StreamChatService {
     return null
   }
 
+  static async getChannelsOfType(chatClient, type) {
+    if (chatClient)
+      return await chatClient.queryChannels({ type: type }, {}, {})
+    return null
+  }
+
   static async createChannel(
     chatClient,
     type,

@@ -59,8 +59,9 @@ const DMChannelListContainer = ({
       <div className={style.channelsListWrapper}>
         <Chat client={chatClient}>
           <ChannelListContainer
-            selectedChannelType={channelTypes.MESSAGING}
             filters={currFilters}
+            sort={{ has_unread: -1 }}
+            options={{ watch: true, limit: 20 }}
             user={user}
             summitId={summitId}
             chatClient={chatClient}

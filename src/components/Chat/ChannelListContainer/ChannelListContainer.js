@@ -10,8 +10,8 @@ import { channelTypes } from '../../../models/channel_types'
 
 import style from './style.module.scss'
 
-const CustomEmptyStateIndicator = (selectedChannelType) => {
-  if (selectedChannelType !== channelTypes.MESSAGING) {
+const CustomEmptyStateIndicator = (isRoomChatChannel) => {
+  if (isRoomChatChannel) {
     return <div />
   }
   return <div className={style.noChannels}>No active conversations</div>
@@ -26,18 +26,12 @@ const ChannelListContainer = ({
   chatClient,
   onItemClick,
   onDelete,
-  selectedChannelType,
-  filters
+  isRoomChatChannel,
+  filters,
+  sort,
+  options,
+  channelRenderFilterFn
 }) => {
-  const sort = {
-    //last_message_at: -1
-    has_unread: -1
-  }
-  const options = {
-    watch: true,
-    limit: 20
-  }
-
   if (!chatClient) {
     return <LoadingIndicator />
   }
@@ -51,26 +45,26 @@ const ChannelListContainer = ({
         sort={sort}
         List={ChannelListMessenger}
         Preview={(previewProps) =>
-          selectedChannelType === channelTypes.MESSAGING ? (
-            <DirectMessageChannelPreview
-              {...previewProps}
-              onItemClick={onItemClick}
-            />
-          ) : (
+          isRoomChatChannel ? (
             <RoomChannelPreview
               {...previewProps}
               onItemClick={onItemClick}
               onDelete={onDelete}
             />
+          ) : (
+            <DirectMessageChannelPreview
+              {...previewProps}
+              onItemClick={onItemClick}
+            />
           )
         }
         EmptyStateIndicator={() => (
-          <CustomEmptyStateIndicator
-            selectedChannelType={selectedChannelType}
-          />
+          <CustomEmptyStateIndicator isRoomChatChannel={isRoomChatChannel} />
         )}
         LoadingIndicator={CustomLoadingIndicator}
         setActiveChannelOnMount={false}
+        //allowNewMessagesFromUnfilteredChannels={false}
+        channelRenderFilterFn={channelRenderFilterFn}
         me={user}
       />
     </div>

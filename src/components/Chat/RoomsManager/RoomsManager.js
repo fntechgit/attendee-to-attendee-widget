@@ -51,8 +51,8 @@ const RoomsManager = (props) => {
 
   return (
     <div className={`${style.roomsManager}`}>
-      <span className={`${style.header} icon-text`}>
-        <span className={`${style.backBtn} icon`} onClick={onBack}>
+      <span className={style.header}>
+        <span className={style.backBtn} onClick={onBack}>
           <i className='fa fa-arrow-left'></i>
         </span>
         <label className={`${style.title} label is-large`}>New Chat Room</label>

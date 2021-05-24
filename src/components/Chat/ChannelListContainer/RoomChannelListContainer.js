@@ -112,9 +112,11 @@ const RoomChannelListContainer = ({
           <div className={style.channelsListWrapper}>
             <Chat client={chatClient}>
               <ChannelListContainer
-                selectedChannelType={channelTypes.CUSTOM_ROOM}
+                isRoomChatChannel={true}
                 filters={currFilters}
+                sort={{ type: -1 }}
                 user={user}
+                options={{ watch: true, limit: 20 }}
                 summitId={summitId}
                 chatClient={chatClient}
                 onItemClick={onItemClick}
