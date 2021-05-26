@@ -22,90 +22,38 @@ const RoomChannelListContainer = ({
   height,
   openDir
 }) => {
-  const defaultScope = [
-    channelTypes.ACTIVITY_ROOM,
-    channelTypes.HELP_ROOM,
-    channelTypes.QA_ROOM,
-    channelTypes.CUSTOM_ROOM
-  ]
+  const defaultScope = [channelTypes.ACTIVITY_ROOM, channelTypes.CUSTOM_ROOM]
 
-  let selectedFilterMode = 0
+  let currentScope = defaultScope
 
   const allowRoomsManagement = user.role === adminRole
 
   const defaultFilters = {
-    $or: [
-      {
-        type: {
-          $in: [channelTypes.HELP_ROOM, channelTypes.QA_ROOM]
-        },
-        members: { $in: [user.id] }
-      },
-      {
-        type: {
-          $in: [channelTypes.ACTIVITY_ROOM, channelTypes.CUSTOM_ROOM]
-        }
-      }
-    ]
+    type: {
+      $in: defaultScope
+    }
   }
-
   const [currFilters, setCurrFilters] = useState(defaultFilters)
   const [showRoomsManager, setShowRoomsManager] = useState(false)
 
-  const buildFilter = (filterMode, id) => {
-    // return id
-    //   ? {
-    //       type: {
-    //         $in: scope
-    //       },
-    //       id: { $in: [id] }
-    //     }
-    //   : {
-    //       type: {
-    //         $in: scope
-    //       }
-    //     }
+  const getScope = (mode) => {
+    if (mode === 1) return [channelTypes.ACTIVITY_ROOM]
+    if (mode === 2) return [channelTypes.CUSTOM_ROOM]
+    return defaultScope
+  }
 
-    const supportScope =
-      selectedFilterMode === 0
-        ? [channelTypes.HELP_ROOM, channelTypes.QA_ROOM]
-        : ['']
-    let roomsScope = [channelTypes.ACTIVITY_ROOM, channelTypes.CUSTOM_ROOM]
-
-    if (selectedFilterMode === 1) roomsScope = [channelTypes.ACTIVITY_ROOM]
-    if (selectedFilterMode === 2) roomsScope = [channelTypes.CUSTOM_ROOM]
-
+  const buildFilter = (scope, id) => {
     return id
       ? {
-          $or: [
-            {
-              type: {
-                $in: supportScope
-              },
-              members: { $in: [user.id] }
-            },
-            {
-              type: {
-                $in: roomsScope
-              }
-            }
-          ],
+          type: {
+            $in: scope
+          },
           id: { $in: [id] }
         }
       : {
-          $or: [
-            {
-              type: {
-                $in: supportScope
-              },
-              members: { $in: [user.id] }
-            },
-            {
-              type: {
-                $in: roomsScope
-              }
-            }
-          ]
+          type: {
+            $in: scope
+          }
         }
   }
 
@@ -113,9 +61,8 @@ const RoomChannelListContainer = ({
     const { value } = e.target
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
-      const roomId = nameToId(value)
       setCurrFilters(
-        value ? buildFilter(selectedFilterMode, roomId) : defaultFilters
+        value ? buildFilter(currentScope, nameToId(value)) : defaultFilters
       )
     }, 300)
 
@@ -127,8 +74,8 @@ const RoomChannelListContainer = ({
   }
 
   const handleFilterModeChange = (mode) => {
-    selectedFilterMode = mode
-    setCurrFilters(buildFilter(selectedFilterMode, null))
+    currentScope = getScope(mode)
+    setCurrFilters(buildFilter(currentScope, null))
   }
 
   const handleRoomCreateClick = () => {
@@ -161,7 +108,6 @@ const RoomChannelListContainer = ({
           <div className={style.channelsListWrapper}>
             <Chat client={chatClient}>
               <ChannelListContainer
-                isRoomChatChannel={true}
                 filters={currFilters}
                 sort={{ type: -1 }}
                 user={user}

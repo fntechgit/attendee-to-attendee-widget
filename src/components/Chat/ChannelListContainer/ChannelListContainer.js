@@ -29,8 +29,7 @@ const ChannelListContainer = ({
   isRoomChatChannel,
   filters,
   sort,
-  options,
-  channelRenderFilterFn
+  options
 }) => {
   if (!chatClient) {
     return <LoadingIndicator />
@@ -44,27 +43,26 @@ const ChannelListContainer = ({
         options={options}
         sort={sort}
         List={ChannelListMessenger}
-        Preview={(previewProps) =>
-          isRoomChatChannel ? (
+        Preview={(previewProps) => {
+          const { type } = previewProps.channel
+          return type === channelTypes.MESSAGING ? (
+            <DirectMessageChannelPreview
+              {...previewProps}
+              onItemClick={onItemClick}
+            />
+          ) : (
             <RoomChannelPreview
               {...previewProps}
               onItemClick={onItemClick}
               onDelete={onDelete}
             />
-          ) : (
-            <DirectMessageChannelPreview
-              {...previewProps}
-              onItemClick={onItemClick}
-            />
           )
-        }
+        }}
         EmptyStateIndicator={() => (
           <CustomEmptyStateIndicator isRoomChatChannel={isRoomChatChannel} />
         )}
         LoadingIndicator={CustomLoadingIndicator}
         setActiveChannelOnMount={false}
-        //allowNewMessagesFromUnfilteredChannels={false}
-        channelRenderFilterFn={channelRenderFilterFn}
         me={user}
       />
     </div>

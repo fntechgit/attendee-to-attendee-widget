@@ -17,8 +17,14 @@ const DMChannelListContainer = ({
   onItemClick,
   height
 }) => {
+  const defaultScope = [
+    channelTypes.HELP_ROOM,
+    channelTypes.QA_ROOM,
+    channelTypes.MESSAGING
+  ]
+
   const defaultFilters = {
-    type: channelTypes.MESSAGING,
+    type: { $in: defaultScope },
     members: { $in: [user.id] }
   }
 
@@ -26,7 +32,10 @@ const DMChannelListContainer = ({
 
   const handleSearch = async (e) => {
     const { value } = e.target
-    if (!value) return
+    if (!value) {
+      setCurrFilters(defaultFilters)
+      return
+    }
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
       //Fetch attendee info for matched user names
@@ -39,9 +48,17 @@ const DMChannelListContainer = ({
           ...channelIds
         ]
         setCurrFilters({
-          type: channelTypes.MESSAGING,
-          id: { $in: channelIds },
-          members: { $in: [user.id] }
+          $or: [
+            {
+              type: { $in: [channelTypes.HELP_ROOM, channelTypes.QA_ROOM] },
+              members: { $in: [user.id] }
+            },
+            {
+              type: { $in: defaultScope },
+              id: { $in: channelIds },
+              members: { $in: [user.id] }
+            }
+          ]
         })
       }
     }, 300)
@@ -60,7 +77,7 @@ const DMChannelListContainer = ({
         <Chat client={chatClient}>
           <ChannelListContainer
             filters={currFilters}
-            sort={{ has_unread: -1 }}
+            sort={{ supporttype: 1 }}
             options={{ watch: true, limit: 20 }}
             user={user}
             summitId={summitId}
