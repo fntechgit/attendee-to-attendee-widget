@@ -14,29 +14,32 @@ const RoomChannelPreview = ({
 }) => {
   const allowDeletion = client.user.local_role === adminRole
   const [showDelete, setShowDelete] = useState(false)
-  const [title, setTitle] = useState(channel.data.name)
 
-  useEffect(() => {
-    if (
-      channel.type === channelTypes.HELP_ROOM ||
-      channel.type === channelTypes.QA_ROOM
-    ) {
-      const imHelpUser = allHelpRoles.includes(client.user.local_role)
+  const title = channel.data.name
 
-      if (imHelpUser) {
-        //Get the user who needs support
-        const member = Object.values(channel.state.members).find(
-          (m) => !allHelpRoles.includes(m.user.role)
-        )
+  // const [title, setTitle] = useState(channel.data.name)
 
-        setTitle(
-          channel.type === channelTypes.QA_ROOM
-            ? `${member.user.name} have a question`
-            : `${member.user.name} help request`
-        )
-      }
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (
+  //     channel.type === channelTypes.HELP_ROOM ||
+  //     channel.type === channelTypes.QA_ROOM
+  //   ) {
+  //     const imHelpUser = allHelpRoles.includes(client.user.local_role)
+
+  //     if (imHelpUser) {
+  //       //Get the user who needs support
+  //       const member = Object.values(channel.state.members).find(
+  //         (m) => !allHelpRoles.includes(m.user.role)
+  //       )
+
+  //       setTitle(
+  //         channel.type === channelTypes.QA_ROOM
+  //           ? `${member.user.name} have a question`
+  //           : `${member.user.name} help request`
+  //       )
+  //     }
+  //   }
+  // }, [])
 
   const onClick = async (ev) => {
     ev.preventDefault()

@@ -1,4 +1,4 @@
-import { signIn, signUp } from '../Auth'
+import { signIn, signUp } from '../auth'
 
 export default class AttendeeRepository {
   constructor(supabaseService, user) {

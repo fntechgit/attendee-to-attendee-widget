@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import AttendeeRepository from './AttendeeRepository'
+import AttendeeRepository from './attendeeRepository'
 
 export default class AccessRepository extends AttendeeRepository {
   constructor(supabaseService) {

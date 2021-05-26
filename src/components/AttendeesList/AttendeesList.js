@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash.debounce'
-import { useStore } from '../../lib/Store'
+import { useStore } from '../../lib/store'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
 import { SearchBar } from '../SearchBar/SearchBar'
 import InfiniteScroll from 'react-infinite-scroll-component'

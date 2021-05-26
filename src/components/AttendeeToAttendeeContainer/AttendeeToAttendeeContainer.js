@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import AccessRepository from '../../lib/repository/AccessRepository'
-import ChatRepository from '../../lib/repository/ChatRepository'
+import AccessRepository from '../../lib/repository/accessRepository'
+import ChatRepository from '../../lib/repository/chatRepository'
 import AttendeesList from '../AttendeesList/AttendeesList'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
-import ChatAPIService from '../../lib/services/ChatAPIService'
-import StreamChatService from '../../lib/services/StreamChatService'
-import SupabaseClientBuilder from '../../lib/SupabaseClientBuilder'
+import ChatAPIService from '../../lib/services/chatAPIService'
+import StreamChatService from '../../lib/services/streamChatService'
+import SupabaseClientBuilder from '../../lib/supabaseClientBuilder'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
@@ -42,7 +42,7 @@ const AttendeeToAttendeeContainer = (props) => {
     user,
     summitId,
     openDir,
-    activityName,
+    activity,
     getAccessToken
   } = props
   props = { ...props, url: window.location.href.split('?')[0] }
@@ -69,8 +69,11 @@ const AttendeeToAttendeeContainer = (props) => {
         forumSlug,
         (client) => {
           setChatClient(client)
+          const { name, imgUrl } = activity
+          chatRepo.setUpActivityRoom(name, imgUrl, user)
         },
-        (err, res) => console.log(err)
+        (err) => console.error(err),
+        (err, res) => console.log(err, res)
       )
 
       //TODO: Uncomment
@@ -81,8 +84,6 @@ const AttendeeToAttendeeContainer = (props) => {
       //   (res) => console.log(res),
       //   (err, res) => console.log(err)
       // )
-
-      await chatRepo.setUpActivityRoom(activityName, user)
     }
 
     const cleanUpChat = async () => {

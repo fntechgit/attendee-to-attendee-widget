@@ -14,6 +14,7 @@ export default class StreamChatService {
     accessToken,
     forumSlug,
     callback,
+    onError,
     onAuthError
   ) => {
     fetch(
@@ -23,18 +24,21 @@ export default class StreamChatService {
 
       if (response.status === 200) {
         localStorage.setItem(this.flag, JSON.stringify(streamServerInfo))
+        try {
+          this.chatClient.setUser(
+            {
+              id: streamServerInfo.id,
+              name: streamServerInfo.name,
+              image: streamServerInfo.image,
+              local_role: streamServerInfo.local_role
+            },
+            streamServerInfo.token
+          )
 
-        this.chatClient.setUser(
-          {
-            id: streamServerInfo.id,
-            name: streamServerInfo.name,
-            image: streamServerInfo.image,
-            local_role: streamServerInfo.local_role
-          },
-          streamServerInfo.token
-        )
-
-        callback(this.chatClient, { ...streamServerInfo })
+          callback(this.chatClient, { ...streamServerInfo })
+        } catch (e) {
+          onError(e)
+        }
       } else {
         onAuthError(streamServerInfo, response)
       }

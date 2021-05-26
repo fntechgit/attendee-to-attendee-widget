@@ -1,4 +1,5 @@
 import { nameToId } from '../../utils/stringHelper'
+import { channelTypes } from '../../models/channel_types'
 
 export default class ChatRepository {
   constructor(supabaseService, streamChatService, chatAPIService) {
@@ -64,15 +65,19 @@ export default class ChatRepository {
   }
 
   async createChannel(type, name, description, members, image) {
-    const id = nameToId(name)
-    return this._streamChatService.createChannel(
-      type,
-      id,
-      name,
-      description,
-      members,
-      image
-    )
+    try {
+      const id = nameToId(name)
+      return this._streamChatService.createChannel(
+        type,
+        id,
+        name,
+        description,
+        members,
+        image
+      )
+    } catch (error) {
+      console.log('error', error)
+    }
   }
 
   async getChannel(type, user, partnerId) {
@@ -87,21 +92,20 @@ export default class ChatRepository {
     await this._streamChatService.removeMember(channel, memberId)
   }
 
-  async setUpActivityRoom(name, user) {
-    //create channel
-    //add user as a member
-    //Get default image
-    const id = nameToId(name)
-
-    console.log('setUpActivityRoom', name, user)
-
-    // await this._streamChatService.createChannel(
-    //   type,
-    //   id,
-    //   name,
-    //   description,
-    //   members,
-    //   image
-    // )
+  async setUpActivityRoom(name, imgUrl, user) {
+    try {
+      const id = nameToId(name)
+      const channel = await this._streamChatService.createChannel(
+        channelTypes.ACTIVITY_ROOM,
+        id,
+        name,
+        name,
+        null,
+        imgUrl
+      )
+      if (channel) channel.addMembers([user.idpUserId])
+    } catch (e) {
+      console.error(e)
+    }
   }
 }

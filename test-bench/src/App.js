@@ -42,7 +42,10 @@ const chatProps = {
   showHelp: true,
   showQA: true,
   hideUsers: false,
-  activityName: 'dev-keynote' //Widget will create this activity room or add members to it
+  activity: {
+    name: 'dev-keynote', //Widget will create this activity room or add members to it
+    imgUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
+  }
 }
 
 const widgetProps = {
@@ -110,11 +113,11 @@ const App = () => {
   }
 
   const token1 =
-    'dAyvb-M4g5wP183pjrNwG4yPfDtFNPbF2gg-cs-BPpEURXlvNHXY5DCY06tOBKJuAmTJwQZsuqfR92r2zoFPKzh3gK2D3xTPX.G-9r8ml5XidGlOA7ghyDU76H-Nsbhl'
+    'SgJVCRbFT8zmCoZG~64Jfed5~mOgvOtpHoW2Pw1JGcM9bgyZJ_0xfQPUqwCr5PVnEE2Pc9ZgqMv76oCHrRE_pItImwiesMeTLhnwF8_9UqFYNTjc9lUE2QqTJwMhghTB'
   const token2 =
-    'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
+    'SgJVCRbFT8zmCoZG~64Jfed5~mOgvOtpHoW2Pw1JGcM9bgyZJ_0xfQPUqwCr5PVnEE2Pc9ZgqMv76oCHrRE_pItImwiesMeTLhnwF8_9UqFYNTjc9lUE2QqTJwMhghTB'
   const token3 =
-    'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
+    'SgJVCRbFT8zmCoZG~64Jfed5~mOgvOtpHoW2Pw1JGcM9bgyZJ_0xfQPUqwCr5PVnEE2Pc9ZgqMv76oCHrRE_pItImwiesMeTLhnwF8_9UqFYNTjc9lUE2QqTJwMhghTB'
 
   return (
     <Router>
