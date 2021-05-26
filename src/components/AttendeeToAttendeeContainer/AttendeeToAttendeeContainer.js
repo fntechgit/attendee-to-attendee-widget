@@ -30,6 +30,7 @@ const AttendeeToAttendeeContainer = (props) => {
   const [chatOpened, setChatOpened] = useState(false)
   const [qaChatOpened, setQAChatOpened] = useState(false)
   const [chatClient, setChatClient] = useState(null)
+  const [accessToken, setAccessToken] = useState(null)
 
   const {
     supabaseUrl,
@@ -62,7 +63,6 @@ const AttendeeToAttendeeContainer = (props) => {
 
   useEffect(() => {
     const initChat = async () => {
-      const accessToken = await getAccessToken()
       await chatRepo.initializeClient(
         apiBaseUrl,
         accessToken,
@@ -89,9 +89,17 @@ const AttendeeToAttendeeContainer = (props) => {
       if (chatClient) await chatClient.disconnect()
     }
 
-    initChat()
-    return () => cleanUpChat()
-  }, [])
+    if (accessToken) {
+      initChat()
+      return () => cleanUpChat()
+    }
+  }, [accessToken])
+
+  useEffect(() => {
+    getAccessToken().then((token) => {
+      if (token && token !== accessToken) setAccessToken(token)
+    })
+  })
 
   const showChatWindow = (preloadedChannel, counterpart) => {
     if (chatClient) {
@@ -146,10 +154,7 @@ const AttendeeToAttendeeContainer = (props) => {
   }
 
   const activeTabContent = () => {
-    const activeIndex = tabList.findIndex((tab) => {
-      return tab.name === activeTab
-    })
-
+    const activeIndex = tabList.findIndex((tab) => tab.name === activeTab)
     return tabList[activeIndex].content
   }
 

@@ -60,7 +60,7 @@ export default class ChatRepository {
   }
 
   async createSupportChannel(user, partnerId) {
-    await this._streamChatService(user, partnerId)
+    return await this._streamChatService.createSupportChannel(user, partnerId)
   }
 
   async createChannel(type, name, description, members, image) {
