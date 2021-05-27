@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
 import { channelTypes } from '../../../models/channel_types'
-import { adminRole, allHelpRoles } from '../../../models/local_roles'
+import { adminRoles, allHelpRoles } from '../../../models/local_roles'
 
 import styles from './style.module.scss'
 
@@ -12,7 +12,7 @@ const RoomChannelPreview = ({
   onItemClick,
   onDelete
 }) => {
-  const allowDeletion = client.user.local_role === adminRole
+  const allowDeletion = adminRoles.includes(client.user.local_role)
   const [showDelete, setShowDelete] = useState(false)
 
   const title = channel.data.name

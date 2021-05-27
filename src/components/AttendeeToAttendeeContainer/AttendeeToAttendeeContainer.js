@@ -69,8 +69,7 @@ const AttendeeToAttendeeContainer = (props) => {
         forumSlug,
         (client) => {
           setChatClient(client)
-          const { name, imgUrl } = activity
-          chatRepo.setUpActivityRoom(name, imgUrl, user)
+          chatRepo.setUpActivityRoom(activity, user)
         },
         (err) => console.error(err),
         (err, res) => console.log(err, res)
@@ -231,6 +230,7 @@ const AttendeeToAttendeeContainer = (props) => {
           openDir={openDir}
           summitId={summitId}
           visible={chatOpened}
+          activity={activity}
           onClose={() => setChatOpened(false)}
           onChatMenuSelected={handleChatMenuSelection}
         />

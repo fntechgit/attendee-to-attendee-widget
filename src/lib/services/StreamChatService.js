@@ -94,9 +94,10 @@ export default class StreamChatService {
     return channel
   }
 
-  async createSupportChannel(user, type) {
+  async createSupportChannel(user, activityName, type) {
     const roles = type === channelTypes.QA_ROOM ? qaRoles : helpRoles
-    const supportType = type === channelTypes.QA_ROOM ? 'qa' : 'help'
+    const supportType =
+      type === channelTypes.QA_ROOM ? `qa-${activityName}` : 'help'
     const displaySupportType =
       type === channelTypes.QA_ROOM ? 'Q & A' : 'Help Desk'
 

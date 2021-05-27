@@ -17,6 +17,8 @@ const UserChannelPreview = ({
   const [showDelete, setShowDelete] = useState(false)
   const statusClass = member.user.online ? styles.online : styles.offline
 
+  console.log('Member', member.user.name, member.user.role)
+
   let title = member.user.name
 
   if (

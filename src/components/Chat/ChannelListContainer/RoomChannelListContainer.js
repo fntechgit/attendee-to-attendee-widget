@@ -6,7 +6,7 @@ import RoomsManager from '../RoomsManager/RoomsManager'
 import ChannelListContainer from './ChannelListContainer'
 import { nameToId } from '../../../utils/stringHelper'
 import { channelTypes } from '../../../models/channel_types'
-import { adminRole } from '../../../models/local_roles'
+import { adminRoles } from '../../../models/local_roles'
 
 import style from './style.module.scss'
 
@@ -26,7 +26,7 @@ const RoomChannelListContainer = ({
 
   let currentScope = defaultScope
 
-  const allowRoomsManagement = user.role === adminRole
+  const allowRoomsManagement = adminRoles.includes(chatClient.user.local_role)
 
   const defaultFilters = {
     type: {

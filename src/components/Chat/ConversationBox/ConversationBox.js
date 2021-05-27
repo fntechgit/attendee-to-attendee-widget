@@ -26,6 +26,7 @@ const ConversationBox = ({
   setActiveChannel,
   onClose,
   visible,
+  activity,
   onChatMenuSelected
 }) => {
   const [channel, setChannel] = useState(null)
@@ -39,9 +40,14 @@ const ConversationBox = ({
           partnerId === channelTypes.QA_ROOM ||
           partnerId === channelTypes.HELP_ROOM
         ) {
+          if (partnerId === channelTypes.QA_ROOM && !activity) return
+
+          const activityName = activity ? activity.name : ''
+
           // create Help/QA channel between this user and help/qa users
           const supportChannel = await chatRepo.createSupportChannel(
             user,
+            activityName,
             partnerId
           )
           setChannel(supportChannel)

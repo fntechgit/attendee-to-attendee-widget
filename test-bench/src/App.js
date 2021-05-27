@@ -43,7 +43,9 @@ const chatProps = {
   showQA: true,
   hideUsers: false,
   activity: {
-    name: 'dev-keynote', //Widget will create this activity room or add members to it
+    id: 206,
+    name:
+      'Global Collaboration Driving Innovation in a Multi-Billion Dollar Market', //Widget will create this activity room or add members to it
     imgUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
   }
 }
@@ -53,7 +55,6 @@ const widgetProps = {
     id: null,
     fullName: '',
     email: '',
-    role: 'admin',
     company: '',
     title: '',
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
@@ -113,7 +114,7 @@ const App = () => {
   }
 
   const token1 =
-    'SgJVCRbFT8zmCoZG~64Jfed5~mOgvOtpHoW2Pw1JGcM9bgyZJ_0xfQPUqwCr5PVnEE2Pc9ZgqMv76oCHrRE_pItImwiesMeTLhnwF8_9UqFYNTjc9lUE2QqTJwMhghTB'
+    'udDYvryAnvR8IUx1ELp49ct_IDlI3qaIPTBzFqIIDDifoJrBJCliFWMUHYWpYz_lmscAGLJT7INf1zgfqU~bIaT73lEct4wfP37ZIDZVN7t-dxc4.PNaX3UZMDpimNl6'
   const token2 =
     'SgJVCRbFT8zmCoZG~64Jfed5~mOgvOtpHoW2Pw1JGcM9bgyZJ_0xfQPUqwCr5PVnEE2Pc9ZgqMv76oCHrRE_pItImwiesMeTLhnwF8_9UqFYNTjc9lUE2QqTJwMhghTB'
   const token3 =
@@ -125,19 +126,19 @@ const App = () => {
         <Route exact path='/'>
           <div>
             <Link
-              to={`/attendance?accessToken=${token1}&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13`}
+              to={`/attendance?accessToken=${token1}&fullName=Roman Gutierrez (Help)&email=roman.gutierrez@gmail.com&idpUserId=13`}
             >
-              Attendees 1
+              Help User
             </Link>
             <Link
               to={`/attendance?accessToken=${token2}&fullName=Johnny Nimbus&email=cespin+1@gmail.com&idpUserId=6`}
             >
-              Attendees 2
+              Attendees
             </Link>
             <Link
-              to={`/attendance?accessToken=${token3}&fullName=Jethro Stratus&email=cespin+2@gmail.com&idpUserId=7`}
+              to={`/attendance?accessToken=${token3}&fullName=Jethro Stratus (Q&A)&email=cespin+2@gmail.com&idpUserId=7`}
             >
-              Attendees 3
+              QA User
             </Link>
             <Tracker {...widgetProps} />
           </div>

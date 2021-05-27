@@ -1,3 +1,0 @@
-https://localhost:3000/attendance?accessToken=&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13
-
-https://localhost:3000/attendance?accessToken=&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11

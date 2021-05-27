@@ -60,8 +60,12 @@ export default class ChatRepository {
     }
   }
 
-  async createSupportChannel(user, partnerId) {
-    return await this._streamChatService.createSupportChannel(user, partnerId)
+  async createSupportChannel(user, activityName, type) {
+    return await this._streamChatService.createSupportChannel(
+      user,
+      activityName,
+      type
+    )
   }
 
   async createChannel(type, name, description, members, image) {
@@ -92,9 +96,9 @@ export default class ChatRepository {
     await this._streamChatService.removeMember(channel, memberId)
   }
 
-  async setUpActivityRoom(name, imgUrl, user) {
+  async setUpActivityRoom(activity, user) {
     try {
-      const id = nameToId(name)
+      const { id, name, imgUrl } = activity
       const channel = await this._streamChatService.createChannel(
         channelTypes.ACTIVITY_ROOM,
         id,
