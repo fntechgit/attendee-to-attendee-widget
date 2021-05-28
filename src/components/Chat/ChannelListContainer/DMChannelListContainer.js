@@ -3,7 +3,7 @@ import { Chat } from 'stream-chat-react'
 import debounce from 'lodash.debounce'
 import { SearchBar } from '../../SearchBar/SearchBar'
 import ChannelListContainer from './ChannelListContainer'
-import { channelTypes } from '../../../models/channel_types'
+import { channelTypes } from '../../../models/channelTypes'
 
 import style from './style.module.scss'
 

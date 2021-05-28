@@ -6,7 +6,7 @@ import {
 } from 'stream-chat-react'
 import DirectMessageChannelPreview from '../ChannelPreview/DirectMessageChannelPreview'
 import RoomChannelPreview from '../ChannelPreview/RoomChannelPreview'
-import { channelTypes } from '../../../models/channel_types'
+import { channelTypes } from '../../../models/channelTypes'
 
 import style from './style.module.scss'
 
@@ -52,6 +52,7 @@ const ChannelListContainer = ({
             />
           ) : (
             <RoomChannelPreview
+              user={user}
               {...previewProps}
               onItemClick={onItemClick}
               onDelete={onDelete}

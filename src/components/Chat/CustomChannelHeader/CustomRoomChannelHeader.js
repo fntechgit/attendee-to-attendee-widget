@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
 import ReactTooltip from 'react-tooltip'
-import { channelTypes } from '../../../models/channel_types'
+import { channelTypes } from '../../../models/channelTypes'
 
 import style from './style.module.scss'
 

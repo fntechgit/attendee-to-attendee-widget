@@ -12,7 +12,7 @@ import {
 } from 'stream-chat-react'
 import SimpleChannelHeader from '../CustomChannelHeader/SimpleChannelHeader'
 import CustomRoomChannelHeader from '../CustomChannelHeader/CustomRoomChannelHeader'
-import { channelTypes } from '../../../models/channel_types'
+import { channelTypes } from '../../../models/channelTypes'
 
 import style from './style.module.scss'
 

@@ -3,7 +3,7 @@ import { withFormik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import Autocomplete from '../../Autocomplete/Autocomplete'
 import AttendeePill from '../AttendeePill/AttendeePill'
-import { channelTypes } from '../../../models/channel_types'
+import { channelTypes } from '../../../models/channelTypes'
 
 import style from './style.module.scss'
 import { nameToId } from '../../../utils/stringHelper'

@@ -1,4 +1,5 @@
 import { signIn, signUp } from '../auth'
+import { roles } from '../../models/userRole'
 
 export default class AttendeeRepository {
   constructor(supabaseService, user) {
@@ -225,6 +226,23 @@ export default class AttendeeRepository {
       return data
     } catch (error) {
       console.log('error', error)
+    }
+  }
+
+  async getRole(idpUserId) {
+    try {
+      const { data, error } = await this._client
+        .from('summit_attendee_roles')
+        .select('summit_id, summit_event_id')
+        .eq('idp_user_id', idpUserId)
+      if (error) throw new Error(error)
+      if (data.length === 0) return roles.USER
+      const roleItem = data[0]
+      if (roleItem.summit_event_id > 0) return roles.QA
+      return roles.HELP
+    } catch (error) {
+      console.log('error', error)
+      return null
     }
   }
 

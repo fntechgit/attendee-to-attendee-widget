@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { StreamChat } from 'stream-chat'
-import { channelTypes } from '../../models/channel_types'
-import { helpRoles, qaRoles } from '../../models/local_roles'
+import { channelTypes } from '../../models/channelTypes'
+import { roles } from '../../models/userRole'
 
 export default class StreamChatService {
   constructor(streamApiKey) {
@@ -10,6 +10,7 @@ export default class StreamChatService {
   }
 
   initializeClient = async (
+    user,
     apiBaseUrl,
     accessToken,
     forumSlug,
@@ -30,7 +31,7 @@ export default class StreamChatService {
               id: streamServerInfo.id,
               name: streamServerInfo.name,
               image: streamServerInfo.image,
-              local_role: streamServerInfo.local_role
+              local_role: user.role //local_role: streamServerInfo.local_role
             },
             streamServerInfo.token
           )
@@ -95,14 +96,15 @@ export default class StreamChatService {
   }
 
   async createSupportChannel(user, activityName, type) {
-    const roles = type === channelTypes.QA_ROOM ? qaRoles : helpRoles
+    const scopedRoles =
+      type === channelTypes.QA_ROOM ? [roles.QA] : [roles.HELP]
     const supportType =
       type === channelTypes.QA_ROOM ? `qa-${activityName}` : 'help'
     const displaySupportType =
       type === channelTypes.QA_ROOM ? 'Q & A' : 'Help Desk'
 
     const supportUsers = await this.chatClient.queryUsers({
-      local_role: { $in: roles }
+      local_role: { $in: scopedRoles }
     })
 
     if (supportUsers.users.length > 0) {
@@ -126,7 +128,9 @@ export default class StreamChatService {
       const membersInChannel = response.members.map((m) => m.user.id)
 
       const membersToRemove = response.members
-        .filter((m) => !roles.includes(m.user.local_role) && m.role !== 'owner')
+        .filter(
+          (m) => !scopedRoles.includes(m.user.local_role) && m.role !== 'owner'
+        )
         .map((u) => u.user.id)
 
       if (membersToRemove.length > 0) {

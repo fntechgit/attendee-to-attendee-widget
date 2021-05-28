@@ -5,8 +5,8 @@ import { SearchBar } from '../../SearchBar/SearchBar'
 import RoomsManager from '../RoomsManager/RoomsManager'
 import ChannelListContainer from './ChannelListContainer'
 import { nameToId } from '../../../utils/stringHelper'
-import { channelTypes } from '../../../models/channel_types'
-import { adminRoles } from '../../../models/local_roles'
+import { channelTypes } from '../../../models/channelTypes'
+import { isAdmin } from '../../../models/userRole'
 
 import style from './style.module.scss'
 
@@ -25,8 +25,6 @@ const RoomChannelListContainer = ({
   const defaultScope = [channelTypes.ACTIVITY_ROOM, channelTypes.CUSTOM_ROOM]
 
   let currentScope = defaultScope
-
-  const allowRoomsManagement = adminRoles.includes(chatClient.user.local_role)
 
   const defaultFilters = {
     type: {
@@ -119,7 +117,7 @@ const RoomChannelListContainer = ({
               />
             </Chat>
           </div>
-          {allowRoomsManagement && (
+          {isAdmin(user) && (
             <div className='has-text-centered mt-2'>
               <button
                 className='button is-large'

@@ -1,45 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
-import { channelTypes } from '../../../models/channel_types'
-import { adminRoles, allHelpRoles } from '../../../models/local_roles'
+import { channelTypes } from '../../../models/channelTypes'
+import { isAdmin } from '../../../models/userRole'
 
 import styles from './style.module.scss'
 
 const RoomChannelPreview = ({
-  client,
+  user,
   channel,
   setActiveChannel,
   onItemClick,
   onDelete
 }) => {
-  const allowDeletion = adminRoles.includes(client.user.local_role)
+  const allowDeletion = isAdmin(user)
   const [showDelete, setShowDelete] = useState(false)
 
   const title = channel.data.name
-
-  // const [title, setTitle] = useState(channel.data.name)
-
-  // useEffect(() => {
-  //   if (
-  //     channel.type === channelTypes.HELP_ROOM ||
-  //     channel.type === channelTypes.QA_ROOM
-  //   ) {
-  //     const imHelpUser = allHelpRoles.includes(client.user.local_role)
-
-  //     if (imHelpUser) {
-  //       //Get the user who needs support
-  //       const member = Object.values(channel.state.members).find(
-  //         (m) => !allHelpRoles.includes(m.user.role)
-  //       )
-
-  //       setTitle(
-  //         channel.type === channelTypes.QA_ROOM
-  //           ? `${member.user.name} have a question`
-  //           : `${member.user.name} help request`
-  //       )
-  //     }
-  //   }
-  // }, [])
 
   const onClick = async (ev) => {
     ev.preventDefault()

@@ -55,6 +55,7 @@ const widgetProps = {
     id: null,
     fullName: '',
     email: '',
+    groups: ['admins'],
     company: '',
     title: '',
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
@@ -114,11 +115,11 @@ const App = () => {
   }
 
   const token1 =
-    'udDYvryAnvR8IUx1ELp49ct_IDlI3qaIPTBzFqIIDDifoJrBJCliFWMUHYWpYz_lmscAGLJT7INf1zgfqU~bIaT73lEct4wfP37ZIDZVN7t-dxc4.PNaX3UZMDpimNl6'
+    'pYxuWO6B0gDdl4TRtUX8Om5iMkKei2li~VLoJIFTCN.eWtxb8Pcy4HEyRJgXZfWoogp2Aa478iDZxYSQCv9Y4K9mb6YQJqPGsm9_1lHl_9pUSkkDhjr9e_W60DzWe_t0'
   const token2 =
-    'SgJVCRbFT8zmCoZG~64Jfed5~mOgvOtpHoW2Pw1JGcM9bgyZJ_0xfQPUqwCr5PVnEE2Pc9ZgqMv76oCHrRE_pItImwiesMeTLhnwF8_9UqFYNTjc9lUE2QqTJwMhghTB'
+    'pYxuWO6B0gDdl4TRtUX8Om5iMkKei2li~VLoJIFTCN.eWtxb8Pcy4HEyRJgXZfWoogp2Aa478iDZxYSQCv9Y4K9mb6YQJqPGsm9_1lHl_9pUSkkDhjr9e_W60DzWe_t0'
   const token3 =
-    'SgJVCRbFT8zmCoZG~64Jfed5~mOgvOtpHoW2Pw1JGcM9bgyZJ_0xfQPUqwCr5PVnEE2Pc9ZgqMv76oCHrRE_pItImwiesMeTLhnwF8_9UqFYNTjc9lUE2QqTJwMhghTB'
+    'pYxuWO6B0gDdl4TRtUX8Om5iMkKei2li~VLoJIFTCN.eWtxb8Pcy4HEyRJgXZfWoogp2Aa478iDZxYSQCv9Y4K9mb6YQJqPGsm9_1lHl_9pUSkkDhjr9e_W60DzWe_t0'
 
   return (
     <Router>

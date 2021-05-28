@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
-import { channelTypes } from '../../../models/channel_types'
-import { allHelpRoles } from '../../../models/local_roles'
+import { channelTypes } from '../../../models/channelTypes'
+import { roles } from '../../../models/userRole'
 
 import styles from './style.module.scss'
 
@@ -17,7 +17,9 @@ const UserChannelPreview = ({
   const [showDelete, setShowDelete] = useState(false)
   const statusClass = member.user.online ? styles.online : styles.offline
 
-  console.log('Member', member.user.name, member.user.role)
+  //console.log('Member', member.user.name, member.user.role)
+
+  //console.log('client.user.local_role', client.user.local_role)
 
   let title = member.user.name
 
@@ -25,12 +27,13 @@ const UserChannelPreview = ({
     channel.type === channelTypes.HELP_ROOM ||
     channel.type === channelTypes.QA_ROOM
   ) {
-    const imHelpUser = allHelpRoles.includes(client.user.local_role)
+    const userRole = client.user.local_role
+    const isSupportUser = userRole === roles.HELP || userRole === roles.QA
 
-    if (imHelpUser) {
+    if (isSupportUser) {
       //Get the user who needs support
       const member = Object.values(channel.state.members).find(
-        (m) => !allHelpRoles.includes(m.user.role)
+        (m) => m.user.role !== roles.QA && m.user.role !== roles.HELP
       )
 
       title =
@@ -108,7 +111,9 @@ const DirectMessageChannelPreview = (props) => {
     client,
     onItemClick
   } = props
-  const isSupportUser = allHelpRoles.includes(client.user.local_role)
+
+  const userRole = client.user.local_role
+  const isSupportUser = userRole === roles.HELP || userRole === roles.QA
 
   const onChannelClick = async (ev) => {
     ev.preventDefault()

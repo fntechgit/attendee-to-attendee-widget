@@ -11,7 +11,7 @@ import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListCo
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 import { copyToClipboard } from '../../utils/clipboardHelper'
-import { channelTypes } from '../../models/channel_types'
+import { channelTypes } from '../../models/channelTypes'
 
 import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
@@ -64,6 +64,8 @@ const AttendeeToAttendeeContainer = (props) => {
   useEffect(() => {
     const initChat = async () => {
       await chatRepo.initializeClient(
+        user,
+        accessRepo,
         apiBaseUrl,
         accessToken,
         forumSlug,

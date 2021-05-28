@@ -1,5 +1,5 @@
 import { nameToId } from '../../utils/stringHelper'
-import { channelTypes } from '../../models/channel_types'
+import { channelTypes } from '../../models/channelTypes'
 
 export default class ChatRepository {
   constructor(supabaseService, streamChatService, chatAPIService) {
@@ -9,13 +9,18 @@ export default class ChatRepository {
   }
 
   async initializeClient(
+    user,
+    accessRepo,
     apiBaseUrl,
     accessToken,
     forumSlug,
     callback,
     onAuthError
   ) {
+    const role = await accessRepo.getRole(user.id)
+    user.role = role
     await this._streamChatService.initializeClient(
+      user,
       apiBaseUrl,
       accessToken,
       forumSlug,
