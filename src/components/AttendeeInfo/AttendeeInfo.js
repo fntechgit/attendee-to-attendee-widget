@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
 
 import style from './style.module.scss'
 
@@ -52,9 +53,9 @@ export const AttendeeInfo = ({
                     target='_blank'
                     className='level-item'
                   >
-                    <span className='icon is-small'>
+                    <span className='icon is-medium'>
                       <i
-                        className='fa fa-github has-text-grey'
+                        className='fa fa-2x fa-github has-text-grey'
                         aria-hidden='true'
                       ></i>
                     </span>
@@ -66,9 +67,9 @@ export const AttendeeInfo = ({
                     target='_blank'
                     className='level-item'
                   >
-                    <span className='icon is-small'>
+                    <span className='icon is-medium'>
                       <i
-                        className='fa fa-linkedin has-text-grey'
+                        className='fa fa-2x fa-linkedin has-text-grey'
                         aria-hidden='true'
                       ></i>
                     </span>
@@ -80,9 +81,9 @@ export const AttendeeInfo = ({
                     target='_blank'
                     className='level-item'
                   >
-                    <span className='icon is-small'>
+                    <span className='icon is-medium'>
                       <i
-                        className='fa fa-twitter has-text-grey'
+                        className='fa fa-2x fa-twitter has-text-grey'
                         aria-hidden='true'
                       ></i>
                     </span>
@@ -108,7 +109,9 @@ export const AttendeeInfo = ({
             <div>
               {bio && (
                 <div className='content'>
-                  <ReactMarkdown>{bio}</ReactMarkdown>
+                  <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                    {bio}
+                  </ReactMarkdown>
                 </div>
               )}
               <nav className='level'>

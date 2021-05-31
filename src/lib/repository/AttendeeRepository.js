@@ -1,10 +1,9 @@
-import { DateTime } from 'luxon'
-import { signIn, signUp } from '../Auth'
-import SupabaseClientBuilder from '../builders/SupabaseClientBuilder'
+import { signIn, signUp } from '../auth'
+import { roles } from '../../models/userRole'
 
 export default class AttendeeRepository {
-  constructor(supabaseUrl, supabaseKey, user) {
-    this._client = SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
+  constructor(supabaseService, user) {
+    this._client = supabaseService
     this._sbUser = null
     if (user) {
       this._fetchExistingAttendeeUser(user).then((u) => (this._sbUser = u))
@@ -178,7 +177,7 @@ export default class AttendeeRepository {
         idp_user_id: idpUserId,
         is_online: isOnline,
         social_info: socialInfo,
-        badge_info: badgeFeatures,
+        badges_info: badgeFeatures,
         bio
       }
     ])
@@ -217,63 +216,6 @@ export default class AttendeeRepository {
     if (error) throw new Error(error)
   }
 
-  async fetchCurrentPageAttendees(
-    url,
-    pageIx = 0,
-    pageSize = 6,
-    ageMinutesBackward = 5
-  ) {
-    try {
-      const ageTreshold = DateTime.utc()
-        .minus({ minutes: ageMinutesBackward })
-        .toString()
-
-      const lowerIx = pageIx * pageSize
-      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
-      const { data, error } = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
-        .eq('current_url', url)
-        .eq('attendees.is_online', true)
-        .gt('updated_at', ageTreshold)
-        .order('updated_at', { ascending: false })
-        .range(lowerIx, upperIx)
-
-      if (error) throw new Error(error)
-      return data
-    } catch (error) {
-      console.log('error', error)
-    }
-  }
-
-  async fetchCurrentShowAttendees(
-    summitId,
-    pageIx = 0,
-    pageSize = 6,
-    ageMinutesBackward = 5
-  ) {
-    try {
-      const ageTreshold = DateTime.utc()
-        .minus({ minutes: ageMinutesBackward })
-        .toString()
-      const lowerIx = pageIx * pageSize
-      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
-
-      const { data, error } = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
-        .eq('summit_id', summitId)
-        .eq('attendees.is_online', true)
-        .gt('updated_at', ageTreshold)
-        .order('updated_at', { ascending: false })
-        .range(lowerIx, upperIx)
-      if (error) throw new Error(error)
-      return data
-    } catch (error) {
-      console.log('error', error)
-    }
-  }
-
   async findByFullName(filter) {
     try {
       const { data, error } = await this._client
@@ -284,6 +226,23 @@ export default class AttendeeRepository {
       return data
     } catch (error) {
       console.log('error', error)
+    }
+  }
+
+  async getRole(idpUserId) {
+    try {
+      const { data, error } = await this._client
+        .from('summit_attendee_roles')
+        .select('summit_id, summit_event_id')
+        .eq('idp_user_id', idpUserId)
+      if (error) throw new Error(error)
+      if (data.length === 0) return roles.USER
+      const roleItem = data[0]
+      if (roleItem.summit_event_id > 0) return roles.QA
+      return roles.HELP
+    } catch (error) {
+      console.log('error', error)
+      return null
     }
   }
 

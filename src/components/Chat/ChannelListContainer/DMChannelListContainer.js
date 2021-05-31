@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Chat } from 'stream-chat-react'
+import debounce from 'lodash.debounce'
 import { SearchBar } from '../../SearchBar/SearchBar'
-import ChannelListContainer, {
-  channelType
-} from './ChannelListContainer'
+import ChannelListContainer from './ChannelListContainer'
+import { channelTypes } from '../../../models/channelTypes'
 
 import style from './style.module.scss'
+
+let handleSearchDebounce = null
 
 const DMChannelListContainer = ({
   user,
@@ -15,40 +17,68 @@ const DMChannelListContainer = ({
   onItemClick,
   height
 }) => {
-  const filters = {
-    type: 'messaging',
-    members: { $in: [user.id] },
-    id: { $nin: [`${user.id}-help`, `${user.id}-qa`] }
+  const defaultScope = [
+    channelTypes.HELP_ROOM,
+    channelTypes.QA_ROOM,
+    channelTypes.MESSAGING
+  ]
+
+  const defaultFilters = {
+    type: { $in: defaultScope },
+    members: { $in: [user.id] }
   }
 
-  const [currFilters, setCurrFilters] = useState(filters)
+  const [currFilters, setCurrFilters] = useState(defaultFilters)
 
   const handleSearch = async (e) => {
     const { value } = e.target
-
-    //TODO: Debounce search
-
-    if (value && value.length > 4) {
+    if (!value) {
+      setCurrFilters(defaultFilters)
+      return
+    }
+    if (handleSearchDebounce) handleSearchDebounce.cancel()
+    handleSearchDebounce = debounce(async () => {
       //Fetch attendee info for matched user names
       const res = await accessRepo.findByFullName(value)
-      if (res) {
-        const filteredUserIds = res.map((att) => `${att.idp_user_id}`)
+
+      if (res && res.length > 0) {
+        let channelIds = res.map((att) => `${user.id}-${att.idp_user_id}`)
+        channelIds = [
+          ...res.map((att) => `${att.idp_user_id}-${user.id}`),
+          ...channelIds
+        ]
         setCurrFilters({
-          type: 'messaging',
-          members: { $in: [user.id, ...filteredUserIds] }
+          $or: [
+            {
+              type: { $in: [channelTypes.HELP_ROOM, channelTypes.QA_ROOM] },
+              members: { $in: [user.id] }
+            },
+            {
+              type: { $in: defaultScope },
+              id: { $in: channelIds },
+              members: { $in: [user.id] }
+            }
+          ]
         })
       }
-    }
+    }, 300)
+
+    handleSearchDebounce()
+  }
+
+  const handleSearchClear = () => {
+    setCurrFilters(defaultFilters)
   }
 
   return (
     <div style={{ height: height }}>
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar onSearch={handleSearch} onClear={handleSearchClear} />
       <div className={style.channelsListWrapper}>
         <Chat client={chatClient}>
           <ChannelListContainer
-            selectedChannelType={channelType.DIRECT_MESSAGE}
             filters={currFilters}
+            sort={{ supporttype: 1 }}
+            options={{ watch: true, limit: 20 }}
             user={user}
             summitId={summitId}
             chatClient={chatClient}

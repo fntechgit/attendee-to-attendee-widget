@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types'
 import { forwardRef, useImperativeHandle, useEffect } from 'react'
 import publicIp from 'public-ip'
-import AccessRepository from '../lib/repository/AccessRepository'
+import AccessRepository from '../lib/repository/accessRepository'
+import SupabaseClientBuilder from '../lib/supabaseClientBuilder'
 
 const Tracker = forwardRef((props, ref) => {
   const { supabaseUrl, supabaseKey } = props
-  const accessRepo = new AccessRepository(supabaseUrl, supabaseKey)
+  const accessRepo = new AccessRepository(
+    SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
+  )
   const pendingOps = new Set()
   let timerHandler = null
 
@@ -98,10 +101,10 @@ Tracker.propTypes = {
       githubUser: PropTypes.string,
       linkedInProfile: PropTypes.string,
       twitterName: PropTypes.string,
-      wechatUser: PropTypes.string,
+      wechatUser: PropTypes.string
     }),
     badgeFeatures: PropTypes.array,
-    bio: PropTypes.string,
+    bio: PropTypes.string
   }).isRequired
 }
 

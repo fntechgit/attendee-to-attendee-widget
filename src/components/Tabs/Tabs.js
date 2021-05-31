@@ -1,4 +1,5 @@
 import React from 'react'
+import style from './style.module.scss'
 
 const Tab = (props) => {
   const { name } = props.tab
@@ -9,16 +10,16 @@ const Tab = (props) => {
       className={name === activeTab ? 'is-active' : ''}
       onClick={() => changeActiveTab(name)}
     >
-      <a style={{textDecoration: 'none'}}>
+      <a style={{ textDecoration: 'none' }}>
         <span>{name}</span>
       </a>
     </li>
   )
 }
 
-const Tabs = ({tabList, activeTab, changeActiveTab}) => {
+const Tabs = ({ tabList, activeTab, changeActiveTab }) => {
   return (
-    <div className='tabs is-fullwidth'>
+    <div className={`${style.tabs} tabs is-fullwidth`}>
       <ul>
         {tabList.map((tab) => (
           <Tab
@@ -35,4 +36,4 @@ const Tabs = ({tabList, activeTab, changeActiveTab}) => {
 
 const ActiveTabContent = (props) => <div>{props.content}</div>
 
-export {Tabs, ActiveTabContent}
+export { Tabs, ActiveTabContent }

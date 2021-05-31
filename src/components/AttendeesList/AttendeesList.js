@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash.debounce'
-import { useStore } from '../../lib/Store'
+import { useStore } from '../../lib/store'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
 import { SearchBar } from '../SearchBar/SearchBar'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -10,8 +10,6 @@ import style from './style.module.scss'
 let urlAccessesPageIx = 0
 let showAccessesPageIx = 0
 const pageSize = 6
-let firstNewsUpdate = true
-let chatNotificationsMapAux = {}
 
 export const scopes = {
   PAGE: 'page',
@@ -24,7 +22,7 @@ const AttendeesList = (props) => {
   const [currScope, setCurrScope] = useState(scopes.SHOW)
   const [attendeesList, setAttendeesList] = useState([])
 
-  const { attendeesNews, chatNotificationsMap } = useStore({
+  const { attendeesNews } = useStore({
     url,
     summitId,
     accessRepository: accessRepo,
@@ -34,11 +32,8 @@ const AttendeesList = (props) => {
   const updateAttendeesList = (promise) => {
     promise
       .then((response) => {
-        console.log('updateAttendeesList chatNotificationsMap...', response.length, Object.keys(chatNotificationsMapAux).length)
         if (response && response.length > 0) {
-          setAttendeesList(
-            chatRepo.mergeChatNews(response, chatNotificationsMapAux)
-          )
+          setAttendeesList(response)
         }
       })
       .catch(console.error)
@@ -46,17 +41,8 @@ const AttendeesList = (props) => {
 
   // handle real-time updates
   useEffect(() => {
-    if (firstNewsUpdate) {
-      firstNewsUpdate = false
-      return
-    }
-
-    if (Object.keys(chatNotificationsMap).length > 0) {
-      chatNotificationsMapAux = {...chatNotificationsMap}
-    }
-
     if (currScope === scopes.PAGE) {
-      if (attendeesList.length === 0) {                                             
+      if (attendeesList.length === 0) {
         updateAttendeesList(
           accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
         )
@@ -104,12 +90,7 @@ const AttendeesList = (props) => {
       setHasMore(false)
       return
     }
-    setAttendeesList(
-      chatRepo.mergeChatNews(
-        [...attendeesList, ...nextPage],
-        chatNotificationsMap
-      )
-    )
+    setAttendeesList([...attendeesList, ...nextPage])
   }
 
   let handleSearchDebounce
@@ -121,33 +102,25 @@ const AttendeesList = (props) => {
       if (currScope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByAttendeeFullName(value, summitId, url)
+          ? await accessRepo.findByAttendeeNameOrCompany(value, summitId, url)
           : await accessRepo.fetchCurrentPageAttendees(
               url,
               urlAccessesPageIx,
               pageSize
             )
-        if (res && res.length > 0) {
-          setAttendeesList(
-            chatRepo.mergeChatNews([...res], chatNotificationsMap)
-          )
-        }
+        setAttendeesList(res && res.length > 0 ? [...res] : [])
       } else {
         showAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByAttendeeFullName(value, summitId, '')
+          ? await accessRepo.findByAttendeeNameOrCompany(value, summitId, '')
           : await accessRepo.fetchCurrentShowAttendees(
               summitId,
               showAccessesPageIx,
               pageSize
             )
-        if (res && res.length > 0) {
-          setAttendeesList(
-            chatRepo.mergeChatNews([...res], chatNotificationsMap)
-          )
-        }
+        setAttendeesList(res && res.length > 0 ? [...res] : [])
       }
-    }, 150)
+    }, 300)
     handleSearchDebounce()
   }
 
@@ -158,7 +131,11 @@ const AttendeesList = (props) => {
   if (attendeesList) {
     return (
       <div className={style.outerWrapper}>
-        <SearchBar onSearch={handleSearch} onFilterModeChange={handleFilterModeChange} filterMenuOptions={['All Attendees', 'On this Room']} />
+        <SearchBar
+          onSearch={handleSearch}
+          onFilterModeChange={handleFilterModeChange}
+          filterMenuOptions={['All Attendees', 'On this Room']}
+        />
         <InfiniteScroll
           dataLength={attendeesList.length}
           next={fetchMoreData}

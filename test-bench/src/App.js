@@ -41,7 +41,13 @@ const chatProps = {
   title: '',
   showHelp: true,
   showQA: true,
-  hideUsers: false
+  hideUsers: false,
+  activity: {
+    id: 206,
+    name:
+      'Global Collaboration Driving Innovation in a Multi-Billion Dollar Market', //Widget will create this activity room or add members to it
+    imgUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
+  }
 }
 
 const widgetProps = {
@@ -49,6 +55,7 @@ const widgetProps = {
     id: null,
     fullName: '',
     email: '',
+    groups: ['admins'],
     company: '',
     title: '',
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
@@ -60,7 +67,8 @@ const widgetProps = {
       wechatUser: ''
     },
     badgeFeatures: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
-    bio: '# This is my bio, *in MD*!'
+    bio: '# This is my bio, *in MD*!', //bio: '<p><span>This is my bio in HTML</span></p>'
+    canChat: true //based on badge features
   },
   summitId: 17,
   height: 500,
@@ -95,6 +103,9 @@ const App = () => {
   //   }
   // }
 
+  //From INVITE LINK
+  const openChatRoom = (roomId) => {}
+
   const startOneToOneChat = (partnerId) => {
     chatRef.current.startOneToOneChat(partnerId)
   }
@@ -104,9 +115,11 @@ const App = () => {
   }
 
   const token1 =
-    '3ZFtGNLbXPWlD8McJDWpkQXH6Wv6x4nhYbxzsa8QtH5LE6-NUMViZaMrPgqss2qZ-1hODNvMiNHe4.jeSI9y30nLvJM-u06QA3KiBLyaGtSHA3gBfW898-iHCef1sjuW'
+    'pYxuWO6B0gDdl4TRtUX8Om5iMkKei2li~VLoJIFTCN.eWtxb8Pcy4HEyRJgXZfWoogp2Aa478iDZxYSQCv9Y4K9mb6YQJqPGsm9_1lHl_9pUSkkDhjr9e_W60DzWe_t0'
   const token2 =
-    'DqPtsnDfx.XJt2BMSMfPXNtJQvgX5HLjgFXcxbM~Rw9kn9zd0Vd.6_nmSrGhhHfK-Webgo9_LncDYiaWdOC8qlRJRYIZvvCJO4ZXo0QM7LLprvuKfIFs96xG4pYx3PqP'
+    'pYxuWO6B0gDdl4TRtUX8Om5iMkKei2li~VLoJIFTCN.eWtxb8Pcy4HEyRJgXZfWoogp2Aa478iDZxYSQCv9Y4K9mb6YQJqPGsm9_1lHl_9pUSkkDhjr9e_W60DzWe_t0'
+  const token3 =
+    'pYxuWO6B0gDdl4TRtUX8Om5iMkKei2li~VLoJIFTCN.eWtxb8Pcy4HEyRJgXZfWoogp2Aa478iDZxYSQCv9Y4K9mb6YQJqPGsm9_1lHl_9pUSkkDhjr9e_W60DzWe_t0'
 
   return (
     <Router>
@@ -114,14 +127,19 @@ const App = () => {
         <Route exact path='/'>
           <div>
             <Link
-              to={`/attendance?accessToken=${token1}&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=13`}
+              to={`/attendance?accessToken=${token1}&fullName=Roman Gutierrez (Help)&email=roman.gutierrez@gmail.com&idpUserId=13`}
             >
-              Attendees 1
+              Help User
             </Link>
             <Link
-              to={`/attendance?accessToken=${token2}&fullName=Abril Gutierrez&email=roman.gutierrez@hotmail.com&idpUserId=11`}
+              to={`/attendance?accessToken=${token2}&fullName=Johnny Nimbus&email=cespin+1@gmail.com&idpUserId=6`}
             >
-              Attendees 2
+              Attendees
+            </Link>
+            <Link
+              to={`/attendance?accessToken=${token3}&fullName=Jethro Stratus (Q&A)&email=cespin+2@gmail.com&idpUserId=7`}
+            >
+              QA User
             </Link>
             <Tracker {...widgetProps} />
           </div>

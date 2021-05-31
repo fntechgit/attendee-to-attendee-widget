@@ -1,0 +1,11 @@
+.tabs {
+  font-size: 1.1rem;
+  a {
+    text-decoration: none;
+  }
+
+  :global(li.is-active a) {
+    border-bottom-color: red !important;
+    color: red;
+  }
+}

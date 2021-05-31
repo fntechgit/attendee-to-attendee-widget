@@ -1,17 +1,13 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
-import style from './style.module.scss'
-import { allHelpRoles } from '../../../models/local_roles'
+import ReactTooltip from 'react-tooltip'
+import { channelTypes } from '../../../models/channelTypes'
 
-const CustomHeader = (props) => {
+import style from './style.module.scss'
+
+const CustomRoomChannelHeader = (props) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
-  const {
-    me,
-    channel: {
-      state: { members }
-    },
-    onClose
-  } = props
+  const { me, channel, onClose, onMenuSelected } = props
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen)
@@ -19,12 +15,13 @@ const CustomHeader = (props) => {
 
   const handleMenuSelection = (index) => {
     setMenuOpen(false)
+    if (onMenuSelected) onMenuSelected(index, channel)
   }
 
   const renderMoreMenu = () => (
-    <div className={`dropdown is-right ${style.more} ${isMenuOpen ? 'is-active' : ''}`}>
+    <div className={`dropdown is-right ${isMenuOpen ? 'is-active' : ''}`}>
       <div className='dropdown-trigger'>
-        <a onClick={toggleMenu}>
+        <a onClick={toggleMenu} data-tip='Chat Room Options'>
           <div className={style.icon}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -39,64 +36,63 @@ const CustomHeader = (props) => {
           </div>
         </a>
       </div>
-      <div
-        className='dropdown-menu'
-        id='search-menu'
-        role='menu'
-      >
+      <div className='dropdown-menu' id='search-menu' role='menu'>
         <div className='dropdown-content'>
-          <a className='dropdown-item' style={{ textDecoration: 'none' }} onClick={() => handleMenuSelection(1)}>
-            Leave chat room
+          <a
+            className='dropdown-item'
+            style={{ textDecoration: 'none' }}
+            onClick={() => handleMenuSelection(1)}
+          >
+            <span className='is-size-5 has-text-grey'>Leave chat room</span>
           </a>
           <a
             className='dropdown-item mt-2'
             style={{ textDecoration: 'none' }}
             onClick={() => handleMenuSelection(2)}
           >
-            Copy Invite Link
+            <span className='is-size-5 has-text-grey'>Copy Invite Link</span>
           </a>
           <a
             className='dropdown-item mt-2'
             style={{ textDecoration: 'none' }}
-            onClick={() => handleMenuSelection(2)}
+            onClick={() => handleMenuSelection(3)}
           >
-            Q&A
+            <span className='is-size-5 has-text-grey'>Q&A</span>
           </a>
         </div>
       </div>
+      <ReactTooltip place='bottom' effect='solid' />
     </div>
   )
 
-  const isHelpUser = allHelpRoles.includes(me.local_role)
-  const memberLookup = (m) =>
-    isHelpUser ? m.role === 'owner' : m.user.id !== me.id
+  const member = Object.values(channel.state.members).find(
+    (m) => m.user.id !== me.id
+  )
 
-  const member = Object.values(members).find(memberLookup)
+  let headerImage = channel.data.image
+  let headerTitle = channel.data.name
+  let headerSubTitle = `${channel.data.member_count} participants`
 
-  let headerTitle = member.user.name
-
-  if (isHelpUser) {
-    const channelType = props.channel.id.includes('help') ? 'Help' : 'Q&A'
-    headerTitle = `${channelType} - ${member.user.name}`
-  } else {
-    if (props.channel.id === `${me.id}-help`) {
-      headerTitle = 'Support'
-    } else if (props.channel.id === `${me.id}-qa`) {
-      headerTitle = 'Q&A'
-    }
+  if (channel.type === channelTypes.MESSAGING && member) {
+    headerImage = member.user.image
+    headerTitle = member.user.name
   }
 
   return (
-    <div className={style.header}>
+    <div className={style.customRoomHeader}>
       <div className={style.picWrapper}>
         <div
           className={style.pic}
-          style={{ backgroundImage: `url(${member.user.image})` }}
+          style={{ backgroundImage: `url(${headerImage})` }}
         />
       </div>
-      <span className={style.name}>{headerTitle}</span>
-      <a href='' onClick={onClose} className={style.close}>
-        <div className={style.icon}>
+      <div className={style.textWrapper}>
+        <span className={style.title}>{headerTitle}</span>
+        <span className={style.subtitle}>{headerSubTitle}</span>
+      </div>
+      <div className={style.controls}>
+        {renderMoreMenu()}
+        <div onClick={onClose} className={style.close}>
           <svg
             width='10px'
             height='10px'
@@ -106,10 +102,9 @@ const CustomHeader = (props) => {
             <path d='m243.1875 182.859375 113.132812-113.132813c12.5-12.5 12.5-32.765624 0-45.246093l-15.082031-15.082031c-12.503906-12.503907-32.769531-12.503907-45.25 0l-113.128906 113.128906-113.132813-113.152344c-12.5-12.5-32.765624-12.5-45.246093 0l-15.105469 15.082031c-12.5 12.503907-12.5 32.769531 0 45.25l113.152344 113.152344-113.128906 113.128906c-12.503907 12.503907-12.503907 32.769531 0 45.25l15.082031 15.082031c12.5 12.5 32.765625 12.5 45.246093 0l113.132813-113.132812 113.128906 113.132812c12.503907 12.5 32.769531 12.5 45.25 0l15.082031-15.082031c12.5-12.503906 12.5-32.769531 0-45.25zm0 0' />
           </svg>
         </div>
-      </a>
-      {renderMoreMenu()}
+      </div>
     </div>
   )
 }
 
-export default withChatContext(CustomHeader)
+export default withChatContext(CustomRoomChannelHeader)

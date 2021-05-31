@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 
+let charsCount = 0
+
 export const SearchBar = ({
   onSearch,
+  onClear,
   onFilterModeChange,
-  filterMenuOptions
+  filterMenuOptions,
+  placeholder
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -20,14 +24,25 @@ export const SearchBar = ({
     }, 200)
   }
 
+  const handleSearch = (e) => {
+    const { value } = e.target
+    if (onClear && charsCount > 0 && value.length === 0) {
+      onClear()
+    }
+    charsCount = value.length
+    if (onSearch) {
+      onSearch(e)
+    }
+  }
+
   return (
     <div className='field has-addons'>
       <div className='control has-icons-left is-expanded'>
         <input
           className='input is-medium'
           type='search'
-          placeholder='Search by name or company'
-          onChange={onSearch}
+          placeholder={placeholder || 'Search by name or company'}
+          onChange={handleSearch}
         />
         <span className='icon is-left'>
           <span className='icon'>
@@ -59,9 +74,7 @@ export const SearchBar = ({
                   onClick={() => handleMenuSelection(ix)}
                 >
                   <span className='icon-text is-size-5 has-text-grey'>
-                    <span>
-                      {item}
-                    </span>
+                    <span>{item}</span>
                     {selectedIndex === ix && (
                       <span className='icon'>
                         <i className='fa fa-check' aria-hidden='true'></i>

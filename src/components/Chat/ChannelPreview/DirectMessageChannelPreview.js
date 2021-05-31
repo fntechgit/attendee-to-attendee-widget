@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
-import { allHelpRoles } from '../../../models/local_roles'
+import { channelTypes } from '../../../models/channelTypes'
+import { roles } from '../../../models/userRole'
 
 import styles from './style.module.scss'
 
@@ -14,11 +15,32 @@ const UserChannelPreview = ({
   onDelete
 }) => {
   const [showDelete, setShowDelete] = useState(false)
-  let name = member.user.name
   const statusClass = member.user.online ? styles.online : styles.offline
 
-  if (allHelpRoles.includes(client.user.local_role)) {
-    name = `${channel.id.includes('help') ? 'Help' : 'Q&A'} - ${name}`
+  //console.log('Member', member.user.name, member.user.role)
+
+  //console.log('client.user.local_role', client.user.local_role)
+
+  let title = member.user.name
+
+  if (
+    channel.type === channelTypes.HELP_ROOM ||
+    channel.type === channelTypes.QA_ROOM
+  ) {
+    const userRole = client.user.local_role
+    const isSupportUser = userRole === roles.HELP || userRole === roles.QA
+
+    if (isSupportUser) {
+      //Get the user who needs support
+      const member = Object.values(channel.state.members).find(
+        (m) => m.user.role !== roles.QA && m.user.role !== roles.HELP
+      )
+
+      title =
+        channel.type === channelTypes.QA_ROOM
+          ? `${member.user.name} have a question`
+          : `${member.user.name} help request`
+    }
   }
 
   return (
@@ -37,7 +59,7 @@ const UserChannelPreview = ({
             <div className={styles.info}>
               <div>
                 <div className={styles.name} data-user={member.user.id}>
-                  {name}
+                  {title}
                 </div>
               </div>
               {latestMessage && (
@@ -89,17 +111,9 @@ const DirectMessageChannelPreview = (props) => {
     client,
     onItemClick
   } = props
-  const isSupportUser = allHelpRoles.includes(client.user.local_role)
 
-  const memberLookup = (m) => {
-    if (isSupportUser) {
-      return m.role === 'owner'
-    } else {
-      return m.user.id !== client.user.id
-    }
-  }
-
-  const member = Object.values(channel.state.members).find(memberLookup)
+  const userRole = client.user.local_role
+  const isSupportUser = userRole === roles.HELP || userRole === roles.QA
 
   const onChannelClick = async (ev) => {
     ev.preventDefault()
@@ -117,25 +131,29 @@ const DirectMessageChannelPreview = (props) => {
     await channel.stopWatching()
   }
 
+  const memberLookup = (m) => {
+    if (isSupportUser) {
+      return m.role === 'owner'
+    } else {
+      return m.user.id !== client.user.id
+    }
+  }
+
+  const member = Object.values(channel.state.members).find(memberLookup)
+
   if (!member) return null
 
-  if (
-    isSupportUser ||
-    (!channel.id.includes('-qa') && !channel.id.includes('-help'))
-  ) {
-    return (
-      <UserChannelPreview
-        client={client}
-        channel={channel}
-        member={member}
-        latestMessage={latestMessage}
-        unread={unread}
-        onDelete={onDelete}
-        onClick={onChannelClick}
-      />
-    )
-  }
-  return null
+  return (
+    <UserChannelPreview
+      client={client}
+      channel={channel}
+      member={member}
+      latestMessage={latestMessage}
+      unread={unread}
+      onDelete={onDelete}
+      onClick={onChannelClick}
+    />
+  )
 }
 
 export default withChatContext(DirectMessageChannelPreview)
