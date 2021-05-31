@@ -1,7 +1,39 @@
 import { helpRoles, qaRoles } from '../../models/local_roles'
 
 export default class ChatChannelsBuilder {
-  createSupportChannel = async (chatClient, user, type) => {
+  static async _setUpChannel(channel, callback) {
+    const response = await channel.create()
+    await channel.watch()
+    await channel.show()
+    if (callback) callback(channel)
+    return channel
+  }
+
+  static async _setUpSupportChannel(supportRoles, type, callback) {
+    const filter = { type: 'messaging', id: { $eq: `${partnerId}-${type}` } }
+    const foundChannels = await client.queryChannels(filter, {}, {})
+
+    if (foundChannels.length > 0) {
+      const channel = foundChannels[0]
+      if (callback) callback(channel)
+      return channel
+    }
+    const supportUsers = await client.queryUsers({
+      local_role: { $in: supportRoles }
+    })
+    const channelUsers = supportUsers.users.map((u) => u.id)
+    channelUsers.push(partnerId)
+
+    const channel = client.channel('messaging', `${partnerId}-${type}`, {
+      name: `${partnerId}-${type}`,
+      members: channelUsers,
+      supporttype: type
+    })
+
+    return _setUpChannel(channel, setActiveChannel)
+  }
+
+  static async createSupportChannel(chatClient, user, type) {
     const roles = type === 'qa' ? qaRoles : helpRoles
 
     const supportUsers = await chatClient.queryUsers({
@@ -42,96 +74,65 @@ export default class ChatChannelsBuilder {
     return null
   }
 
-  async startConversation(partnerId, client, user, setActiveChannel) {
-    let result
-    // const isHelpUser = helpRoles.includes(user.local_role)
-    // const isQAUser = qaRoles.includes(user.local_role)
+  static async startConversation(
+    chatClient,
+    user,
+    partnerId,
+    setActiveChannel
+  ) {
+    const isHelpUser = helpRoles.includes(user.local_role)
+    const isQAUser = qaRoles.includes(user.local_role)
 
-    // if (isHelpUser) {
-    //   // show help channel
-    //   const filter = { type: 'messaging', id: { $eq: `${partnerId}-help` } }
-    //   const foundChannels = await client.queryChannels(filter, {}, {})
-
-    //   if (foundChannels.length > 0) {
-    //     setActiveChannel(foundChannels[0])
-    //   } else {
-    //     const helpUsers = await client.queryUsers({
-    //       local_role: { $in: helpRoles }
-    //     })
-    //     const channelUsers = helpUsers.users.map((u) => u.id)
-    //     channelUsers.push(partnerId)
-
-    //     const channel = client.channel('messaging', `${partnerId}-help`, {
-    //       name: `${partnerId}-help`,
-    //       members: channelUsers
-    //     })
-
-    //     const response = await channel.create()
-    //     await channel.watch()
-    //     await channel.show()
-    //     setActiveChannel(channel)
-    //   }
-    // } else if (isQAUser) {
-    //   // show qa channel
-    //   const filter = { type: 'messaging', id: { $eq: `${partnerId}-qa` } }
-    //   const foundChannels = await client.queryChannels(filter, {}, {})
-
-    //   if (foundChannels.length > 0) {
-    //     setActiveChannel(foundChannels[0])
-    //   } else {
-    //     const qaUsers = await client.queryUsers({
-    //       local_role: { $in: qaRoles }
-    //     })
-    //     const channelUsers = qaUsers.users.map((u) => u.id)
-    //     channelUsers.push(partnerId)
-
-    //     const channel = client.channel('messaging', `${partnerId}-qa`, {
-    //       name: `${partnerId}-qa`,
-    //       members: channelUsers
-    //     })
-
-    //     const response = await channel.create()
-    //     await channel.watch()
-    //     await channel.show()
-    //     setActiveChannel(channel)
-    //   }
-    // } else {
-    // create 1 to 1 channel
+    if (isHelpUser) {
+      return _setUpSupportChannel(helpRoles, 'help', setActiveChannel)
+    } else if (isQAUser) {
+      return _setUpSupportChannel(qaRoles, 'qa', setActiveChannel)
+    }
+    // get/create 1 to 1 channel
     const filter = {
       type: 'messaging',
       id: { $in: [`${user.id}-${partnerId}`, `${partnerId}-${user.id}`] }
     }
-    const foundChannels = await client.queryChannels(filter, {}, {})
+    const foundChannels = await chatClient.queryChannels(filter, {}, {})
 
     if (foundChannels.length > 0) {
-      setActiveChannel(foundChannels[0])
-      result = foundChannels[0]
-    } else {
-
-      const channel = client.channel('messaging', `${user.id}-${partnerId}`, {
-        name: `${user.id}-${partnerId}`,
-        members: [`${user.id}`, `${partnerId}`]
-      })
-
-      const response = await channel.create()
-      await channel.watch()
-      await channel.show()
+      const channel = foundChannels[0]
       setActiveChannel(channel)
-      result = channel
+      return channel
     }
-    // }
-    return result
+    const channel = chatClient.channel('messaging', `${user.id}-${partnerId}`, {
+      name: `${user.id}-${partnerId}`,
+      members: [`${user.id}`, `${partnerId}`]
+    })
+    return _setUpChannel(channel, setActiveChannel)
   }
 
-  static async getChannel(partnerId, client, user) {
+  //get an existing channel
+  static async getChannel(partnerId, chatClient, user) {
     const filter = {
       type: 'messaging',
       id: { $in: [`${user.id}-${partnerId}`, `${partnerId}-${user.id}`] }
     }
-    const foundChannels = await client.queryChannels(filter, {}, {})
+    const foundChannels = await chatClient.queryChannels(filter, {}, {})
     if (foundChannels.length > 0) {
       return foundChannels[0]
     }
     return null
+  }
+
+  static async createCustomChannel(
+    chatClient,
+    type,
+    name,
+    description,
+    members,
+    image
+  ) {
+    const channel = chatClient.channel(type, name, {
+      name: name,
+      image: image,
+      members: members
+    })
+    await channel.create()
   }
 }

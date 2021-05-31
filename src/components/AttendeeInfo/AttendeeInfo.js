@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactMarkdown from 'react-markdown'
 
 import style from './style.module.scss'
 
@@ -107,7 +108,7 @@ export const AttendeeInfo = ({
             <div>
               {bio && (
                 <div className='content'>
-                  <p>{bio}</p>
+                  <ReactMarkdown>{bio}</ReactMarkdown>
                 </div>
               )}
               <nav className='level'>

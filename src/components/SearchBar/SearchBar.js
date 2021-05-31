@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
 
-export const SearchBar = ({ onSearch, onFilterModeChange }) => {
+export const SearchBar = ({
+  onSearch,
+  onFilterModeChange,
+  filterMenuOptions
+}) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(1)
+  const [selectedIndex, setSelectedIndex] = useState(0)
 
   const toggleMenu = (event) => {
     setMenuOpen(!isMenuOpen)
@@ -31,53 +35,45 @@ export const SearchBar = ({ onSearch, onFilterModeChange }) => {
           </span>
         </span>
       </div>
-      <div className={`dropdown is-right ${isMenuOpen ? 'is-active' : ''}`}>
-        <div className='dropdown-trigger'>
-          <button
-            className='button is-white is-medium'
-            aria-haspopup='true'
-            aria-controls='search-menu'
-            onClick={toggleMenu}
-          >
-            <span className='icon'>
-              <i className='fa fa-sliders' aria-hidden='true'></i>
-            </span>
-          </button>
-        </div>
-        <div
-          className='dropdown-menu'
-          style={{ textDecoration: 'none' }}
-          id='search-menu'
-          role='menu'
-        >
-          <div className='dropdown-content'>
-            <a className='dropdown-item' onClick={() => handleMenuSelection(1)}>
-              <span className='icon-text is-size-4 has-text-grey'>
-                <span>All Attendees</span>
-                {selectedIndex === 1 && (
-                  <span className='icon'>
-                    <i className='fa fa-check' aria-hidden='true'></i>
-                  </span>
-                )}
-              </span>
-            </a>
-            <a
-              className='dropdown-item mt-2'
-              style={{ textDecoration: 'none' }}
-              onClick={() => handleMenuSelection(2)}
+      {filterMenuOptions && (
+        <div className={`dropdown is-right ${isMenuOpen ? 'is-active' : ''}`}>
+          <div className='dropdown-trigger'>
+            <button
+              className='button is-medium'
+              aria-haspopup='true'
+              aria-controls='search-menu'
+              onClick={toggleMenu}
             >
-              <span className='icon-text is-size-4 has-text-grey'>
-                <span>On this Room</span>
-                {selectedIndex === 2 && (
-                  <span className='icon'>
-                    <i className='fa fa-check' aria-hidden='true'></i>
-                  </span>
-                )}
+              <span className='icon'>
+                <i className='fa fa-sliders' aria-hidden='true'></i>
               </span>
-            </a>
+            </button>
+          </div>
+          <div className='dropdown-menu' id='search-menu' role='menu'>
+            <div className='dropdown-content'>
+              {filterMenuOptions.map((item, ix) => (
+                <a
+                  className='dropdown-item mt-2 pr-0'
+                  style={{ textDecoration: 'none' }}
+                  key={ix}
+                  onClick={() => handleMenuSelection(ix)}
+                >
+                  <span className='icon-text is-size-5 has-text-grey'>
+                    <span>
+                      {item}
+                    </span>
+                    {selectedIndex === ix && (
+                      <span className='icon'>
+                        <i className='fa fa-check' aria-hidden='true'></i>
+                      </span>
+                    )}
+                  </span>
+                </a>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

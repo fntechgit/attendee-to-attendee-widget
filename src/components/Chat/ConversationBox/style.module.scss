@@ -1,0 +1,86 @@
+.conversation {
+  position: absolute;
+  top: -1px;
+  width: 400px;
+  height: auto;
+  z-index: 40;
+
+  &.left {
+    left: -400px;
+  }
+
+  &.right {
+    right: -400px;
+  }
+
+  :global(.str-chat-channel) {
+    background-color: transparent;
+    height: 100%;
+    margin: 10px 20px;
+
+    :global(.str-chat__container) {
+      :global(.str-chat__message-simple-status) {
+        margin-left: 4px;
+      }
+
+      :global(.str-chat__main-panel) {
+        margin: 0;
+        padding: 0 !important;
+        border: 1px solid #eee;
+        box-shadow: 0 0 8px 8px rgba(0, 0, 0, 0.08),
+          0 0 8px 1px rgba(0, 0, 0, 0.08);
+
+        :global(.str-chat__list) {
+          max-height: 342px;
+          min-height: 342px;
+        }
+
+        :global(.str-chat__message) {
+          :global(.str-chat__message-inner) {
+            margin-left: 0;
+            margin-right: 65px;
+
+            :global(.str-chat__message-simple__actions) {
+              position: absolute;
+              left: unset;
+              right: -70px;
+              min-width: 65px;
+            }
+          }
+        }
+
+        :global(.str-chat__message--me) {
+          :global(.str-chat__message-inner) {
+            margin-left: 65px;
+            margin-right: 0;
+
+            :global(.str-chat__message-simple__actions) {
+              position: absolute;
+              left: -70px;
+              right: unset;
+              min-width: 65px;
+            }
+          }
+        }
+
+        :global(.str-chat__message-text) {
+          width: auto;
+        }
+
+        :global(.str-chat__input-large) {
+          :global(.str-chat__input-emojiselect) {
+            top: calc(100% - 39px);
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .conversation {
+    right: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+  }
+}

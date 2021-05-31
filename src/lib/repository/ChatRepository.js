@@ -76,7 +76,10 @@ export default class ChatRepository extends AttendeeRepository {
 
   mergeChatNews(attendeesNews, chatNotificationsMap) {
     const currentAttendeeUserId = this._sbUser ? this._sbUser.id : null
-    if (!chatNotificationsMap || Object.keys(chatNotificationsMap).length === 0) {
+    if (
+      !chatNotificationsMap ||
+      Object.keys(chatNotificationsMap).length === 0
+    ) {
       attendeesNews.forEach((attendeeNews) => {
         if (attendeeNews.attendee_id === currentAttendeeUserId) {
           attendeeNews.notification_status = undefined
@@ -117,5 +120,25 @@ export default class ChatRepository extends AttendeeRepository {
       .on('INSERT', (payload) => handleNotificationsNews(payload.new))
       .on('UPDATE', (payload) => handleNotificationsNews(payload.new))
       .subscribe()
+  }
+
+  async uploadRoomImage(name, file) {
+    const maxExpirationTime = 2147483647
+    try {
+      const { uploadError } = await this._client.storage
+        .from('chat-room-images')
+        .upload(name, file)
+      if (uploadError) throw new Error(uploadError)
+
+      const { data, listError } = await this._client.storage
+        .from('chat-room-images')
+        .createSignedUrl(name, maxExpirationTime)
+
+      if (listError) throw new Error(listError)
+
+      return data
+    } catch (error) {
+      console.log('error', error)
+    }
   }
 }

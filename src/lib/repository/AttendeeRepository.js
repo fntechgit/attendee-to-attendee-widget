@@ -274,23 +274,12 @@ export default class AttendeeRepository {
     }
   }
 
-  async findByFullName(filter, summitId, url, ageMinutesBackward = 5) {
+  async findByFullName(filter) {
     try {
-      const { scopeFieldName, scopeFieldVal } = url
-        ? { scopeFieldName: 'current_url', scopeFieldVal: url }
-        : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
-
-      const ageTreshold = DateTime.utc()
-        .minus({ minutes: ageMinutesBackward })
-        .toString()
-
       const { data, error } = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
-        .eq(scopeFieldName, scopeFieldVal)
-        .eq('attendees.is_online', true)
-        .gt('updated_at', ageTreshold)
-        .ilike('attendees.full_name', `%${filter}%`)
+        .from('attendees')
+        .select(`*`)
+        .ilike('full_name', `%${filter}%`)
       if (error) throw new Error(error)
       return data
     } catch (error) {

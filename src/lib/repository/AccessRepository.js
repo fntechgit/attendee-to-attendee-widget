@@ -92,6 +92,25 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
+  async findByAttendeeFullName(filter, summitId, url) {
+    try {
+      const { scopeFieldName, scopeFieldVal } = url
+        ? { scopeFieldName: 'current_url', scopeFieldVal: url }
+        : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
+
+      const { data, error } = await this._client
+        .from('accesses')
+        .select(`*, attendees(*)`)
+        .eq(scopeFieldName, scopeFieldVal)
+        .eq('attendees.is_online', true)
+        .ilike('attendees.full_name', `%${filter}%`)
+      if (error) throw new Error(error)
+      return data
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
   cleanUpAccess(summitId) {
     try {
       if (this._sbUser) {
