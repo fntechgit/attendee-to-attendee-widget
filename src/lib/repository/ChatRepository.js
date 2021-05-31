@@ -15,6 +15,7 @@ export default class ChatRepository {
     accessToken,
     forumSlug,
     callback,
+    onError,
     onAuthError
   ) {
     const role = await accessRepo.getRole(user.id)
@@ -25,6 +26,7 @@ export default class ChatRepository {
       accessToken,
       forumSlug,
       callback,
+      onError,
       onAuthError
     )
   }
@@ -65,10 +67,10 @@ export default class ChatRepository {
     }
   }
 
-  async createSupportChannel(user, activityName, type) {
+  async createSupportChannel(user, activity, type) {
     return await this._streamChatService.createSupportChannel(
       user,
-      activityName,
+      activity,
       type
     )
   }

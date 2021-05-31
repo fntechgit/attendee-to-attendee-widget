@@ -42,14 +42,15 @@ const ConversationBox = ({
         ) {
           if (partnerId === channelTypes.QA_ROOM && !activity) return
 
-          const activityName = activity ? activity.name : ''
-
           // create Help/QA channel between this user and help/qa users
           const supportChannel = await chatRepo.createSupportChannel(
             user,
-            activityName,
+            activity,
             partnerId
           )
+
+          console.log('supportChannel', supportChannel)
+
           setChannel(supportChannel)
         } else {
           const dmChannel = await chatRepo.getChannel(

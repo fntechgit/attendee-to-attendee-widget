@@ -44,7 +44,7 @@ export default class AccessRepository extends AttendeeRepository {
         .match({ attendee_id: this._sbUser.id, summit_id: summitId })
 
       if (fetchRes.error) throw new Error(fetchRes.error)
-      // there were a previous access from this user
+      // there was a previous access from this user
       if (fetchRes.data && fetchRes.data.length > 0) {
         const access = fetchRes.data[0]
         const { data, error } = await this._client

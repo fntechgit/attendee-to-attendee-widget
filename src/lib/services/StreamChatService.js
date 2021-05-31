@@ -95,13 +95,18 @@ export default class StreamChatService {
     return channel
   }
 
-  async createSupportChannel(user, activityName, type) {
-    const scopedRoles =
-      type === channelTypes.QA_ROOM ? [roles.QA] : [roles.HELP]
-    const supportType =
-      type === channelTypes.QA_ROOM ? `qa-${activityName}` : 'help'
-    const displaySupportType =
-      type === channelTypes.QA_ROOM ? 'Q & A' : 'Help Desk'
+  async createSupportChannel(user, activity, type) {
+    let scopedRoles = ['help-user', 'help-qa-user'] //[roles.HELP]
+    let supportType = roles.HELP
+    let displaySupportType = 'Help Desk'
+    let channelId = `${user.id}-${roles.HELP}`
+
+    if (type === channelTypes.QA_ROOM) {
+      scopedRoles = ['qa-user', 'help-qa-user'] //[roles.QA]
+      supportType = roles.QA
+      displaySupportType = 'Q & A'
+      channelId = `${user.id}-${activity.id}`
+    }
 
     const supportUsers = await this.chatClient.queryUsers({
       local_role: { $in: scopedRoles }
@@ -112,21 +117,14 @@ export default class StreamChatService {
       channelUsers.push(user.id)
       const imageURL = supportUsers.users[0].image
 
-      const channel = this.chatClient.channel(
-        type,
-        `${user.id}-${supportType}`,
-        {
-          name: displaySupportType,
-          members: channelUsers,
-          image: imageURL,
-          supporttype: supportType
-        }
-      )
-
+      const channel = this.chatClient.channel(type, channelId, {
+        name: displaySupportType,
+        members: channelUsers,
+        image: imageURL,
+        supporttype: supportType
+      })
       const response = await channel.create()
-
       const membersInChannel = response.members.map((m) => m.user.id)
-
       const membersToRemove = response.members
         .filter(
           (m) => !scopedRoles.includes(m.user.local_role) && m.role !== 'owner'
@@ -136,14 +134,11 @@ export default class StreamChatService {
       if (membersToRemove.length > 0) {
         await channel.removeMembers(membersToRemove)
       }
-
       if (channelUsers.some((mid) => !membersInChannel.includes(mid))) {
         await channel.addMembers(channelUsers)
       }
-
       await channel.watch()
       await channel.show()
-
       return channel
     }
     return null

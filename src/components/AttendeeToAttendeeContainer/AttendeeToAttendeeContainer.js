@@ -139,6 +139,14 @@ const AttendeeToAttendeeContainer = (props) => {
     }
   }
 
+  const handleQARequest = (index, channel) => {
+    if (!qaChatOpened) {
+      setTimeout(() => {
+        setQAChatOpened(true)
+      }, 100)
+    }
+  }
+
   const handleAttendeeClick = (att) => {
     if (att.attendees.idp_user_id != user.idpUserId && user.canChat) {
       showChatWindow(null, att.attendees.idp_user_id)
@@ -164,7 +172,7 @@ const AttendeeToAttendeeContainer = (props) => {
     {
       name: 'ATTENDEES',
       icon: '',
-      content: (
+      content: chatClient && (
         <AttendeesList
           {...props}
           accessRepo={accessRepo}
@@ -176,7 +184,7 @@ const AttendeeToAttendeeContainer = (props) => {
     {
       name: 'MESSAGES',
       icon: '',
-      content: (
+      content: chatClient && (
         <DMChannelListContainer
           user={user}
           summitId={summitId}
@@ -184,6 +192,8 @@ const AttendeeToAttendeeContainer = (props) => {
           accessRepo={accessRepo}
           onItemClick={handleMessageClick}
           height={props.height}
+          activity={activity}
+          onQAClick={handleQARequest}
         />
       )
     },
@@ -237,14 +247,15 @@ const AttendeeToAttendeeContainer = (props) => {
           onChatMenuSelected={handleChatMenuSelection}
         />
       )}
-      {chatClient && chatOpened && qaChatOpened && user && (
+      {chatClient && qaChatOpened && user && (
         <ConversationBox
           chatClient={chatClient}
           chatRepo={chatRepo}
           user={user}
           partnerId={channelTypes.QA_ROOM}
-          openDir='parentLeft'
+          openDir={chatOpened ? 'parentLeft' : 'left'}
           summitId={summitId}
+          activity={activity}
           visible={qaChatOpened}
           onClose={() => setQAChatOpened(false)}
         />

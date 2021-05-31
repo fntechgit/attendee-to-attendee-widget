@@ -15,7 +15,9 @@ const DMChannelListContainer = ({
   chatClient,
   accessRepo,
   onItemClick,
-  height
+  height,
+  activity,
+  onQAClick
 }) => {
   const defaultScope = [
     channelTypes.HELP_ROOM,
@@ -87,6 +89,19 @@ const DMChannelListContainer = ({
           />
         </Chat>
       </div>
+      {activity && (
+        <div className='has-text-centered mt-2'>
+          <button
+            className='button is-large'
+            onClick={() => onQAClick(activity)}
+          >
+            <span className='icon'>
+              <i className='fa fa-comments'></i>
+            </span>
+            <span>Q&A</span>
+          </button>
+        </div>
+      )}
     </div>
   )
 }

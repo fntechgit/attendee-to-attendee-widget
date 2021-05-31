@@ -62,7 +62,7 @@ const ChannelListContainer = ({
         EmptyStateIndicator={() => (
           <CustomEmptyStateIndicator isRoomChatChannel={isRoomChatChannel} />
         )}
-        LoadingIndicator={CustomLoadingIndicator}
+        //LoadingIndicator={CustomLoadingIndicator}
         setActiveChannelOnMount={false}
         me={user}
       />
