@@ -37,35 +37,16 @@ const ConversationBox = ({
     const initChannel = async () => {
       //console.log('activeChannel', activeChannel)
       if (!activeChannel) {
-        if (
-          partnerId === channelTypes.QA_ROOM ||
-          partnerId === channelTypes.HELP_ROOM
-        ) {
-          if (partnerId === channelTypes.QA_ROOM && !activity) return
-
-          // create Help/QA channel between this user and help/qa users
-          const helpChannel = await chatRepo.createHelpChannel(user, summitId)
-
-          const qaChannel = await chatRepo.createQAChannel(
-            user,
-            summitId,
-            activity
-          )
-
-          // const supportChannel = await chatRepo.createSupportChannel(
-          //   user,
-          //   activity,
-          //   partnerId
-          // )
-
-          // setChannel(supportChannel)
+        if (partnerId === channelTypes.QA_ROOM) {
+          if (!activity) return
+          const qaChannel = await chatRepo.startQAChat(user, summitId, activity)
+          if (qaChannel) setChannel(qaChannel)
+        } else if (partnerId === channelTypes.HELP_ROOM) {
+          const helpChannel = await chatRepo.startHelpChat(user, summitId)
+          if (helpChannel) setChannel(helpChannel)
         } else {
-          const dmChannel = await chatRepo.getChannel(
-            channelTypes.MESSAGING,
-            user,
-            partnerId
-          )
-          setChannel(dmChannel)
+          const dmChannel = await chatRepo.startA2AChat(user, partnerId)
+          if (dmChannel) setChannel(dmChannel)
         }
       } else {
         setChannel(activeChannel)

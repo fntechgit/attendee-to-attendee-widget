@@ -1,5 +1,6 @@
 import { nameToId } from '../../utils/stringHelper'
 import { channelTypes } from '../../models/channelTypes'
+import { roles } from '../../models/userRole'
 
 export default class ChatRepository {
   constructor(supabaseService, streamChatService, chatAPIService) {
@@ -21,6 +22,20 @@ export default class ChatRepository {
     } catch (error) {
       console.log('error', error)
       return []
+    }
+  }
+
+  async _getAgentInfo(id) {
+    try {
+      const { data, error } = await this._supabaseService
+        .from('attendees')
+        .select('*')
+        .eq('idp_user_id', id)
+      if (error) throw new Error(error)
+      return data[0]
+    } catch (error) {
+      console.log('error', error)
+      return null
     }
   }
 
@@ -83,44 +98,82 @@ export default class ChatRepository {
     }
   }
 
-  async createSupportChannel(user, activity, type) {
-    return await this._streamChatService.createSupportChannel(
+  async startHelpChat(user, summitId) {
+    try {
+      //Fetch all the show help agents from Supabase
+      const helpAgents = await this._getSupportAgents(summitId, 0)
+      if (helpAgents && helpAgents.length > 0) {
+        const helpAgentIds = helpAgents.map((h) => h.idp_user_id.toString())
+        const firstHelpAgent = await this._getAgentInfo(helpAgentIds[0])
+        const members = [user.id, ...helpAgentIds]
+        console.log('help channel members', members)
+        return this._streamChatService.createChannel(
+          channelTypes.HELP_ROOM,
+          `${user.id}-${roles.HELP}`,
+          'Help Desk',
+          '',
+          members,
+          firstHelpAgent.pic_url
+        )
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+    return null
+  }
+
+  async startQAChat(user, summitId, activity) {
+    try {
+      //Fetch all the activity QA agents from Supabase
+      const qaAgents = await this._getSupportAgents(summitId, activity.id)
+      if (qaAgents && qaAgents.length > 0) {
+        const qaAgentsIds = qaAgents.map((h) => h.idp_user_id.toString())
+        const firstQAAgent = await this._getAgentInfo(qaAgentsIds[0])
+        const members = [user.id, ...qaAgentsIds]
+        console.log('qa channel members', members)
+        return this._streamChatService.createChannel(
+          channelTypes.QA_ROOM,
+          `${user.id}-${activity.id}`,
+          'Q & A',
+          '',
+          members,
+          firstQAAgent.pic_url
+        )
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+    return null
+  }
+
+  async startA2AChat(user, partnerId) {
+    const channel = await this._streamChatService.getChannel(
+      channelTypes.MESSAGING,
       user,
-      activity,
-      type
+      partnerId
+    )
+    if (channel) return channel
+    const id = `${user.id}-${partnerId}`
+    const members = [user.id, partnerId]
+    return this._streamChatService.createChannel(
+      channelTypes.MESSAGING,
+      id,
+      id,
+      '',
+      members,
+      user.picUrl
     )
   }
 
-  async createHelpChannel(user, summitId) {
-    //Fetch all the show help agents from Supabase
-    const helpAgents = await this._getSupportAgents(summitId, 0)
-    if (helpAgents && helpAgents.length > 0) {
-      const helpAgentIds = helpAgents.map((h) => h.idp_user_id.toString())
-      const members = [user.id, ...helpAgentIds]
-      console.log('help channel members', members)
-    }
-    //Create/get the HELP channel with id (user.id-help)
-
-    //Add fetched agents to the channel
-    //Add user to the channel
-    //Return the channel
+  async deleteChannel(id) {
+    await this._streamChatService.deleteChannel(id)
   }
 
-  async createQAChannel(user, summitId, activity) {
-    //Fetch all the activity QA agents from Supabase
-    const qaAgents = await this._getSupportAgents(summitId, activity.id)
-    if (qaAgents && qaAgents.length > 0) {
-      const qaAgentsIds = qaAgents.map((h) => h.idp_user_id.toString())
-      const members = [user.id, ...qaAgentsIds]
-      console.log('qa channel members', members)
-    }
-    //Create/get the QA channel with id (user.id-activity.id)
-    //Add fetched agents to the channel
-    //Add user to the channel
-    //Return the channel
+  async removeMember(channel, memberId) {
+    await this._streamChatService.removeMember(channel, memberId)
   }
 
-  async createChannel(type, name, description, members, image) {
+  async createRoom(type, name, description, members, image) {
     try {
       const id = nameToId(name)
       return this._streamChatService.createChannel(
@@ -134,18 +187,6 @@ export default class ChatRepository {
     } catch (error) {
       console.log('error', error)
     }
-  }
-
-  async getChannel(type, user, partnerId) {
-    await this._streamChatService.getChannel(type, user, partnerId)
-  }
-
-  async deleteChannel(id) {
-    await this._streamChatService.deleteChannel(id)
-  }
-
-  async removeMember(channel, memberId) {
-    await this._streamChatService.removeMember(channel, memberId)
   }
 
   async setUpActivityRoom(activity, user) {

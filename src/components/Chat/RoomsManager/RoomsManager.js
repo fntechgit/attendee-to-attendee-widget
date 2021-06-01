@@ -191,8 +191,8 @@ export default withFormik({
 
     const memberIds = members.map((m) => `${m.value}`)
 
-    //Create channel
-    const channel = await chatRepo.createChannel(
+    //Create room
+    const channel = await chatRepo.createRoom(
       channelTypes.CUSTOM_ROOM,
       roomName,
       roomDesc,

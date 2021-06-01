@@ -73,76 +73,66 @@ export default class StreamChatService {
     return null
   }
 
-  async getChannelsOfType(chatClient, type) {
-    if (chatClient)
-      return await chatClient.queryChannels({ type: type }, {}, {})
-    return null
-  }
-
   async createChannel(type, id, name, description, members, image) {
     const channel = this.chatClient.channel(type, id, {
       name: name,
       image: image,
       members: members
     })
-
     //await channel.addModerators([]);
-
-    //await channel.create()
     await channel.watch()
     await channel.show()
-
     return channel
   }
 
-  async createSupportChannel(user, activity, type) {
-    let scopedRoles = ['help-user', 'help-qa-user'] //[roles.HELP]
-    let supportType = roles.HELP
-    let displaySupportType = 'Help Desk'
-    let channelId = `${user.id}-${roles.HELP}`
+  // async createSupportChannel(user, activity, type) {
+  //   let scopedRoles = ['help-user', 'help-qa-user'] //[roles.HELP]
+  //   let supportType = roles.HELP
+  //   let displaySupportType = 'Help Desk'
+  //   let channelId = `${user.id}-${roles.HELP}`
 
-    if (type === channelTypes.QA_ROOM) {
-      scopedRoles = ['qa-user', 'help-qa-user'] //[roles.QA]
-      supportType = roles.QA
-      displaySupportType = 'Q & A'
-      channelId = `${user.id}-${activity.id}`
-    }
+  //   if (type === channelTypes.QA_ROOM) {
+  //     scopedRoles = ['qa-user', 'help-qa-user'] //[roles.QA]
+  //     supportType = roles.QA
+  //     displaySupportType = 'Q & A'
+  //     channelId = `${user.id}-${activity.id}`
+  //   }
 
-    const supportUsers = await this.chatClient.queryUsers({
-      local_role: { $in: scopedRoles }
-    })
+  //   const supportUsers = await this.chatClient.queryUsers({
+  //     local_role: { $in: scopedRoles }
+  //   })
 
-    if (supportUsers.users.length > 0) {
-      const channelUsers = supportUsers.users.map((u) => u.id)
-      channelUsers.push(user.id)
-      const imageURL = supportUsers.users[0].image
+  //   if (supportUsers.users.length > 0) {
+  //     const channelUsers = supportUsers.users.map((u) => u.id)
+  //     channelUsers.push(user.id)
+  //     const imageURL = supportUsers.users[0].image
 
-      const channel = this.chatClient.channel(type, channelId, {
-        name: displaySupportType,
-        members: channelUsers,
-        image: imageURL,
-        supporttype: supportType
-      })
-      const response = await channel.create()
-      const membersInChannel = response.members.map((m) => m.user.id)
-      const membersToRemove = response.members
-        .filter(
-          (m) => !scopedRoles.includes(m.user.local_role) && m.role !== 'owner'
-        )
-        .map((u) => u.user.id)
+  //     const channel = this.chatClient.channel(type, channelId, {
+  //       name: displaySupportType,
+  //       members: channelUsers,
+  //       image: imageURL,
+  //       supporttype: supportType
+  //     })
+  //     const response = await channel.create()
+  //     const membersInChannel = response.members.map((m) => m.user.id)
+  //     const membersToRemove = response.members
+  //       .filter(
+  //         (m) => !scopedRoles.includes(m.user.local_role) && m.role !== 'owner'
+  //       )
+  //       .map((u) => u.user.id)
 
-      if (membersToRemove.length > 0) {
-        await channel.removeMembers(membersToRemove)
-      }
-      if (channelUsers.some((mid) => !membersInChannel.includes(mid))) {
-        await channel.addMembers(channelUsers)
-      }
-      await channel.watch()
-      await channel.show()
-      return channel
-    }
-    return null
-  }
+  //     if (membersToRemove.length > 0) {
+  //       await channel.removeMembers(membersToRemove)
+  //     }
+  //     if (channelUsers.some((mid) => !membersInChannel.includes(mid))) {
+  //       await channel.addMembers(channelUsers)
+  //     }
+  //     await channel.watch()
+  //     await channel.show()
+  //     return channel
+  //   }
+  //   return null
+  // }
 
   async deleteChannel(id) {
     // const filter = { type: channelTypes.CUSTOM_ROOM, id: id }
