@@ -106,7 +106,6 @@ export default class ChatRepository {
         const helpAgentIds = helpAgents.map((h) => h.idp_user_id.toString())
         const firstHelpAgent = await this._getAgentInfo(helpAgentIds[0])
         const members = [user.id, ...helpAgentIds]
-        console.log('help channel members', members)
         return this._streamChatService.createChannel(
           channelTypes.HELP_ROOM,
           `${user.id}-${roles.HELP}`,
@@ -130,7 +129,6 @@ export default class ChatRepository {
         const qaAgentsIds = qaAgents.map((h) => h.idp_user_id.toString())
         const firstQAAgent = await this._getAgentInfo(qaAgentsIds[0])
         const members = [user.id, ...qaAgentsIds]
-        console.log('qa channel members', members)
         return this._streamChatService.createChannel(
           channelTypes.QA_ROOM,
           `${user.id}-${activity.id}`,

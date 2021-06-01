@@ -17,6 +17,7 @@ const DMChannelListContainer = ({
   onItemClick,
   height,
   activity,
+  onHelpClick,
   onQAClick
 }) => {
   const defaultScope = [
@@ -89,10 +90,16 @@ const DMChannelListContainer = ({
           />
         </Chat>
       </div>
-      {activity && (
-        <div className='has-text-centered mt-2'>
+      <div className='has-text-centered mt-2'>
+        <button className='button is-large' onClick={onHelpClick}>
+          <span className='icon'>
+            <i className='fa fa-question-circle-o'></i>
+          </span>
+          <span>Help</span>
+        </button>
+        {activity && (
           <button
-            className='button is-large'
+            className='button is-large ml-1'
             onClick={() => onQAClick(activity)}
           >
             <span className='icon'>
@@ -100,8 +107,8 @@ const DMChannelListContainer = ({
             </span>
             <span>Q&A</span>
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
