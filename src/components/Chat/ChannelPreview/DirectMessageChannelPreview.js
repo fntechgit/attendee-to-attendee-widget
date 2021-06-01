@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
-import { channelTypes } from '../../../models/channelTypes'
 import { roles } from '../../../models/userRole'
 
 import styles from './style.module.scss'
@@ -17,30 +16,20 @@ const UserChannelPreview = ({
   const [showDelete, setShowDelete] = useState(false)
   const statusClass = member.user.online ? styles.online : styles.offline
 
-  //console.log('Member', member.user.name, member.user.role)
-
-  //console.log('client.user.local_role', client.user.local_role)
-
   let title = member.user.name
+  const userRole = client.user.local_role
+  const isSupportUser = userRole === roles.HELP || userRole === roles.QA
 
-  if (
-    channel.type === channelTypes.HELP_ROOM ||
-    channel.type === channelTypes.QA_ROOM
-  ) {
-    const userRole = client.user.local_role
-    const isSupportUser = userRole === roles.HELP || userRole === roles.QA
+  if (isSupportUser) {
+    //Get the user who needs support
+    const member = Object.values(channel.state.members).find(
+      (m) => m.user.role !== roles.QA && m.user.role !== roles.HELP
+    )
 
-    if (isSupportUser) {
-      //Get the user who needs support
-      const member = Object.values(channel.state.members).find(
-        (m) => m.user.role !== roles.QA && m.user.role !== roles.HELP
-      )
-
-      title =
-        channel.type === channelTypes.QA_ROOM
-          ? `${member.user.name} have a question`
-          : `${member.user.name} help request`
-    }
+    title =
+      userRole === roles.QA
+        ? `${member.user.name} have a question`
+        : `${member.user.name} help request`
   }
 
   return (

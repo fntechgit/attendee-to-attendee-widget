@@ -115,10 +115,6 @@ const AttendeeToAttendeeContainer = (props) => {
     }
   }
 
-  const handleHelpClick = async () => {
-    showChatWindow(null, channelTypes.HELP_ROOM)
-  }
-
   const handleChatMenuSelection = (index, channel) => {
     switch (index) {
       case 1:
@@ -139,7 +135,11 @@ const AttendeeToAttendeeContainer = (props) => {
     }
   }
 
-  const handleQARequest = (index, channel) => {
+  const handleHelpClick = async () => {
+    showChatWindow(null, channelTypes.HELP_ROOM)
+  }
+
+  const handleQAClick = (index, channel) => {
     if (!qaChatOpened) {
       setTimeout(() => {
         setQAChatOpened(true)
@@ -193,7 +193,8 @@ const AttendeeToAttendeeContainer = (props) => {
           onItemClick={handleMessageClick}
           height={props.height}
           activity={activity}
-          onQAClick={handleQARequest}
+          onHelpClick={handleHelpClick}
+          onQAClick={handleQAClick}
         />
       )
     },
