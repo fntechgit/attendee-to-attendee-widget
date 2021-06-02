@@ -8,6 +8,7 @@ const UserChannelPreview = ({
   client,
   channel,
   member,
+  title,
   latestMessage,
   unread,
   onClick,
@@ -15,22 +16,6 @@ const UserChannelPreview = ({
 }) => {
   const [showDelete, setShowDelete] = useState(false)
   const statusClass = member.user.online ? styles.online : styles.offline
-
-  let title = member.user.name
-  const userRole = client.user.local_role
-  const isSupportUser = userRole === roles.HELP || userRole === roles.QA
-
-  if (isSupportUser) {
-    //Get the user who needs support
-    const member = Object.values(channel.state.members).find(
-      (m) => m.user.role !== roles.QA && m.user.role !== roles.HELP
-    )
-
-    title =
-      userRole === roles.QA
-        ? `${member.user.name} have a question`
-        : `${member.user.name} help request`
-  }
 
   return (
     <div
@@ -101,9 +86,6 @@ const DirectMessageChannelPreview = (props) => {
     onItemClick
   } = props
 
-  const userRole = client.user.local_role
-  const isSupportUser = userRole === roles.HELP || userRole === roles.QA
-
   const onChannelClick = async (ev) => {
     ev.preventDefault()
     await channel.markRead()
@@ -120,23 +102,30 @@ const DirectMessageChannelPreview = (props) => {
     await channel.stopWatching()
   }
 
+  const userRole = client.user.local_role
+
   const memberLookup = (m) => {
-    if (isSupportUser) {
+    if (userRole === roles.HELP || userRole === roles.QA) {
+      //Get the user who needs support
       return m.role === 'owner'
     } else {
       return m.user.id !== client.user.id
     }
   }
-
   const member = Object.values(channel.state.members).find(memberLookup)
 
   if (!member) return null
+
+  let title = member.user.name
+  if (userRole === roles.QA) title = `${member.user.name} have a question`
+  else if (userRole === roles.HELP) title = `${member.user.name} help request`
 
   return (
     <UserChannelPreview
       client={client}
       channel={channel}
       member={member}
+      title={title}
       latestMessage={latestMessage}
       unread={unread}
       onDelete={onDelete}

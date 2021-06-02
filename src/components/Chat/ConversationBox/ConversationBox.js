@@ -13,11 +13,12 @@ import {
 import SimpleChannelHeader from '../CustomChannelHeader/SimpleChannelHeader'
 import CustomRoomChannelHeader from '../CustomChannelHeader/CustomRoomChannelHeader'
 import { channelTypes } from '../../../models/channelTypes'
+import { roles } from '../../../models/userRole'
 
 import style from './style.module.scss'
 
 const ConversationBox = ({
-  partnerId,
+  chatCounterpart,
   chatClient,
   chatRepo,
   activeChannel,
@@ -37,15 +38,15 @@ const ConversationBox = ({
     const initChannel = async () => {
       //console.log('activeChannel', activeChannel)
       if (!activeChannel) {
-        if (partnerId === channelTypes.QA_ROOM) {
+        if (chatCounterpart === roles.QA) {
           if (!activity) return
           const qaChannel = await chatRepo.startQAChat(user, summitId, activity)
           if (qaChannel) setChannel(qaChannel)
-        } else if (partnerId === channelTypes.HELP_ROOM) {
+        } else if (chatCounterpart === roles.HELP) {
           const helpChannel = await chatRepo.startHelpChat(user, summitId)
           if (helpChannel) setChannel(helpChannel)
         } else {
-          const dmChannel = await chatRepo.startA2AChat(user, partnerId)
+          const dmChannel = await chatRepo.startA2AChat(user, chatCounterpart)
           if (dmChannel) setChannel(dmChannel)
         }
       } else {
@@ -55,7 +56,7 @@ const ConversationBox = ({
     }
     //console.log('initChannel', visible)
     if (visible) initChannel()
-  }, [partnerId, visible])
+  }, [chatCounterpart, visible])
 
   const handleClose = (ev) => {
     ev.preventDefault()
@@ -65,8 +66,21 @@ const ConversationBox = ({
     onClose()
   }
 
+  const getChanTypeByCounterpart = (counterpart) => {
+    switch (counterpart) {
+      case roles.HELP:
+        return channelTypes.HELP_ROOM
+      case roles.QA:
+        return channelTypes.QA_ROOM
+      default:
+        return channelTypes.MESSAGING
+    }
+  }
+
   const buildChannelHeader = () => {
-    const channelType = activeChannel ? activeChannel.type : partnerId
+    const channelType = activeChannel
+      ? activeChannel.type
+      : getChanTypeByCounterpart(chatCounterpart)
 
     if (
       channelType === channelTypes.QA_ROOM ||

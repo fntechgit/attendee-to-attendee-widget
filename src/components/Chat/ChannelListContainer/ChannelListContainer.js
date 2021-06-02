@@ -45,7 +45,9 @@ const ChannelListContainer = ({
         List={ChannelListMessenger}
         Preview={(previewProps) => {
           const { type } = previewProps.channel
-          return type === channelTypes.MESSAGING ? (
+          return type === channelTypes.MESSAGING ||
+            type === channelTypes.HELP_ROOM ||
+            type === channelTypes.QA_ROOM ? (
             <DirectMessageChannelPreview
               {...previewProps}
               onItemClick={onItemClick}

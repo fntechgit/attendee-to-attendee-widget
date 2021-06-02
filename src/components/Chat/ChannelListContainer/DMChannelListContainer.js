@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Chat } from 'stream-chat-react'
 import debounce from 'lodash.debounce'
 import { SearchBar } from '../../SearchBar/SearchBar'
 import ChannelListContainer from './ChannelListContainer'
 import { channelTypes } from '../../../models/channelTypes'
+import { roles } from '../../../models/userRole'
 
 import style from './style.module.scss'
 
@@ -31,7 +32,25 @@ const DMChannelListContainer = ({
     members: { $in: [user.id] }
   }
 
-  const [currFilters, setCurrFilters] = useState(defaultFilters)
+  const [currFilters, setCurrFilters] = useState(null)
+
+  useEffect(() => {
+    const userId = chatClient.user.id
+    const userRole = chatClient.user.local_role
+    if (userRole === roles.HELP) {
+      setCurrFilters({
+        type: { $in: [channelTypes.HELP_ROOM] },
+        members: { $in: [userId] }
+      })
+    } else if (userRole === roles.QA) {
+      setCurrFilters({
+        type: { $in: [channelTypes.QA_ROOM] },
+        members: { $in: [userId] }
+      })
+    } else {
+      setCurrFilters(defaultFilters)
+    }
+  }, [])
 
   const handleSearch = async (e) => {
     const { value } = e.target
@@ -76,20 +95,22 @@ const DMChannelListContainer = ({
   return (
     <div style={{ height: height }}>
       <SearchBar onSearch={handleSearch} onClear={handleSearchClear} />
-      <div className={style.channelsListWrapper}>
-        <Chat client={chatClient}>
-          <ChannelListContainer
-            filters={currFilters}
-            sort={{ supporttype: 1 }}
-            options={{ watch: true, limit: 20 }}
-            user={user}
-            summitId={summitId}
-            chatClient={chatClient}
-            accessRepo={accessRepo}
-            onItemClick={onItemClick}
-          />
-        </Chat>
-      </div>
+      {currFilters && (
+        <div className={style.channelsListWrapper}>
+          <Chat client={chatClient}>
+            <ChannelListContainer
+              filters={currFilters}
+              sort={{ supporttype: 1 }}
+              options={{ watch: true, limit: 20 }}
+              user={user}
+              summitId={summitId}
+              chatClient={chatClient}
+              accessRepo={accessRepo}
+              onItemClick={onItemClick}
+            />
+          </Chat>
+        </div>
+      )}
       <div className='has-text-centered mt-2'>
         <button className='button is-large' onClick={onHelpClick}>
           <span className='icon'>

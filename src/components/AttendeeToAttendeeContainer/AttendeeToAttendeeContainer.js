@@ -11,7 +11,7 @@ import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListCo
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 import { copyToClipboard } from '../../utils/clipboardHelper'
-import { channelTypes } from '../../models/channelTypes'
+import { roles } from '../../models/userRole'
 
 import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
@@ -21,7 +21,7 @@ import style from './style.module.scss'
 
 let accessRepo = null
 let chatRepo = null
-let chatCounterpart = channelTypes.HELP_ROOM
+let chatCounterpart = roles.HELP
 let activeChannel = null
 
 const AttendeeToAttendeeContainer = (props) => {
@@ -136,7 +136,7 @@ const AttendeeToAttendeeContainer = (props) => {
   }
 
   const handleHelpClick = async () => {
-    showChatWindow(null, channelTypes.HELP_ROOM)
+    showChatWindow(null, roles.HELP)
   }
 
   const handleQAClick = (index, channel) => {
@@ -253,7 +253,7 @@ const AttendeeToAttendeeContainer = (props) => {
           chatClient={chatClient}
           chatRepo={chatRepo}
           user={user}
-          partnerId={channelTypes.QA_ROOM}
+          partnerId={roles.QA}
           openDir={chatOpened ? 'parentLeft' : 'left'}
           summitId={summitId}
           activity={activity}

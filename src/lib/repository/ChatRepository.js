@@ -102,15 +102,11 @@ export default class ChatRepository {
     try {
       //Fetch all the show help agents from Supabase
       const helpAgents = await this._getSupportAgents(summitId, 0)
-
-      console.log('startHelpChat -> summitId', summitId)
-      console.log('startHelpChat -> helpAgents', helpAgents)
-
       if (helpAgents && helpAgents.length > 0) {
         const helpAgentIds = helpAgents.map((h) => h.idp_user_id.toString())
         const firstHelpAgent = await this._getAgentInfo(helpAgentIds[0])
         const members = [user.id, ...helpAgentIds]
-        const channel = await this._streamChatService.createChannel(
+        return await this._streamChatService.createChannel(
           channelTypes.HELP_ROOM,
           `${user.id}-${roles.HELP}`,
           'Help Desk',
@@ -118,8 +114,6 @@ export default class ChatRepository {
           members,
           firstHelpAgent.pic_url
         )
-        console.log('startHelpChat -> channel', channel)
-        return channel
       }
     } catch (error) {
       console.log('error', error)
@@ -151,22 +145,27 @@ export default class ChatRepository {
   }
 
   async startA2AChat(user, partnerId) {
-    const channel = await this._streamChatService.getChannel(
-      channelTypes.MESSAGING,
-      user,
-      partnerId
-    )
-    if (channel) return channel
-    const id = `${user.id}-${partnerId}`
-    const members = [user.id, partnerId]
-    return this._streamChatService.createChannel(
-      channelTypes.MESSAGING,
-      id,
-      id,
-      '',
-      members,
-      user.picUrl
-    )
+    try {
+      const channel = await this._streamChatService.getChannel(
+        channelTypes.MESSAGING,
+        user,
+        partnerId
+      )
+      if (channel) return channel
+      const id = `${user.id}-${partnerId}`
+      const members = [user.id, partnerId]
+      return await this._streamChatService.createChannel(
+        channelTypes.MESSAGING,
+        id,
+        id,
+        '',
+        members,
+        user.picUrl
+      )
+    } catch (error) {
+      console.log('error', error)
+    }
+    return null
   }
 
   async deleteChannel(id) {
@@ -180,7 +179,7 @@ export default class ChatRepository {
   async createRoom(type, name, description, members, image) {
     try {
       const id = nameToId(name)
-      return this._streamChatService.createChannel(
+      return await this._streamChatService.createChannel(
         type,
         id,
         name,
@@ -204,7 +203,7 @@ export default class ChatRepository {
         null,
         imgUrl
       )
-      if (channel) channel.addMembers([user.idpUserId])
+      if (channel) await channel.addMembers([user.idpUserId])
     } catch (e) {
       console.error(e)
     }
