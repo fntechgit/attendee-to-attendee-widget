@@ -102,11 +102,15 @@ export default class ChatRepository {
     try {
       //Fetch all the show help agents from Supabase
       const helpAgents = await this._getSupportAgents(summitId, 0)
+
+      console.log('startHelpChat -> summitId', summitId)
+      console.log('startHelpChat -> helpAgents', helpAgents)
+
       if (helpAgents && helpAgents.length > 0) {
         const helpAgentIds = helpAgents.map((h) => h.idp_user_id.toString())
         const firstHelpAgent = await this._getAgentInfo(helpAgentIds[0])
         const members = [user.id, ...helpAgentIds]
-        return this._streamChatService.createChannel(
+        const channel = await this._streamChatService.createChannel(
           channelTypes.HELP_ROOM,
           `${user.id}-${roles.HELP}`,
           'Help Desk',
@@ -114,6 +118,8 @@ export default class ChatRepository {
           members,
           firstHelpAgent.pic_url
         )
+        console.log('startHelpChat -> channel', channel)
+        return channel
       }
     } catch (error) {
       console.log('error', error)
@@ -129,7 +135,7 @@ export default class ChatRepository {
         const qaAgentsIds = qaAgents.map((h) => h.idp_user_id.toString())
         const firstQAAgent = await this._getAgentInfo(qaAgentsIds[0])
         const members = [user.id, ...qaAgentsIds]
-        return this._streamChatService.createChannel(
+        return await this._streamChatService.createChannel(
           channelTypes.QA_ROOM,
           `${user.id}-${activity.id}`,
           'Q & A',

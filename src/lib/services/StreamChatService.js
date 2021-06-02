@@ -79,7 +79,6 @@ export default class StreamChatService {
       image: image,
       members: members
     })
-    //await channel.addModerators([]);
     await channel.watch()
     await channel.show()
     return channel

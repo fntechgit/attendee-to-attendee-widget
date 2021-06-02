@@ -51,11 +51,11 @@ export const AttendeeInfo = ({
                   <a
                     href={`https://github.com/${githubUser}/`}
                     target='_blank'
-                    className='level-item'
+                    className={`${style.levelItem} level-item`}
                   >
                     <span className='icon is-medium'>
                       <i
-                        className='fa fa-2x fa-github has-text-grey'
+                        className='fa fa-lg fa-github has-text-grey'
                         aria-hidden='true'
                       ></i>
                     </span>
@@ -65,11 +65,11 @@ export const AttendeeInfo = ({
                   <a
                     href={linkedInProfile}
                     target='_blank'
-                    className='level-item'
+                    className={`${style.levelItem} level-item`}
                   >
                     <span className='icon is-medium'>
                       <i
-                        className='fa fa-2x fa-linkedin has-text-grey'
+                        className='fa fa-lg fa-linkedin has-text-grey'
                         aria-hidden='true'
                       ></i>
                     </span>
@@ -79,11 +79,11 @@ export const AttendeeInfo = ({
                   <a
                     href={`https://twitter.com/${twitterName}/`}
                     target='_blank'
-                    className='level-item'
+                    className={`${style.levelItem} level-item`}
                   >
                     <span className='icon is-medium'>
                       <i
-                        className='fa fa-2x fa-twitter has-text-grey'
+                        className='fa fa-lg fa-twitter has-text-grey'
                         aria-hidden='true'
                       ></i>
                     </span>
