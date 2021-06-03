@@ -91,7 +91,7 @@ export const AttendeeInfo = ({
                 )}
               </div>
             </nav>
-            {badgeFeatures && (
+            {/* {badgeFeatures && (
               <nav className='level'>
                 <div className='level-left'>
                   {badgeFeatures.map((bf) => (
@@ -101,7 +101,7 @@ export const AttendeeInfo = ({
                   ))}
                 </div>
               </nav>
-            )}
+            )} */}
           </div>
         </article>
         {fullMode && (
