@@ -89,7 +89,7 @@ const RoomChannelListContainer = ({
   }
 
   return (
-    <div style={{ height: height }}>
+    <div>
       {!showRoomsManager && (
         <div>
           <SearchBar
@@ -103,7 +103,7 @@ const RoomChannelListContainer = ({
             ]}
             placeholder='Search by room name'
           />
-          <div className={style.channelsListWrapper}>
+          <div className={style.channelsListWrapper} style={{ height: height }}>
             <Chat client={chatClient}>
               <ChannelListContainer
                 filters={currFilters}

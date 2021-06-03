@@ -179,7 +179,7 @@ export default withFormik({
 
     let roomPicURL
 
-    const roomId = nameToId(value)
+    const roomId = nameToId(roomName)
 
     if (roomImg) {
       const res = await chatRepo.uploadRoomImage(

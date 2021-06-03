@@ -89,8 +89,8 @@ const App = () => {
 
   widgetProps.user.fullName = fullName
   widgetProps.user.email = email
-  widgetProps.user.company = `Tipit`
-  widgetProps.user.title = `Full stack developer`
+  //widgetProps.user.company = `Tipit`
+  //widgetProps.user.title = `Full stack developer`
   widgetProps.user.id = idpUserId
   widgetProps.user.idpUserId = idpUserId
 
@@ -115,11 +115,11 @@ const App = () => {
   }
 
   const token1 =
-    '8hHx5~PKQ-XyUs9FbaiNt29gAC-xBSOmxdMKiPd-Jp5uLy2Rp1wLLTy.D6_8u4d9wMhYdZFM2NLiu7m-M5_n0O1eMicplFLizAekeYv5ABDtb~jkrml6dBSTkQZssfcj'
+    'rXeQxMzc4arP5mq~RKT8QhrEG9kqtZBhvbCAOkoI-zgDZV5Fo0O7p3F6MjgaqTCvlsfQ_cO6mCNV0SXweBXxTeHrQ3PmyuKB3BggMgLR6nUnqKCIxzAJQrgNYyauOhzq'
   const token2 =
-    '8hHx5~PKQ-XyUs9FbaiNt29gAC-xBSOmxdMKiPd-Jp5uLy2Rp1wLLTy.D6_8u4d9wMhYdZFM2NLiu7m-M5_n0O1eMicplFLizAekeYv5ABDtb~jkrml6dBSTkQZssfcj'
+    'rXeQxMzc4arP5mq~RKT8QhrEG9kqtZBhvbCAOkoI-zgDZV5Fo0O7p3F6MjgaqTCvlsfQ_cO6mCNV0SXweBXxTeHrQ3PmyuKB3BggMgLR6nUnqKCIxzAJQrgNYyauOhzq'
   const token3 =
-    '8hHx5~PKQ-XyUs9FbaiNt29gAC-xBSOmxdMKiPd-Jp5uLy2Rp1wLLTy.D6_8u4d9wMhYdZFM2NLiu7m-M5_n0O1eMicplFLizAekeYv5ABDtb~jkrml6dBSTkQZssfcj'
+    'rXeQxMzc4arP5mq~RKT8QhrEG9kqtZBhvbCAOkoI-zgDZV5Fo0O7p3F6MjgaqTCvlsfQ_cO6mCNV0SXweBXxTeHrQ3PmyuKB3BggMgLR6nUnqKCIxzAJQrgNYyauOhzq'
 
   return (
     <Router>
@@ -155,7 +155,7 @@ const App = () => {
             {/* <Link to='/'>Track 1</Link>
             <Link to='/a'>Track 2</Link>
             <button onClick={handleSignOutClick}>SignOut</button> */}
-            <AttendeeToAttendeeContainer title='Attendance' {...widgetProps} />
+            <AttendeeToAttendeeContainer {...widgetProps} />
             {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
           </div>
         </Route>

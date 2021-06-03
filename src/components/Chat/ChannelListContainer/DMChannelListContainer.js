@@ -93,10 +93,10 @@ const DMChannelListContainer = ({
   }
 
   return (
-    <div style={{ height: height }}>
+    <div>
       <SearchBar onSearch={handleSearch} onClear={handleSearchClear} />
       {currFilters && (
-        <div className={style.channelsListWrapper}>
+        <div className={style.channelsListWrapper} style={{ height: height }}>
           <Chat client={chatClient}>
             <ChannelListContainer
               filters={currFilters}
