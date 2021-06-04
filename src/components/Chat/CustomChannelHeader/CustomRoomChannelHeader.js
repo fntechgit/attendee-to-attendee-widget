@@ -71,7 +71,7 @@ const CustomRoomChannelHeader = (props) => {
 
   let headerImage = channel.data.image
   let headerTitle = channel.data.name
-  let headerSubTitle = `${channel.data.member_count} participants`
+  let headerSubTitle = `${channel.data.member_count ?? 0} participants`
 
   if (channel.type === channelTypes.MESSAGING && member) {
     headerImage = member.user.image

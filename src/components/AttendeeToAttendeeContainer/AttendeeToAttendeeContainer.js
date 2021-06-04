@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
+  useState
+} from 'react'
 import AccessRepository from '../../lib/repository/AccessRepository'
 import ChatRepository from '../../lib/repository/ChatRepository'
 import AttendeesList from '../AttendeesList/AttendeesList'
@@ -24,7 +29,7 @@ let chatRepo = null
 let chatCounterpart = roles.HELP
 let activeChannel = null
 
-const AttendeeToAttendeeContainer = (props) => {
+const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [activeTab, setActiveTab] = useState('ATTENDEES')
   const [isMinimized, setMinimized] = useState(false)
   const [chatOpened, setChatOpened] = useState(false)
@@ -139,7 +144,7 @@ const AttendeeToAttendeeContainer = (props) => {
     showChatWindow(null, roles.HELP)
   }
 
-  const handleQAClick = (index, channel) => {
+  const handleQAClick = (activity) => {
     if (!qaChatOpened) {
       setTimeout(() => {
         setQAChatOpened(true)
@@ -167,6 +172,38 @@ const AttendeeToAttendeeContainer = (props) => {
     const activeIndex = tabList.findIndex((tab) => tab.name === activeTab)
     return tabList[activeIndex].content
   }
+
+  /*begin deep linking section*/
+  useImperativeHandle(ref.sdcRef, () => ({
+    startDirectChat(partnerId) {
+      if (partnerId != user.idpUserId && user.canChat) {
+        showChatWindow(null, partnerId)
+      }
+    }
+  }))
+
+  useImperativeHandle(ref.shcRef, () => ({
+    startHelpChat() {
+      showChatWindow(null, roles.HELP)
+    }
+  }))
+
+  useImperativeHandle(ref.sqacRef, () => ({
+    startQAChat() {
+      showChatWindow(null, roles.QA)
+    }
+  }))
+
+  useImperativeHandle(ref.ocrRef, () => ({
+    openChatRoom(roomId) {
+      const openChatRoom = async () => {
+        const channel = await chatRepo.getChannel(roomId)
+        showChatWindow(channel, null)
+      }
+      openChatRoom()
+    }
+  }))
+  /*end deep linking section*/
 
   const tabList = [
     {
@@ -239,7 +276,7 @@ const AttendeeToAttendeeContainer = (props) => {
           chatRepo={chatRepo}
           activeChannel={activeChannel}
           user={user}
-          partnerId={chatCounterpart}
+          chatCounterpart={chatCounterpart}
           openDir={openDir}
           summitId={summitId}
           visible={chatOpened}
@@ -253,7 +290,7 @@ const AttendeeToAttendeeContainer = (props) => {
           chatClient={chatClient}
           chatRepo={chatRepo}
           user={user}
-          partnerId={roles.QA}
+          chatCounterpart={roles.QA}
           openDir={chatOpened ? 'parentLeft' : 'left'}
           summitId={summitId}
           activity={activity}
@@ -263,6 +300,6 @@ const AttendeeToAttendeeContainer = (props) => {
       )}
     </div>
   )
-}
+})
 
 export default AttendeeToAttendeeContainer

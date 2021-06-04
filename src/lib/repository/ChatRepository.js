@@ -168,6 +168,10 @@ export default class ChatRepository {
     return null
   }
 
+  async getChannel(id) {
+    return await this._streamChatService.getChannelById(id)
+  }
+
   async deleteChannel(id) {
     await this._streamChatService.deleteChannel(id)
   }

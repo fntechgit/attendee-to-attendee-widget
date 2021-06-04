@@ -71,14 +71,17 @@ const widgetProps = {
     canChat: true //based on badge features
   },
   summitId: 17,
-  height: 500,
+  height: 400,
   ...chatProps,
   ...sbAuthProps
 }
 
 const App = () => {
   const trackerRef = useRef()
-  const chatRef = useRef()
+  const sdcRef = useRef()
+  const shcRef = useRef()
+  const sqacRef = useRef()
+  const ocrRef = useRef()
 
   // const rnd = Math.floor(Math.random() * 5) + 1
   // widgetProps.user.fullName = `Test User ${rnd}`
@@ -104,22 +107,32 @@ const App = () => {
   // }
 
   //From INVITE LINK
-  const openChatRoom = (roomId) => {}
-
-  const startOneToOneChat = (partnerId) => {
-    chatRef.current.startOneToOneChat(partnerId)
+  const openChatRoom = (roomId) => {
+    ocrRef.current.openChatRoom(roomId)
   }
 
-  const handleSignOutClick = () => {
-    trackerRef.current.signOut()
+  const startHelpChat = () => {
+    shcRef.current.startHelpChat()
   }
+
+  const startQAChat = () => {
+    sqacRef.current.startQAChat()
+  }
+
+  const startDirectChat = (partnerId) => {
+    sdcRef.current.startDirectChat(partnerId)
+  }
+
+  // const handleSignOutClick = () => {
+  //   trackerRef.current.signOut()
+  // }
 
   const token1 =
-    'QQ1O6r.hHe3y9Nq9KfUkz-6t9FtQeksw9duMCl0o7ETphiguylbweib3wErwHa1DdTJjWJArGKMZ-N9.VgFDj69voCl3tLr8WvD6fuLr6Fz0WN_ztARd0l5ewkWy0FMt'
+    'UDwvKWAhiP-_GqGULj-fmolU9uctFk.muJ8LrNg.P98dEa2S15QFGM-FZTn8KKvRNS3Shzwy9raM._aT5pVq5_4TRBqb~QFk5PI3_IvOWZ3dL1YJqsuMe.ot8Xi6i1C4'
   const token2 =
-    'QQ1O6r.hHe3y9Nq9KfUkz-6t9FtQeksw9duMCl0o7ETphiguylbweib3wErwHa1DdTJjWJArGKMZ-N9.VgFDj69voCl3tLr8WvD6fuLr6Fz0WN_ztARd0l5ewkWy0FMt'
+    'Oh7PUW4Np3eqhQ4kcZ1PGr_EVBRa6qTNSh98w3--VCWh2stz5aknNRbskEiIpZ3ZiwvU0b7I2XG5DcQ0U.muV5sFJOCXqBRjZSPFA1-q-13Ciu1OjoSnbEnrRP2XWNCQ'
   const token3 =
-    'QQ1O6r.hHe3y9Nq9KfUkz-6t9FtQeksw9duMCl0o7ETphiguylbweib3wErwHa1DdTJjWJArGKMZ-N9.VgFDj69voCl3tLr8WvD6fuLr6Fz0WN_ztARd0l5ewkWy0FMt'
+    'UDwvKWAhiP-_GqGULj-fmolU9uctFk.muJ8LrNg.P98dEa2S15QFGM-FZTn8KKvRNS3Shzwy9raM._aT5pVq5_4TRBqb~QFk5PI3_IvOWZ3dL1YJqsuMe.ot8Xi6i1C4'
 
   return (
     <Router>
@@ -127,15 +140,17 @@ const App = () => {
         <Route exact path='/'>
           <div>
             <Link
-              to={`/attendance?accessToken=${token1}&fullName=Roman Gutierrez (Help)&email=roman.gutierrez@gmail.com&idpUserId=13`}
+              to={`/attendance?accessToken=${token1}&fullName=Johnny Nimbus(Help)&email=cespin+1@gmail.com&idpUserId=6`}
             >
               Help User
             </Link>
+            <br />
             <Link
-              to={`/attendance?accessToken=${token2}&fullName=Johnny Nimbus&email=cespin+1@gmail.com&idpUserId=6`}
+              to={`/attendance?accessToken=${token2}&fullName=Roman Gutierrez&email=roman.gutierrez@gmail.com&idpUserId=13`}
             >
               Attendees
             </Link>
+            <br />
             <Link
               to={`/attendance?accessToken=${token3}&fullName=Jethro Stratus (Q&A)&email=cespin+2@gmail.com&idpUserId=7`}
             >
@@ -152,11 +167,22 @@ const App = () => {
               position: 'relative'
             }}
           >
-            {/* <Link to='/'>Track 1</Link>
-            <Link to='/a'>Track 2</Link>
-            <button onClick={handleSignOutClick}>SignOut</button> */}
-            <AttendeeToAttendeeContainer {...widgetProps} />
+            <AttendeeToAttendeeContainer
+              {...widgetProps}
+              ref={{ sdcRef, shcRef, sqacRef, ocrRef }}
+            />
+            <br />
+            <hr />
             {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
+            {/* <button onClick={handleSignOutClick}>SignOut</button> */}
+            <button onClick={() => startDirectChat('7')}>
+              Start Direct Chat
+            </button>
+            <button onClick={() => openChatRoom('578133244')}>
+              Open Chat Room
+            </button>
+            <button onClick={startHelpChat}>Start Help Chat</button>
+            <button onClick={startQAChat}>Start Q&A Chat</button>
           </div>
         </Route>
         <Route exact path='/untracked'>

@@ -49,7 +49,7 @@ const RoomChannelPreview = ({
               {channel.type !== channelTypes.QA_ROOM &&
                 channel.type !== channelTypes.HELP_ROOM && (
                   <div className={styles.participants}>
-                    {channel.data.member_count} Participants
+                    {channel.data.member_count ?? 0} Participants
                   </div>
                 )}
             </div>
