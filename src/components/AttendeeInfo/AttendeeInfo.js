@@ -95,9 +95,15 @@ export const AttendeeInfo = ({
               <nav className='level'>
                 <div className='level-left'>
                   {badgeFeatures.map((bf) => (
-                    <span key={bf} className='has-text-grey mr-2'>
-                      {bf}
-                    </span>
+                    <div className='media-left' key={bf.title}>
+                      <figure className='image is-48x48'>
+                        <img
+                          className='is-rounded'
+                          alt={bf.title}
+                          src={bf.imgUrl}
+                        />
+                      </figure>
+                    </div>
                   ))}
                 </div>
               </nav>

@@ -37,17 +37,13 @@ const chatProps = {
   forumSlug: 'fnvirtual-poc',
   getAccessToken: async () => accessToken,
   onAuthError: (err, res) => console.log(err),
-  openDir: 'left',
-  title: '',
-  showHelp: true,
-  showQA: true,
-  hideUsers: false,
-  activity: {
-    id: 206,
-    name:
-      'Global Collaboration Driving Innovation in a Multi-Billion Dollar Market', //Widget will create this activity room or add members to it
-    imgUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
-  }
+  openDir: 'left'
+  // activity: {
+  //   id: 206,
+  //   name:
+  //     'Global Collaboration Driving Innovation in a Multi-Billion Dollar Market',
+  //   imgUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
+  // }
 }
 
 const widgetProps = {
@@ -66,7 +62,18 @@ const widgetProps = {
       twitterName: 'romanetar',
       wechatUser: ''
     },
-    badgeFeatures: ['feat 1', 'feat 2'], //attendee.ticket.badge.features
+    badgeFeatures: [
+      {
+        title: 'feat 1',
+        imgUrl:
+          'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
+      },
+      {
+        title: 'feat 2',
+        imgUrl:
+          'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
+      }
+    ], //attendee.ticket.badge.features
     bio: '# This is my bio, *in MD*!', //bio: '<p><span>This is my bio in HTML</span></p>'
     canChat: true //based on badge features
   },
@@ -130,7 +137,7 @@ const App = () => {
   const token1 =
     'UDwvKWAhiP-_GqGULj-fmolU9uctFk.muJ8LrNg.P98dEa2S15QFGM-FZTn8KKvRNS3Shzwy9raM._aT5pVq5_4TRBqb~QFk5PI3_IvOWZ3dL1YJqsuMe.ot8Xi6i1C4'
   const token2 =
-    'Oh7PUW4Np3eqhQ4kcZ1PGr_EVBRa6qTNSh98w3--VCWh2stz5aknNRbskEiIpZ3ZiwvU0b7I2XG5DcQ0U.muV5sFJOCXqBRjZSPFA1-q-13Ciu1OjoSnbEnrRP2XWNCQ'
+    'Lxdy3AXQCmq_5IwmG4WxyG~-rnZXk1Y_hLP-8HAuspzJWVgEHCAxgxJPSVIXvp66KSRVgM-aoTq-9UJM-Tdvta57Uom7bxMJj_M~A~AC_6VcA.CslekekJB8luBShMMq'
   const token3 =
     'UDwvKWAhiP-_GqGULj-fmolU9uctFk.muJ8LrNg.P98dEa2S15QFGM-FZTn8KKvRNS3Shzwy9raM._aT5pVq5_4TRBqb~QFk5PI3_IvOWZ3dL1YJqsuMe.ot8Xi6i1C4'
 
@@ -171,9 +178,9 @@ const App = () => {
               {...widgetProps}
               ref={{ sdcRef, shcRef, sqacRef, ocrRef }}
             />
+            <Tracker {...widgetProps} ref={trackerRef} />
             <br />
             <hr />
-            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
             {/* <button onClick={handleSignOutClick}>SignOut</button> */}
             <button onClick={() => startDirectChat('7')}>
               Start Direct Chat

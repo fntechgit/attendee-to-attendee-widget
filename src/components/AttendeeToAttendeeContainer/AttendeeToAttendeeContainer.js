@@ -29,8 +29,14 @@ let chatRepo = null
 let chatCounterpart = roles.HELP
 let activeChannel = null
 
+const tabNames = {
+  ATTENDEES: 'ATTENDEES',
+  MESSAGES: 'MESSAGES',
+  ROOM_CHATS: 'ROOM CHATS'
+}
+
 const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
-  const [activeTab, setActiveTab] = useState('ATTENDEES')
+  const [activeTab, setActiveTab] = useState(tabNames.ATTENDEES)
   const [isMinimized, setMinimized] = useState(false)
   const [chatOpened, setChatOpened] = useState(false)
   const [qaChatOpened, setQAChatOpened] = useState(false)
@@ -76,7 +82,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         forumSlug,
         (client) => {
           setChatClient(client)
-          chatRepo.setUpActivityRoom(activity, user)
+          if (activity) chatRepo.setUpActivityRoom(activity, user)
         },
         (err) => console.error(err),
         (err, res) => console.log(err, res)
@@ -177,6 +183,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   useImperativeHandle(ref.sdcRef, () => ({
     startDirectChat(partnerId) {
       if (partnerId != user.idpUserId && user.canChat) {
+        changeActiveTab(tabNames.MESSAGES)
         showChatWindow(null, partnerId)
       }
     }
@@ -184,18 +191,21 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
 
   useImperativeHandle(ref.shcRef, () => ({
     startHelpChat() {
+      changeActiveTab(tabNames.MESSAGES)
       showChatWindow(null, roles.HELP)
     }
   }))
 
   useImperativeHandle(ref.sqacRef, () => ({
     startQAChat() {
+      changeActiveTab(tabNames.MESSAGES)
       showChatWindow(null, roles.QA)
     }
   }))
 
   useImperativeHandle(ref.ocrRef, () => ({
     openChatRoom(roomId) {
+      changeActiveTab(tabNames.ROOM_CHATS)
       const openChatRoom = async () => {
         const channel = await chatRepo.getChannel(roomId)
         showChatWindow(channel, null)
@@ -207,7 +217,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
 
   const tabList = [
     {
-      name: 'ATTENDEES',
+      name: tabNames.ATTENDEES,
       icon: '',
       content: chatClient && (
         <AttendeesList
@@ -219,7 +229,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       )
     },
     {
-      name: 'MESSAGES',
+      name: tabNames.MESSAGES,
       icon: '',
       content: chatClient && (
         <DMChannelListContainer
@@ -236,7 +246,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       )
     },
     {
-      name: 'ROOM CHATS',
+      name: tabNames.ROOM_CHATS,
       icon: '',
       content: (
         <RoomChannelListContainer
