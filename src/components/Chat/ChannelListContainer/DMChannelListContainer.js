@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce'
 import { SearchBar } from '../../SearchBar/SearchBar'
 import ChannelListContainer from './ChannelListContainer'
 import { channelTypes } from '../../../models/channelTypes'
-import { roles } from '../../../models/userRole'
+import { roles } from '../../../models/userRoles'
 
 import style from './style.module.scss'
 

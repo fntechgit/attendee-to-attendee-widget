@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import {
   AttendeeToAttendeeContainer,
+  permissions,
   Tracker
 } from 'attendee-to-attendee-widget'
 
@@ -51,7 +52,6 @@ const widgetProps = {
     id: null,
     fullName: '',
     email: '',
-    groups: ['admins'],
     company: '',
     title: '',
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
@@ -75,7 +75,17 @@ const widgetProps = {
       }
     ], //attendee.ticket.badge.features
     bio: '# This is my bio, *in MD*!', //bio: '<p><span>This is my bio in HTML</span></p>'
-    canChat: true //based on badge features
+    hasPermission: (permission) => {
+      switch (permission) {
+        case permissions.MANAGE_ROOMS:
+          //return user.groups && (user.groups.includes('admins') || user.groups.includes('super-admins'))
+          return true
+        case permissions.CHAT:
+          return true //based on badge features
+        default:
+          return false
+      }
+    }
   },
   summitId: 17,
   height: 400,
@@ -137,7 +147,7 @@ const App = () => {
   const token1 =
     'UDwvKWAhiP-_GqGULj-fmolU9uctFk.muJ8LrNg.P98dEa2S15QFGM-FZTn8KKvRNS3Shzwy9raM._aT5pVq5_4TRBqb~QFk5PI3_IvOWZ3dL1YJqsuMe.ot8Xi6i1C4'
   const token2 =
-    'Lxdy3AXQCmq_5IwmG4WxyG~-rnZXk1Y_hLP-8HAuspzJWVgEHCAxgxJPSVIXvp66KSRVgM-aoTq-9UJM-Tdvta57Uom7bxMJj_M~A~AC_6VcA.CslekekJB8luBShMMq'
+    'F5htyxoJTnq-Ba.SD5jR2LjH9-JGLbgMnaW~0hRjoMuftG_ep1hcqMj7Y6enAQWkJiCj~Xsay6yTQtAM9YrxmOfBE.THm.aYzXbvB0KMkb4SYye9Dxe0F3F4nZS4tHtc'
   const token3 =
     'UDwvKWAhiP-_GqGULj-fmolU9uctFk.muJ8LrNg.P98dEa2S15QFGM-FZTn8KKvRNS3Shzwy9raM._aT5pVq5_4TRBqb~QFk5PI3_IvOWZ3dL1YJqsuMe.ot8Xi6i1C4'
 
@@ -178,7 +188,7 @@ const App = () => {
               {...widgetProps}
               ref={{ sdcRef, shcRef, sqacRef, ocrRef }}
             />
-            <Tracker {...widgetProps} ref={trackerRef} />
+            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
             <br />
             <hr />
             {/* <button onClick={handleSignOutClick}>SignOut</button> */}

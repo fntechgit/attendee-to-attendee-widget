@@ -1,5 +1,5 @@
 import { signIn, signUp } from '../auth'
-import { roles } from '../../models/userRole'
+import { roles } from '../../models/userRoles'
 
 export default class AttendeeRepository {
   constructor(supabaseService, user) {

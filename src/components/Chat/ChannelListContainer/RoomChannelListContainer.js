@@ -6,7 +6,7 @@ import RoomsManager from '../RoomsManager/RoomsManager'
 import ChannelListContainer from './ChannelListContainer'
 import { nameToId } from '../../../utils/stringHelper'
 import { channelTypes } from '../../../models/channelTypes'
-import { isAdmin } from '../../../models/userRole'
+import { permissions } from '../../../models/permissions'
 
 import style from './style.module.scss'
 
@@ -117,7 +117,7 @@ const RoomChannelListContainer = ({
               />
             </Chat>
           </div>
-          {isAdmin(user) && (
+          {user.hasPermission(permissions.MANAGE_ROOMS) && (
             <div className='has-text-centered mt-2'>
               <button
                 className='button is-large'

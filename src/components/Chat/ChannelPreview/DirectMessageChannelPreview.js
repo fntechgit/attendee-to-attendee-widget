@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
-import { roles } from '../../../models/userRole'
+import { roles } from '../../../models/userRoles'
 
 import styles from './style.module.scss'
 

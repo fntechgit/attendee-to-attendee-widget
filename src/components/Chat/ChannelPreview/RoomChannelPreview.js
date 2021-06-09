@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
 import { channelTypes } from '../../../models/channelTypes'
-import { isAdmin } from '../../../models/userRole'
+import { permissions } from '../../../models/permissions'
 
 import styles from './style.module.scss'
 
@@ -12,7 +12,7 @@ const RoomChannelPreview = ({
   onItemClick,
   onDelete
 }) => {
-  const allowDeletion = isAdmin(user)
+  const allowDeletion = user.hasPermission(permissions.MANAGE_ROOMS)
   const [showDelete, setShowDelete] = useState(false)
 
   const title = channel.data.name

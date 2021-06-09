@@ -16,7 +16,8 @@ import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListCo
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 import { copyToClipboard } from '../../utils/clipboardHelper'
-import { roles } from '../../models/userRole'
+import { roles } from '../../models/userRoles'
+import { permissions } from '../../models/permissions'
 
 import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
@@ -159,13 +160,16 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   }
 
   const handleAttendeeClick = (att) => {
-    if (att.attendees.idp_user_id != user.idpUserId && user.canChat) {
+    if (
+      att.attendees.idp_user_id != user.idpUserId &&
+      user.hasPermission(permissions.CHAT)
+    ) {
       showChatWindow(null, att.attendees.idp_user_id)
     }
   }
 
   const handleMessageClick = (channel) => {
-    if (user.canChat) {
+    if (user.hasPermission(permissions.CHAT)) {
       showChatWindow(channel, null)
     }
   }
@@ -182,7 +186,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   /*begin deep linking section*/
   useImperativeHandle(ref.sdcRef, () => ({
     startDirectChat(partnerId) {
-      if (partnerId != user.idpUserId && user.canChat) {
+      if (partnerId != user.idpUserId && user.hasPermission(permissions.CHAT)) {
         changeActiveTab(tabNames.MESSAGES)
         showChatWindow(null, partnerId)
       }

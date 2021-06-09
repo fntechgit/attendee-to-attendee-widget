@@ -1,6 +1,6 @@
 import { nameToId } from '../../utils/stringHelper'
 import { channelTypes } from '../../models/channelTypes'
-import { roles } from '../../models/userRole'
+import { roles } from '../../models/userRoles'
 
 export default class ChatRepository {
   constructor(supabaseService, streamChatService, chatAPIService) {

@@ -13,7 +13,7 @@ import {
 import SimpleChannelHeader from '../CustomChannelHeader/SimpleChannelHeader'
 import CustomRoomChannelHeader from '../CustomChannelHeader/CustomRoomChannelHeader'
 import { channelTypes } from '../../../models/channelTypes'
-import { roles } from '../../../models/userRole'
+import { roles } from '../../../models/userRoles'
 
 import style from './style.module.scss'
 
