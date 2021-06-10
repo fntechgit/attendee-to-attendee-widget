@@ -109,6 +109,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         (res) => console.log(res),
         (err, res) => console.log(err)
       )
+      console.log('setIsInitialized')
       setIsInitialized(true)
     }
 
@@ -281,51 +282,53 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   ]
 
   return (
-    <div className={style.widgetContainer}>
-      <MainBar
-        user={user}
-        onHelpClick={handleHelpClick}
-        onMinimizeButtonClick={() => setMinimized(!isMinimized)}
-      />
-      {!isMinimized && (
-        <div>
-          <Tabs
-            tabList={tabList}
-            activeTab={activeTab}
-            changeActiveTab={changeActiveTab}
+    isInitialized && (
+      <div className={style.widgetContainer}>
+        <MainBar
+          user={user}
+          onHelpClick={handleHelpClick}
+          onMinimizeButtonClick={() => setMinimized(!isMinimized)}
+        />
+        {!isMinimized && (
+          <div>
+            <Tabs
+              tabList={tabList}
+              activeTab={activeTab}
+              changeActiveTab={changeActiveTab}
+            />
+            <ActiveTabContent key={activeTab} content={activeTabContent()} />
+          </div>
+        )}
+        {chatClient && chatOpened && user && (
+          <ConversationBox
+            chatClient={chatClient}
+            chatRepo={chatRepo}
+            activeChannel={activeChannel}
+            user={user}
+            chatCounterpart={chatCounterpart}
+            openDir={openDir}
+            summitId={summitId}
+            visible={chatOpened}
+            activity={activity}
+            onClose={() => setChatOpened(false)}
+            onChatMenuSelected={handleChatMenuSelection}
           />
-          <ActiveTabContent key={activeTab} content={activeTabContent()} />
-        </div>
-      )}
-      {chatClient && chatOpened && user && (
-        <ConversationBox
-          chatClient={chatClient}
-          chatRepo={chatRepo}
-          activeChannel={activeChannel}
-          user={user}
-          chatCounterpart={chatCounterpart}
-          openDir={openDir}
-          summitId={summitId}
-          visible={chatOpened}
-          activity={activity}
-          onClose={() => setChatOpened(false)}
-          onChatMenuSelected={handleChatMenuSelection}
-        />
-      )}
-      {chatClient && qaChatOpened && user && (
-        <ConversationBox
-          chatClient={chatClient}
-          chatRepo={chatRepo}
-          user={user}
-          chatCounterpart={roles.QA}
-          openDir={chatOpened && activeChannel ? 'parentLeft' : 'left'}
-          summitId={summitId}
-          activity={activity}
-          visible={qaChatOpened}
-          onClose={() => setQAChatOpened(false)}
-        />
-      )}
-    </div>
+        )}
+        {chatClient && qaChatOpened && user && (
+          <ConversationBox
+            chatClient={chatClient}
+            chatRepo={chatRepo}
+            user={user}
+            chatCounterpart={roles.QA}
+            openDir={chatOpened && activeChannel ? 'parentLeft' : 'left'}
+            summitId={summitId}
+            activity={activity}
+            visible={qaChatOpened}
+            onClose={() => setQAChatOpened(false)}
+          />
+        )}
+      </div>
+    )
   )
 })
 
