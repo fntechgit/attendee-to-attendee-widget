@@ -11,15 +11,15 @@ import style from './style.module.scss'
 let handleSearchDebounce = null
 
 const DMChannelListContainer = ({
-  user,
-  summitId,
-  chatClient,
   accessRepo,
-  onItemClick,
-  height,
   activity,
+  chatClient,
+  height,
+  summitId,
   onHelpClick,
-  onQAClick
+  onItemClick,
+  onQAClick,
+  user
 }) => {
   const defaultScope = [
     channelTypes.HELP_ROOM,
@@ -119,10 +119,7 @@ const DMChannelListContainer = ({
           <span>Help</span>
         </button>
         {activity && (
-          <button
-            className='button is-large ml-1'
-            onClick={() => onQAClick(activity)}
-          >
+          <button className='button is-large ml-1' onClick={onQAClick}>
             <span className='icon'>
               <i className='fa fa-comments'></i>
             </span>

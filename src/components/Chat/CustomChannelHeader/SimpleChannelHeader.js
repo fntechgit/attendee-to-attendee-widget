@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { withChatContext } from 'stream-chat-react'
 import { channelTypes } from '../../../models/channelTypes'
 import style from './style.module.scss'
@@ -6,35 +6,19 @@ import style from './style.module.scss'
 const SimpleChannelHeader = (props) => {
   const { me, channel, onClose } = props
 
-  // const isHelpUser = allHelpRoles.includes(me.local_role)
-  // const memberLookup = (m) =>
-  //   isHelpUser ? m.role === 'owner' : m.user.id !== me.id
-
-  // const member = Object.values(members).find(memberLookup)
-
-  // let headerTitle = member.user.name
-
-  // if (isHelpUser) {
-  //   const channelType = props.channel.id.includes('help') ? 'Help' : 'Q&A'
-  //   headerTitle = `${channelType} - ${member.user.name}`
-  // } else {
-  //   if (props.channel.id === `${me.id}-help`) {
-  //     headerTitle = 'Support'
-  //   } else if (props.channel.id === `${me.id}-qa`) {
-  //     headerTitle = 'Q&A'
-  //   }
-  // }
-
   const member = Object.values(channel.state.members).find(
     (m) => m.user.id !== me.id
   )
 
   let headerImage = channel.data.image
   let headerTitle = channel.data.name
+  let headerSubtitle = null
 
   if (channel.type === channelTypes.MESSAGING && member) {
     headerImage = member.user.image
     headerTitle = member.user.name
+  } else if (channel.type === channelTypes.QA_ROOM) {
+    headerSubtitle = channel.data.description
   }
 
   return (
@@ -46,11 +30,12 @@ const SimpleChannelHeader = (props) => {
         />
       </div>
       <div className={style.textWrapper}>
-        <span className={style.title}>{headerTitle}</span>
-        {(channel.type === channelTypes.CUSTOM_ROOM ||
-          channel.type === channelTypes.ACTIVITY_ROOM) && (
-          <span className={style.subtitle}>{5} participants</span>
-        )}
+        <span className={style.title}>
+          {headerTitle}{' '}
+          {headerSubtitle && (
+            <span className={style.subtitle}>{` - ${headerSubtitle}`}</span>
+          )}
+        </span>
       </div>
       <div className={style.controls}>
         <div onClick={onClose} className={style.close}>

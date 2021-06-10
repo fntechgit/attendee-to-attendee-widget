@@ -216,18 +216,18 @@ export default class AttendeeRepository {
     if (error) throw new Error(error)
   }
 
-  // async findByIdpID(id) {
-  //   try {
-  //     const { data, error } = await this._client
-  //       .from('attendees')
-  //       .select('*')
-  //       .eq('id', id)
-  //     if (error) throw new Error(error)
-  //     return data
-  //   } catch (error) {
-  //     console.log('error', error)
-  //   }
-  // }
+  async findByIdpID(id) {
+    try {
+      const { data, error } = await this._client
+        .from('attendees')
+        .select('*')
+        .eq('idp_user_id', id)
+      if (error) throw new Error(error)
+      return data[0]
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
 
   async findByFullName(filter) {
     try {

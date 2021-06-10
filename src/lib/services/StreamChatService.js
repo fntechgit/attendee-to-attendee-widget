@@ -84,6 +84,7 @@ export default class StreamChatService {
     const channel = this.chatClient.channel(type, id, {
       name: name,
       image: image,
+      description: description,
       members: members
     })
     await channel.watch()

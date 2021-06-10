@@ -38,6 +38,18 @@
   height: 60px;
   .textWrapper {
     margin-top: -20px;
+    .title {
+      font-size: 17px;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1; /* number of lines to show */
+      -webkit-box-orient: vertical;
+    }
+    .subtitle {
+      font-size: 14px;
+    }
   }
   .picWrapper {
     margin-top: -20px;

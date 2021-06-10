@@ -37,6 +37,7 @@ const tabNames = {
 }
 
 const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
+  const [isInitialized, setIsInitialized] = useState(false)
   const [activeTab, setActiveTab] = useState(tabNames.ATTENDEES)
   const [isMinimized, setMinimized] = useState(false)
   const [chatOpened, setChatOpened] = useState(false)
@@ -59,22 +60,34 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   } = props
   props = { ...props, url: window.location.href.split('?')[0] }
 
-  if (!accessRepo) {
-    accessRepo = new AccessRepository(
-      SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
-    )
-  }
-
-  if (!chatRepo) {
-    chatRepo = new ChatRepository(
-      SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
-      new StreamChatService(streamApiKey),
-      new ChatAPIService()
-    )
+  const initUser = async (currUser) => {
+    const att = await accessRepo.findByIdpID(currUser.id)
+    currUser.fullName = att.full_name
+    currUser.email = att.email
+    currUser.company = att.company
+    currUser.title = att.title
+    currUser.picUrl = att.pic_url
+    currUser.bio = att.bio
+    currUser.socialInfo = att.social_info
+    currUser.badgeFeatures = att.badges_info
+    return currUser
   }
 
   useEffect(() => {
-    const initChat = async () => {
+    const init = async () => {
+      if (!accessRepo) {
+        accessRepo = new AccessRepository(
+          SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
+        )
+      }
+      if (!chatRepo) {
+        chatRepo = new ChatRepository(
+          SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
+          new StreamChatService(streamApiKey),
+          new ChatAPIService()
+        )
+      }
+      await initUser(user)
       await chatRepo.initializeClient(
         user,
         accessRepo,
@@ -89,14 +102,14 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         (err, res) => console.log(err, res)
       )
 
-      //TODO: Uncomment
-      // await chatRepo.seedChannelTypes(
-      //   chatApiBaseUrl,
-      //   summitId,
-      //   accessToken,
-      //   (res) => console.log(res),
-      //   (err, res) => console.log(err)
-      // )
+      await chatRepo.seedChannelTypes(
+        chatApiBaseUrl,
+        summitId,
+        accessToken,
+        (res) => console.log(res),
+        (err, res) => console.log(err)
+      )
+      setIsInitialized(true)
     }
 
     const cleanUpChat = async () => {
@@ -104,7 +117,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     }
 
     if (accessToken) {
-      initChat()
+      init()
       return () => cleanUpChat()
     }
   }, [accessToken])
@@ -133,9 +146,9 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         chatRepo.removeMember(channel, me.id)
         break
       case 2:
-        copyToClipboard(
-          `${window.location.href.split('?')[0]}?gotoroom=${channel.id}`
-        )
+        let baseUrl = window.location.href.split('?')[0]
+        baseUrl = baseUrl.split('#')[0]
+        copyToClipboard(`${baseUrl}#openchatroom=${channel.id}`)
         break
       case 3:
         if (!qaChatOpened) {
@@ -151,7 +164,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     showChatWindow(null, roles.HELP)
   }
 
-  const handleQAClick = (activity) => {
+  const handleQAClick = () => {
     if (!qaChatOpened) {
       setTimeout(() => {
         setQAChatOpened(true)
@@ -305,7 +318,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           chatRepo={chatRepo}
           user={user}
           chatCounterpart={roles.QA}
-          openDir={chatOpened ? 'parentLeft' : 'left'}
+          openDir={chatOpened && activeChannel ? 'parentLeft' : 'left'}
           summitId={summitId}
           activity={activity}
           visible={qaChatOpened}

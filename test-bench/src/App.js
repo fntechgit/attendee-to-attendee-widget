@@ -38,13 +38,13 @@ const chatProps = {
   forumSlug: 'fnvirtual-poc',
   getAccessToken: async () => accessToken,
   onAuthError: (err, res) => console.log(err),
-  openDir: 'left'
-  // activity: {
-  //   id: 206,
-  //   name:
-  //     'Global Collaboration Driving Innovation in a Multi-Billion Dollar Market',
-  //   imgUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
-  // }
+  openDir: 'left',
+  activity: {
+    id: 206,
+    name:
+      'Global Collaboration Driving Innovation in a Multi-Billion Dollar Market',
+    imgUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
+  }
 }
 
 const widgetProps = {
@@ -62,18 +62,7 @@ const widgetProps = {
       twitterName: 'romanetar',
       wechatUser: ''
     },
-    badgeFeatures: [
-      {
-        title: 'feat 1',
-        imgUrl:
-          'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-      },
-      {
-        title: 'feat 2',
-        imgUrl:
-          'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-      }
-    ], //attendee.ticket.badge.features
+    badgeFeatures: null,
     bio: '# This is my bio, *in MD*!', //bio: '<p><span>This is my bio in HTML</span></p>'
     hasPermission: (permission) => {
       switch (permission) {
@@ -109,10 +98,22 @@ const App = () => {
 
   widgetProps.user.fullName = fullName
   widgetProps.user.email = email
-  //widgetProps.user.company = `Tipit`
-  //widgetProps.user.title = `Full stack developer`
+  widgetProps.user.company = `Tipit`
+  widgetProps.user.title = `Full stack developer`
   widgetProps.user.id = idpUserId
   widgetProps.user.idpUserId = idpUserId
+  widgetProps.user.badgeFeatures = [
+    {
+      title: 'feat 1',
+      imgUrl:
+        'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
+    },
+    {
+      title: 'feat 2',
+      imgUrl:
+        'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
+    }
+  ] //attendee.ticket.badge.features
 
   // const handleItemClick = (itemInfo) => {
   //   //setAccessInfo(itemInfo)
@@ -145,11 +146,11 @@ const App = () => {
   // }
 
   const token1 =
-    'UDwvKWAhiP-_GqGULj-fmolU9uctFk.muJ8LrNg.P98dEa2S15QFGM-FZTn8KKvRNS3Shzwy9raM._aT5pVq5_4TRBqb~QFk5PI3_IvOWZ3dL1YJqsuMe.ot8Xi6i1C4'
+    'Saz.PStcv54NCAuJ0yhKUS1oI60Mz0_IjOZlK8Phr.EGsb6_HkJTaySqnthpSNwKZ2f9kxjgS6TIP3hL6ixv~dXv7pXyKsrNnmWiwWNxTzO9g4pG6PB.9458CFoNpKbj'
   const token2 =
-    'F5htyxoJTnq-Ba.SD5jR2LjH9-JGLbgMnaW~0hRjoMuftG_ep1hcqMj7Y6enAQWkJiCj~Xsay6yTQtAM9YrxmOfBE.THm.aYzXbvB0KMkb4SYye9Dxe0F3F4nZS4tHtc'
+    'XXA7-vH.yv5BcZrmhbB2vF9rkuBJBDbDt-wHnberIjA309dDvf7aek9cULHkYY81G.YQFGSK9ktnKAxAT2k00xwZ472UrI22tIyfuyjus4QCly1LRxGBNrI~Ud~iDkC6'
   const token3 =
-    'UDwvKWAhiP-_GqGULj-fmolU9uctFk.muJ8LrNg.P98dEa2S15QFGM-FZTn8KKvRNS3Shzwy9raM._aT5pVq5_4TRBqb~QFk5PI3_IvOWZ3dL1YJqsuMe.ot8Xi6i1C4'
+    'Saz.PStcv54NCAuJ0yhKUS1oI60Mz0_IjOZlK8Phr.EGsb6_HkJTaySqnthpSNwKZ2f9kxjgS6TIP3hL6ixv~dXv7pXyKsrNnmWiwWNxTzO9g4pG6PB.9458CFoNpKbj'
 
   return (
     <Router>
@@ -188,7 +189,7 @@ const App = () => {
               {...widgetProps}
               ref={{ sdcRef, shcRef, sqacRef, ocrRef }}
             />
-            {/* <Tracker {...widgetProps} ref={trackerRef} /> */}
+            <Tracker {...widgetProps} ref={trackerRef} />
             <br />
             <hr />
             {/* <button onClick={handleSignOutClick}>SignOut</button> */}

@@ -39,12 +39,19 @@ const ConversationBox = ({
       //console.log('activeChannel', activeChannel)
       if (!activeChannel) {
         if (chatCounterpart === roles.QA) {
-          if (!activity) return
-          const qaChannel = await chatRepo.startQAChat(user, summitId, activity)
-          if (qaChannel) setChannel(qaChannel)
+          if (activity) {
+            const qaChannel = await chatRepo.startQAChat(
+              user,
+              summitId,
+              activity
+            )
+            if (qaChannel) setChannel(qaChannel)
+          }
         } else if (chatCounterpart === roles.HELP) {
-          const helpChannel = await chatRepo.startHelpChat(user, summitId)
-          if (helpChannel) setChannel(helpChannel)
+          if (user.role !== roles.HELP) {
+            const helpChannel = await chatRepo.startHelpChat(user, summitId)
+            if (helpChannel) setChannel(helpChannel)
+          }
         } else {
           const dmChannel = await chatRepo.startA2AChat(user, chatCounterpart)
           if (dmChannel) setChannel(dmChannel)

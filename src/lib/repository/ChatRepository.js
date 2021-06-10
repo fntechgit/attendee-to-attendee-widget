@@ -133,7 +133,7 @@ export default class ChatRepository {
           channelTypes.QA_ROOM,
           `${user.id}-${activity.id}`,
           'Q & A',
-          '',
+          activity.name,
           members,
           firstQAAgent.pic_url
         )
