@@ -29,7 +29,7 @@ let accessRepo = null
 let chatRepo = null
 let chatCounterpart = roles.HELP
 let activeChannel = null
-let chatInitialized = false
+let dlCallback = null
 
 const tabNames = {
   ATTENDEES: 'ATTENDEES',
@@ -97,9 +97,11 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         accessToken,
         forumSlug,
         (client) => {
-          chatInitialized = true
           setChatClient(client)
           if (activity) chatRepo.setUpActivityRoom(activity, user)
+          setTimeout(() => {
+            if (dlCallback) dlCallback()
+          }, 1000)
         },
         (err) => console.error(err),
         (err, res) => console.log(err, res)
@@ -198,17 +200,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     return tabList[activeIndex].content
   }
 
-  const withChatInitialized = (f) => {
-    if (chatInitialized) return f()
-    setTimeout(() => {
-      withChatInitialized(f)
-    }, 2000)
-  }
-
   /*begin deep linking section*/
   useImperativeHandle(ref.sdcRef, () => ({
     startDirectChat(partnerId) {
-      withChatInitialized(() => {
+      dlCallback = () => {
         if (
           partnerId != user.idpUserId &&
           user.hasPermission(permissions.CHAT)
@@ -216,36 +211,41 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           changeActiveTab(tabNames.MESSAGES)
           showChatWindow(null, partnerId)
         }
-      })
+      }
+      if (chatClient) dlCallback()
     }
   }))
 
   useImperativeHandle(ref.shcRef, () => ({
     startHelpChat() {
-      withChatInitialized(() => {
+      dlCallback = () => {
         changeActiveTab(tabNames.MESSAGES)
         showChatWindow(null, roles.HELP)
-      })
+      }
+      if (chatClient) dlCallback()
     }
   }))
 
   useImperativeHandle(ref.sqacRef, () => ({
     startQAChat() {
-      withChatInitialized(() => {
+      dlCallback = () => {
         changeActiveTab(tabNames.MESSAGES)
         showChatWindow(null, roles.QA)
-      })
+      }
+      if (chatClient) dlCallback()
     }
   }))
 
   useImperativeHandle(ref.ocrRef, () => ({
     openChatRoom(roomId) {
-      withChatInitialized(async () => {
+      dlCallback = async () => {
         changeActiveTab(tabNames.ROOM_CHATS)
+        console.log('openChatRoom roomId', roomId)
         const channel = await chatRepo.getChannel(roomId)
         console.log('openChatRoom channel', channel)
         showChatWindow(channel, null)
-      })
+      }
+      if (chatClient) dlCallback()
     }
   }))
   /*end deep linking section*/
