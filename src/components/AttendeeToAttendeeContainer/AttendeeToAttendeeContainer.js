@@ -195,38 +195,59 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     return tabList[activeIndex].content
   }
 
+  const withChatClientInitialized = (f) => {
+    console.log('try')
+    if (chatClient) return f()
+    setTimeout(() => {
+      console.log('retry')
+      withChatClientInitialized(f)
+    }, 1000)
+    console.log('end')
+  }
+
   /*begin deep linking section*/
   useImperativeHandle(ref.sdcRef, () => ({
     startDirectChat(partnerId) {
-      if (partnerId != user.idpUserId && user.hasPermission(permissions.CHAT)) {
-        changeActiveTab(tabNames.MESSAGES)
-        showChatWindow(null, partnerId)
-      }
+      withChatClientInitialized(() => {
+        if (
+          partnerId != user.idpUserId &&
+          user.hasPermission(permissions.CHAT)
+        ) {
+          changeActiveTab(tabNames.MESSAGES)
+          showChatWindow(null, partnerId)
+        }
+      })
     }
   }))
 
   useImperativeHandle(ref.shcRef, () => ({
     startHelpChat() {
-      changeActiveTab(tabNames.MESSAGES)
-      showChatWindow(null, roles.HELP)
+      withChatClientInitialized(() => {
+        changeActiveTab(tabNames.MESSAGES)
+        showChatWindow(null, roles.HELP)
+      })
     }
   }))
 
   useImperativeHandle(ref.sqacRef, () => ({
     startQAChat() {
-      changeActiveTab(tabNames.MESSAGES)
-      showChatWindow(null, roles.QA)
+      withChatClientInitialized(() => {
+        changeActiveTab(tabNames.MESSAGES)
+        showChatWindow(null, roles.QA)
+      })
     }
   }))
 
   useImperativeHandle(ref.ocrRef, () => ({
     openChatRoom(roomId) {
-      changeActiveTab(tabNames.ROOM_CHATS)
-      const openChatRoom = async () => {
-        const channel = await chatRepo.getChannel(roomId)
-        showChatWindow(channel, null)
-      }
-      openChatRoom()
+      withChatClientInitialized(() => {
+        changeActiveTab(tabNames.ROOM_CHATS)
+        const openChatRoom = async () => {
+          const channel = await chatRepo.getChannel(roomId)
+          showChatWindow(channel, null)
+        }
+        openChatRoom()
+      })
     }
   }))
   /*end deep linking section*/
