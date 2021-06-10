@@ -29,6 +29,7 @@ let accessRepo = null
 let chatRepo = null
 let chatCounterpart = roles.HELP
 let activeChannel = null
+let chatInitialized = false
 
 const tabNames = {
   ATTENDEES: 'ATTENDEES',
@@ -95,6 +96,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         accessToken,
         forumSlug,
         (client) => {
+          chatInitialized = true
           setChatClient(client)
           if (activity) chatRepo.setUpActivityRoom(activity, user)
         },
@@ -197,11 +199,11 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
 
   const withChatClientInitialized = (f) => {
     console.log('try')
-    if (chatClient) return f()
+    if (chatInitialized) return f()
     setTimeout(() => {
       console.log('retry')
       withChatClientInitialized(f)
-    }, 1000)
+    }, 2000)
     console.log('end')
   }
 
