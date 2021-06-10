@@ -197,20 +197,17 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     return tabList[activeIndex].content
   }
 
-  const withChatClientInitialized = (f) => {
-    console.log('try')
-    if (chatInitialized) return f()
+  const retryer = (f, stopCondition) => {
+    if (stopCondition) return f()
     setTimeout(() => {
-      console.log('retry')
-      withChatClientInitialized(f)
+      retryer(f, stopCondition)
     }, 2000)
-    console.log('end')
   }
 
   /*begin deep linking section*/
   useImperativeHandle(ref.sdcRef, () => ({
     startDirectChat(partnerId) {
-      withChatClientInitialized(() => {
+      retryer(() => {
         if (
           partnerId != user.idpUserId &&
           user.hasPermission(permissions.CHAT)
@@ -218,38 +215,35 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           changeActiveTab(tabNames.MESSAGES)
           showChatWindow(null, partnerId)
         }
-      })
+      }, chatInitialized)
     }
   }))
 
   useImperativeHandle(ref.shcRef, () => ({
     startHelpChat() {
-      withChatClientInitialized(() => {
+      retryer(() => {
         changeActiveTab(tabNames.MESSAGES)
         showChatWindow(null, roles.HELP)
-      })
+      }, chatInitialized)
     }
   }))
 
   useImperativeHandle(ref.sqacRef, () => ({
     startQAChat() {
-      withChatClientInitialized(() => {
+      retryer(() => {
         changeActiveTab(tabNames.MESSAGES)
         showChatWindow(null, roles.QA)
-      })
+      }, chatInitialized)
     }
   }))
 
   useImperativeHandle(ref.ocrRef, () => ({
     openChatRoom(roomId) {
-      withChatClientInitialized(() => {
+      retryer(async () => {
         changeActiveTab(tabNames.ROOM_CHATS)
-        const openChatRoom = async () => {
-          const channel = await chatRepo.getChannel(roomId)
-          showChatWindow(channel, null)
-        }
-        openChatRoom()
-      })
+        const channel = await chatRepo.getChannel(roomId)
+        showChatWindow(channel, null)
+      }, chatInitialized)
     }
   }))
   /*end deep linking section*/
