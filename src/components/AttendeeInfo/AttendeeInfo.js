@@ -22,7 +22,57 @@ export const AttendeeInfo = ({
     bio
   } = user
 
-  const { githubUser, linkedInProfile, twitterName, wechatUser } = socialInfo
+  const buildSocialSection = (socialInfo) => {
+    const { githubUser, linkedInProfile, twitterName, wechatUser } = socialInfo
+    return (
+      <nav className='level is-mobile'>
+        <div className='level-left'>
+          {githubUser && (
+            <a
+              href={`https://github.com/${githubUser}/`}
+              target='_blank'
+              className={`${style.levelItem} level-item`}
+            >
+              <span className='icon is-medium'>
+                <i
+                  className='fa fa-lg fa-github has-text-grey'
+                  aria-hidden='true'
+                ></i>
+              </span>
+            </a>
+          )}
+          {linkedInProfile && (
+            <a
+              href={linkedInProfile}
+              target='_blank'
+              className={`${style.levelItem} level-item`}
+            >
+              <span className='icon is-medium'>
+                <i
+                  className='fa fa-lg fa-linkedin has-text-grey'
+                  aria-hidden='true'
+                ></i>
+              </span>
+            </a>
+          )}
+          {twitterName && (
+            <a
+              href={`https://twitter.com/${twitterName}/`}
+              target='_blank'
+              className={`${style.levelItem} level-item`}
+            >
+              <span className='icon is-medium'>
+                <i
+                  className='fa fa-lg fa-twitter has-text-grey'
+                  aria-hidden='true'
+                ></i>
+              </span>
+            </a>
+          )}
+        </div>
+      </nav>
+    )
+  }
 
   return (
     <div
@@ -45,52 +95,7 @@ export const AttendeeInfo = ({
               <div className='is-size-4 has-text-grey'>{title}</div>
               <div className='is-size-4 has-text-grey'>{company}</div>
             </div>
-            <nav className='level is-mobile'>
-              <div className='level-left'>
-                {githubUser && (
-                  <a
-                    href={`https://github.com/${githubUser}/`}
-                    target='_blank'
-                    className={`${style.levelItem} level-item`}
-                  >
-                    <span className='icon is-medium'>
-                      <i
-                        className='fa fa-lg fa-github has-text-grey'
-                        aria-hidden='true'
-                      ></i>
-                    </span>
-                  </a>
-                )}
-                {linkedInProfile && (
-                  <a
-                    href={linkedInProfile}
-                    target='_blank'
-                    className={`${style.levelItem} level-item`}
-                  >
-                    <span className='icon is-medium'>
-                      <i
-                        className='fa fa-lg fa-linkedin has-text-grey'
-                        aria-hidden='true'
-                      ></i>
-                    </span>
-                  </a>
-                )}
-                {twitterName && (
-                  <a
-                    href={`https://twitter.com/${twitterName}/`}
-                    target='_blank'
-                    className={`${style.levelItem} level-item`}
-                  >
-                    <span className='icon is-medium'>
-                      <i
-                        className='fa fa-lg fa-twitter has-text-grey'
-                        aria-hidden='true'
-                      ></i>
-                    </span>
-                  </a>
-                )}
-              </div>
-            </nav>
+            {socialInfo && buildSocialSection(socialInfo)}
             {badgeFeatures && (
               <nav className='level'>
                 <div className='level-left'>
