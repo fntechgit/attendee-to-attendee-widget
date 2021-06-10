@@ -37,7 +37,7 @@ const tabNames = {
 }
 
 const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
-  const [isInitialized, setIsInitialized] = useState(false)
+  const [currentUser, setCurrentUser] = useState(props.user)
   const [activeTab, setActiveTab] = useState(tabNames.ATTENDEES)
   const [isMinimized, setMinimized] = useState(false)
   const [chatOpened, setChatOpened] = useState(false)
@@ -70,7 +70,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     currUser.bio = att.bio
     currUser.socialInfo = att.social_info
     currUser.badgeFeatures = att.badges_info
-    return currUser
+    setCurrentUser(currUser)
   }
 
   useEffect(() => {
@@ -109,8 +109,6 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         (res) => console.log(res),
         (err, res) => console.log(err)
       )
-      console.log('setIsInitialized')
-      setIsInitialized(true)
     }
 
     const cleanUpChat = async () => {
@@ -251,7 +249,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       icon: '',
       content: chatClient && (
         <DMChannelListContainer
-          user={user}
+          user={currentUser}
           summitId={summitId}
           chatClient={chatClient}
           accessRepo={accessRepo}
@@ -268,7 +266,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       icon: '',
       content: (
         <RoomChannelListContainer
-          user={user}
+          user={currentUser}
           summitId={summitId}
           chatClient={chatClient}
           accessRepo={accessRepo}
@@ -282,53 +280,51 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   ]
 
   return (
-    isInitialized && (
-      <div className={style.widgetContainer}>
-        <MainBar
-          user={user}
-          onHelpClick={handleHelpClick}
-          onMinimizeButtonClick={() => setMinimized(!isMinimized)}
+    <div className={style.widgetContainer}>
+      <MainBar
+        user={currentUser}
+        onHelpClick={handleHelpClick}
+        onMinimizeButtonClick={() => setMinimized(!isMinimized)}
+      />
+      {!isMinimized && (
+        <div>
+          <Tabs
+            tabList={tabList}
+            activeTab={activeTab}
+            changeActiveTab={changeActiveTab}
+          />
+          <ActiveTabContent key={activeTab} content={activeTabContent()} />
+        </div>
+      )}
+      {chatClient && chatOpened && currentUser && (
+        <ConversationBox
+          chatClient={chatClient}
+          chatRepo={chatRepo}
+          activeChannel={activeChannel}
+          user={currentUser}
+          chatCounterpart={chatCounterpart}
+          openDir={openDir}
+          summitId={summitId}
+          visible={chatOpened}
+          activity={activity}
+          onClose={() => setChatOpened(false)}
+          onChatMenuSelected={handleChatMenuSelection}
         />
-        {!isMinimized && (
-          <div>
-            <Tabs
-              tabList={tabList}
-              activeTab={activeTab}
-              changeActiveTab={changeActiveTab}
-            />
-            <ActiveTabContent key={activeTab} content={activeTabContent()} />
-          </div>
-        )}
-        {chatClient && chatOpened && user && (
-          <ConversationBox
-            chatClient={chatClient}
-            chatRepo={chatRepo}
-            activeChannel={activeChannel}
-            user={user}
-            chatCounterpart={chatCounterpart}
-            openDir={openDir}
-            summitId={summitId}
-            visible={chatOpened}
-            activity={activity}
-            onClose={() => setChatOpened(false)}
-            onChatMenuSelected={handleChatMenuSelection}
-          />
-        )}
-        {chatClient && qaChatOpened && user && (
-          <ConversationBox
-            chatClient={chatClient}
-            chatRepo={chatRepo}
-            user={user}
-            chatCounterpart={roles.QA}
-            openDir={chatOpened && activeChannel ? 'parentLeft' : 'left'}
-            summitId={summitId}
-            activity={activity}
-            visible={qaChatOpened}
-            onClose={() => setQAChatOpened(false)}
-          />
-        )}
-      </div>
-    )
+      )}
+      {chatClient && qaChatOpened && currentUser && (
+        <ConversationBox
+          chatClient={chatClient}
+          chatRepo={chatRepo}
+          user={currentUser}
+          chatCounterpart={roles.QA}
+          openDir={chatOpened && activeChannel ? 'parentLeft' : 'left'}
+          summitId={summitId}
+          activity={activity}
+          visible={qaChatOpened}
+          onClose={() => setQAChatOpened(false)}
+        />
+      )}
+    </div>
   )
 })
 
