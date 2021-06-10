@@ -89,6 +89,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         )
       }
       await initUser(user)
+
       await chatRepo.initializeClient(
         user,
         accessRepo,
@@ -197,17 +198,17 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     return tabList[activeIndex].content
   }
 
-  const retryer = (f, stopCondition) => {
-    if (stopCondition) return f()
+  const withChatInitialized = (f) => {
+    if (chatInitialized) return f()
     setTimeout(() => {
-      retryer(f, stopCondition)
+      withChatInitialized(f)
     }, 2000)
   }
 
   /*begin deep linking section*/
   useImperativeHandle(ref.sdcRef, () => ({
     startDirectChat(partnerId) {
-      retryer(() => {
+      withChatInitialized(() => {
         if (
           partnerId != user.idpUserId &&
           user.hasPermission(permissions.CHAT)
@@ -215,35 +216,36 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           changeActiveTab(tabNames.MESSAGES)
           showChatWindow(null, partnerId)
         }
-      }, chatInitialized)
+      })
     }
   }))
 
   useImperativeHandle(ref.shcRef, () => ({
     startHelpChat() {
-      retryer(() => {
+      withChatInitialized(() => {
         changeActiveTab(tabNames.MESSAGES)
         showChatWindow(null, roles.HELP)
-      }, chatInitialized)
+      })
     }
   }))
 
   useImperativeHandle(ref.sqacRef, () => ({
     startQAChat() {
-      retryer(() => {
+      withChatInitialized(() => {
         changeActiveTab(tabNames.MESSAGES)
         showChatWindow(null, roles.QA)
-      }, chatInitialized)
+      })
     }
   }))
 
   useImperativeHandle(ref.ocrRef, () => ({
     openChatRoom(roomId) {
-      retryer(async () => {
+      withChatInitialized(async () => {
         changeActiveTab(tabNames.ROOM_CHATS)
         const channel = await chatRepo.getChannel(roomId)
+        console.log('openChatRoom channel', channel)
         showChatWindow(channel, null)
-      }, chatInitialized)
+      })
     }
   }))
   /*end deep linking section*/
