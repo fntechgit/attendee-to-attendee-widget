@@ -80,14 +80,26 @@ const adminGroups = ['administrators', 'super-admins']
 
 export const AttendeesWidget = ({ user, event }) => {
   //Deep linking support
-  const chatRef = useRef()
+  const sdcRef = useRef()
+  const shcRef = useRef()
+  const sqacRef = useRef()
+  const ocrRef = useRef()
 
   useEffect(() => {
     const starHelpChatParam = getUrlParam('starthelpchat')
     const starQAChatParam = getUrlParam('startqachat')
     const starDirectChatParam = getUrlParam('startdirectchat')
     const openChatRoomParam = getUrlParam('openchatroom')
-    ...
+
+    if (starHelpChatParam) {
+      shcRef.current.startHelpChat();
+    } else if (starQAChatParam) {
+      sqacRef.current.startQAChat();
+    } else if (starDirectChatParam) {
+      sdcRef.current.startDirectChat(starDirectChatParam);
+    } else if (openChatRoomParam) {
+      ocrRef.current.openChatRoom(openChatRoomParam);
+    }
   }, [])
 
   const { email, first_name, last_name, bio, groups } = user.userProfile
@@ -145,13 +157,14 @@ export const AttendeesWidget = ({ user, event }) => {
     ...sbAuthProps
   }
 
-  return <AttendeeToAttendeeContainer {...widgetProps} ref={chatRef} />
+  return <AttendeeToAttendeeContainer {...widgetProps} ref={{ sdcRef, shcRef, sqacRef, ocrRef }} />
 }
 ```
 
 ### Deep linking
 
-This feature is activated by setting url hash parameters
+Deep linking is implemented using multiple forwardRefs (sdcRef, shcRef, sqacRef, ocrRef)
+As shown in the example above, this feature could be activated by setting url hash parameters
 
 #### Allowed parameters
 
