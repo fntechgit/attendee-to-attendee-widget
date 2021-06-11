@@ -24,6 +24,7 @@ export default class StreamChatService {
       if (response.status === 200) {
         localStorage.setItem(this.flag, JSON.stringify(streamServerInfo))
         try {
+          await this.chatClient.disconnect()
           this.chatClient.setUser(
             {
               id: streamServerInfo.id,

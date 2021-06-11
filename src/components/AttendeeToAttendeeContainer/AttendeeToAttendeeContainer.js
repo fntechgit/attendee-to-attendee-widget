@@ -122,8 +122,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
 
     if (accessToken) {
       init()
-      return () => cleanUpChat()
     }
+    return () => cleanUpChat()
   }, [accessToken])
 
   useEffect(() => {
