@@ -73,7 +73,7 @@ export default class StreamChatService {
   }
 
   async getChannelById(id) {
-    const filter = { id: { $in: [id] } }
+    const filter = { id: { $in: [`${id}`] } }
     const foundChannels = await this.chatClient.queryChannels(filter, {}, {})
     if (foundChannels.length > 0) {
       return foundChannels[0]
@@ -94,8 +94,7 @@ export default class StreamChatService {
   }
 
   async deleteChannel(id) {
-    // const filter = { type: channelTypes.CUSTOM_ROOM, id: id }
-    const filter = { id: id }
+    const filter = { id: `${id}` }
     const channels = await this.chatClient.queryChannels(filter, {}, {})
     if (channels && channels.length > 0) {
       await channels[0].delete()
