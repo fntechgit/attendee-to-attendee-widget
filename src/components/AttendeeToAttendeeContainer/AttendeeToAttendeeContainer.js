@@ -4,13 +4,13 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import AccessRepository from '../../lib/repository/AccessRepository'
-import ChatRepository from '../../lib/repository/ChatRepository'
+import AccessRepository from '../../lib/repository/accessRepository'
+import ChatRepository from '../../lib/repository/chatRepository'
 import AttendeesList from '../AttendeesList/AttendeesList'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
 import ChatAPIService from '../../lib/services/ChatAPIService'
-import StreamChatService from '../../lib/services/StreamChatService'
+import StreamChatService from '../../lib/services/streamChatService'
 import SupabaseClientBuilder from '../../lib/SupabaseClientBuilder'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
@@ -102,7 +102,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         (client) => {
           setChatClient(client)
           if (activity) chatRepo.setUpActivityRoom(activity, user)
-          if (dlCallback) dlCallback(client)
+          if (dlCallback) {
+            dlCallback(client)
+            dlCallback = null
+          }
         },
         (err) => console.error(err),
         (err, res) => console.log(err, res)
@@ -134,17 +137,12 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   })
 
   const showChatWindow = (client, preloadedChannel, counterpart) => {
-    console.log('showChatWindow')
     if (client) {
-      console.log('showChatWindow chatClient', chatClient)
       if (chatOpened) setChatOpened(false)
       if (qaChatOpened) setQAChatOpened(false)
       activeChannel = preloadedChannel
       chatCounterpart = counterpart
-      console.log('showChatWindow preloadedChannel', preloadedChannel)
-      console.log('showChatWindow counterpart', counterpart)
       setTimeout(() => {
-        console.log('showChatWindow setChatOpened')
         setChatOpened(true)
       }, 100)
     }
@@ -246,9 +244,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     openChatRoom(roomId) {
       dlCallback = async (client) => {
         changeActiveTab(tabNames.ROOM_CHATS)
-        console.log('openChatRoom roomId', roomId)
         const channel = await chatRepo.getChannel(roomId)
-        console.log('openChatRoom channel', channel)
         showChatWindow(client, channel, null)
       }
       if (chatClient) dlCallback(chatClient)
