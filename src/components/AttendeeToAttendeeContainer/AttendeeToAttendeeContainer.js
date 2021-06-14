@@ -101,7 +101,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           if (activity) chatRepo.setUpActivityRoom(activity, user)
           setTimeout(() => {
             if (dlCallback) dlCallback()
-          }, 1000)
+          }, 3000)
         },
         (err) => console.error(err),
         (err, res) => console.log(err, res)
@@ -133,12 +133,17 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   })
 
   const showChatWindow = (preloadedChannel, counterpart) => {
+    console.log('showChatWindow')
     if (chatClient) {
+      console.log('showChatWindow chatClient', chatClient)
       if (chatOpened) setChatOpened(false)
       if (qaChatOpened) setQAChatOpened(false)
       activeChannel = preloadedChannel
       chatCounterpart = counterpart
+      console.log('showChatWindow preloadedChannel', preloadedChannel)
+      console.log('showChatWindow counterpart', counterpart)
       setTimeout(() => {
+        console.log('showChatWindow setChatOpened')
         setChatOpened(true)
       }, 100)
     }
