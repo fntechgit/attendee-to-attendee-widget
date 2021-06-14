@@ -46,6 +46,9 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [chatClient, setChatClient] = useState(null)
   const [accessToken, setAccessToken] = useState(null)
 
+  let baseUrl = window.location.href.split('?')[0]
+  if (baseUrl) baseUrl = window.location.href.split('#')[0]
+
   const {
     supabaseUrl,
     supabaseKey,
@@ -59,7 +62,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     activity,
     getAccessToken
   } = props
-  props = { ...props, url: window.location.href.split('?')[0] }
+  props = { ...props, url: baseUrl }
 
   const initUser = async (currUser) => {
     const att = await accessRepo.findByIdpID(currUser.id)
@@ -99,9 +102,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         (client) => {
           setChatClient(client)
           if (activity) chatRepo.setUpActivityRoom(activity, user)
-          setTimeout(() => {
-            if (dlCallback) dlCallback()
-          }, 3000)
+          if (dlCallback) dlCallback(client)
         },
         (err) => console.error(err),
         (err, res) => console.log(err, res)
@@ -132,9 +133,9 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     })
   })
 
-  const showChatWindow = (preloadedChannel, counterpart) => {
+  const showChatWindow = (client, preloadedChannel, counterpart) => {
     console.log('showChatWindow')
-    if (chatClient) {
+    if (client) {
       console.log('showChatWindow chatClient', chatClient)
       if (chatOpened) setChatOpened(false)
       if (qaChatOpened) setQAChatOpened(false)
@@ -170,7 +171,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   }
 
   const handleHelpClick = async () => {
-    showChatWindow(null, roles.HELP)
+    showChatWindow(chatClient, null, roles.HELP)
   }
 
   const handleQAClick = () => {
@@ -186,13 +187,13 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       att.attendees.idp_user_id != user.idpUserId &&
       user.hasPermission(permissions.CHAT)
     ) {
-      showChatWindow(null, att.attendees.idp_user_id)
+      showChatWindow(chatClient, null, att.attendees.idp_user_id)
     }
   }
 
   const handleMessageClick = (channel) => {
     if (user.hasPermission(permissions.CHAT)) {
-      showChatWindow(channel, null)
+      showChatWindow(chatClient, channel, null)
     }
   }
 
@@ -208,49 +209,49 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   /*begin deep linking section*/
   useImperativeHandle(ref.sdcRef, () => ({
     startDirectChat(partnerId) {
-      dlCallback = () => {
+      dlCallback = (client) => {
         if (
           partnerId != user.idpUserId &&
           user.hasPermission(permissions.CHAT)
         ) {
           changeActiveTab(tabNames.MESSAGES)
-          showChatWindow(null, partnerId)
+          showChatWindow(client, null, partnerId)
         }
       }
-      if (chatClient) dlCallback()
+      if (chatClient) dlCallback(chatClient)
     }
   }))
 
   useImperativeHandle(ref.shcRef, () => ({
     startHelpChat() {
-      dlCallback = () => {
+      dlCallback = (client) => {
         changeActiveTab(tabNames.MESSAGES)
-        showChatWindow(null, roles.HELP)
+        showChatWindow(client, null, roles.HELP)
       }
-      if (chatClient) dlCallback()
+      if (chatClient) dlCallback(chatClient)
     }
   }))
 
   useImperativeHandle(ref.sqacRef, () => ({
     startQAChat() {
-      dlCallback = () => {
+      dlCallback = (client) => {
         changeActiveTab(tabNames.MESSAGES)
-        showChatWindow(null, roles.QA)
+        showChatWindow(client, null, roles.QA)
       }
-      if (chatClient) dlCallback()
+      if (chatClient) dlCallback(chatClient)
     }
   }))
 
   useImperativeHandle(ref.ocrRef, () => ({
     openChatRoom(roomId) {
-      dlCallback = async () => {
+      dlCallback = async (client) => {
         changeActiveTab(tabNames.ROOM_CHATS)
         console.log('openChatRoom roomId', roomId)
         const channel = await chatRepo.getChannel(roomId)
         console.log('openChatRoom channel', channel)
-        showChatWindow(channel, null)
+        showChatWindow(client, channel, null)
       }
-      if (chatClient) dlCallback()
+      if (chatClient) dlCallback(chatClient)
     }
   }))
   /*end deep linking section*/
