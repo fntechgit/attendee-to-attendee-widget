@@ -3,6 +3,7 @@ import { forwardRef, useImperativeHandle, useEffect } from 'react'
 import publicIp from 'public-ip'
 import AccessRepository from '../lib/repository/AccessRepository'
 import SupabaseClientBuilder from '../lib/SupabaseClientBuilder'
+import { extractBaseUrl } from '../utils/urlHelper'
 
 const Tracker = forwardRef((props, ref) => {
   const { supabaseUrl, supabaseKey } = props
@@ -17,7 +18,7 @@ const Tracker = forwardRef((props, ref) => {
     accessRepo.trackAccess(
       props.user,
       props.summitId,
-      window.location.href.split('?')[0],
+      extractBaseUrl(window.location.href),
       clientIP,
       true
     )

@@ -18,6 +18,7 @@ import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 import { copyToClipboard } from '../../utils/clipboardHelper'
 import { roles } from '../../models/userRoles'
 import { permissions } from '../../models/permissions'
+import { extractBaseUrl } from '../../utils/urlHelper'
 
 import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
@@ -46,8 +47,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [chatClient, setChatClient] = useState(null)
   const [accessToken, setAccessToken] = useState(null)
 
-  let baseUrl = window.location.href.split('?')[0]
-  if (baseUrl) baseUrl = window.location.href.split('#')[0]
+  const baseUrl = extractBaseUrl(window.location.href)
 
   const {
     supabaseUrl,
@@ -154,8 +154,6 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         chatRepo.removeMember(channel, me.id)
         break
       case 2:
-        let baseUrl = window.location.href.split('?')[0]
-        baseUrl = baseUrl.split('#')[0]
         copyToClipboard(`${baseUrl}#openchatroom=${channel.id}`)
         break
       case 3:

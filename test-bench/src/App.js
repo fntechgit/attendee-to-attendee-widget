@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import {
   AttendeeToAttendeeContainer,
@@ -115,15 +115,6 @@ const App = () => {
     }
   ] //attendee.ticket.badge.features
 
-  // const handleItemClick = (itemInfo) => {
-  //   //setAccessInfo(itemInfo)
-  //   //openModal()
-  //   //console.log(itemInfo)
-  //   if (itemInfo.attendees.idp_user_id != widgetProps.user.idpUserId) {
-  //     startOneToOneChat(itemInfo.attendees.idp_user_id)
-  //   }
-  // }
-
   //From INVITE LINK
   const openChatRoom = (roomId) => {
     ocrRef.current.openChatRoom(roomId)
@@ -141,16 +132,16 @@ const App = () => {
     sdcRef.current.startDirectChat(partnerId)
   }
 
-  // const handleSignOutClick = () => {
-  //   trackerRef.current.signOut()
-  // }
+  const handleSignOutClick = () => {
+    trackerRef.current.signOut()
+  }
 
   const token1 =
-    'pKvPcaHQEvrxDUjVKTrar3jrV2IX83H~AFoGa6otDJTmNiu7q9VSsMfVoE6oi0wrUIAqtAO0BRj.3l6dF.9.cUkWg4uebnrUFV0PuGJ-hWcmx58XcXETqN69SnPhv~QS'
+    '9dP6ZjbmXmemxgzrtQBIwp_~ipX.xNjZsWCmMt1Cxxx9HE8c6GajXimCowHkRpJ3-A1vRwj~9P.HQb1.FOpEoseobbi7Vxug2w4.X7ynM9HxALseRAj6~UPPZgvcAv0p'
   const token2 =
-    'pKvPcaHQEvrxDUjVKTrar3jrV2IX83H~AFoGa6otDJTmNiu7q9VSsMfVoE6oi0wrUIAqtAO0BRj.3l6dF.9.cUkWg4uebnrUFV0PuGJ-hWcmx58XcXETqN69SnPhv~QS'
+    '9dP6ZjbmXmemxgzrtQBIwp_~ipX.xNjZsWCmMt1Cxxx9HE8c6GajXimCowHkRpJ3-A1vRwj~9P.HQb1.FOpEoseobbi7Vxug2w4.X7ynM9HxALseRAj6~UPPZgvcAv0p'
   const token3 =
-    'pKvPcaHQEvrxDUjVKTrar3jrV2IX83H~AFoGa6otDJTmNiu7q9VSsMfVoE6oi0wrUIAqtAO0BRj.3l6dF.9.cUkWg4uebnrUFV0PuGJ-hWcmx58XcXETqN69SnPhv~QS'
+    '9dP6ZjbmXmemxgzrtQBIwp_~ipX.xNjZsWCmMt1Cxxx9HE8c6GajXimCowHkRpJ3-A1vRwj~9P.HQb1.FOpEoseobbi7Vxug2w4.X7ynM9HxALseRAj6~UPPZgvcAv0p'
 
   return (
     <Router>
@@ -191,7 +182,7 @@ const App = () => {
             <Tracker {...widgetProps} ref={trackerRef} />
             <br />
             <hr />
-            {/* <button onClick={handleSignOutClick}>SignOut</button> */}
+            <button onClick={handleSignOutClick}>SignOut</button>
             <button onClick={() => startDirectChat('7')}>
               Start Direct Chat
             </button>
