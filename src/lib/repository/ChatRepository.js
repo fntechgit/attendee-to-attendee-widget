@@ -42,9 +42,9 @@ export default class ChatRepository {
   async initializeClient(
     user,
     accessRepo,
-    apiBaseUrl,
+    chatApiBaseUrl,
     accessToken,
-    forumSlug,
+    summitId,
     callback,
     onError,
     onAuthError
@@ -53,9 +53,9 @@ export default class ChatRepository {
     user.role = role
     await this._streamChatService.initializeClient(
       user,
-      apiBaseUrl,
+      chatApiBaseUrl,
       accessToken,
-      forumSlug,
+      summitId,
       callback,
       onError,
       onAuthError

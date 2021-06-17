@@ -9,19 +9,25 @@ export default class StreamChatService {
 
   initializeClient = async (
     user,
-    apiBaseUrl,
+    chatApiBaseUrl,
     accessToken,
-    forumSlug,
+    summitId,
     callback,
     onError,
     onAuthError
   ) => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    }
+
     fetch(
-      `${apiBaseUrl}/api/v1/sso/stream-chat/${forumSlug}/profile?access_token=${accessToken}`
+      `${chatApiBaseUrl}/api/v1/sso?access_token=${accessToken}&summit_id=${summitId}`,
+      requestOptions
     ).then(async (response) => {
       const streamServerInfo = await response.json()
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         localStorage.setItem(this.flag, JSON.stringify(streamServerInfo))
         try {
           await this.chatClient.disconnect()
@@ -30,7 +36,7 @@ export default class StreamChatService {
               id: streamServerInfo.id,
               name: streamServerInfo.name,
               image: streamServerInfo.image,
-              local_role: user.role //local_role: streamServerInfo.local_role
+              local_role: user.role //local_role: streamServerInfo.role
             },
             streamServerInfo.token
           )

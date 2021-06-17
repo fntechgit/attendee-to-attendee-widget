@@ -1,6 +1,6 @@
 export default class ChatAPIService {
   seedChannelTypes = async (
-    apiBaseUrl,
+    chatApiBaseUrl,
     summitId,
     accessToken,
     callback,
@@ -12,7 +12,7 @@ export default class ChatAPIService {
     }
 
     fetch(
-      `${apiBaseUrl}/api/v1/channel-types/seed?access_token=${accessToken}&summit_id=${summitId}`,
+      `${chatApiBaseUrl}/api/v1/channel-types/seed?access_token=${accessToken}&summit_id=${summitId}`,
       requestOptions
     ).then(async (response) => {
       const res = await response.json()

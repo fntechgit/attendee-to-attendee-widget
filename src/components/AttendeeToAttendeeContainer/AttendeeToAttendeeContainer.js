@@ -96,9 +96,9 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       await chatRepo.initializeClient(
         user,
         accessRepo,
-        apiBaseUrl,
+        chatApiBaseUrl,
         accessToken,
-        forumSlug,
+        summitId,
         (client) => {
           setChatClient(client)
           if (activity) chatRepo.setUpActivityRoom(activity, user)
