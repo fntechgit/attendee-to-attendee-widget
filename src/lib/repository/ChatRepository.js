@@ -105,15 +105,23 @@ export default class ChatRepository {
       if (helpAgents && helpAgents.length > 0) {
         const helpAgentIds = helpAgents.map((h) => h.idp_user_id.toString())
         const firstHelpAgent = await this._getAgentInfo(helpAgentIds[0])
-        const members = [user.id, ...helpAgentIds]
-        return await this._streamChatService.createChannel(
+        const helpChannel = await this._streamChatService.createChannel(
           channelTypes.HELP_ROOM,
           `${user.id}-${roles.HELP}`,
           'Help Desk',
           '',
-          members,
+          [user.id],
           firstHelpAgent.pic_url
         )
+        //Reset support agents
+        const oldAgentMembers = await helpChannel.queryMembers({user_id: {$nin: [user.id]}})
+
+        if (oldAgentMembers && oldAgentMembers.members.length > 0) {
+          const oldAgentMemberIds = oldAgentMembers.members.map(m => m.user_id)
+          await this._streamChatService.removeMembers(helpChannel, oldAgentMemberIds)
+        }
+        await this._streamChatService.addMembers(helpChannel, helpAgentIds)
+        return helpChannel
       }
     } catch (error) {
       console.log('error', error)
@@ -128,15 +136,23 @@ export default class ChatRepository {
       if (qaAgents && qaAgents.length > 0) {
         const qaAgentsIds = qaAgents.map((h) => h.idp_user_id.toString())
         const firstQAAgent = await this._getAgentInfo(qaAgentsIds[0])
-        const members = [user.id, ...qaAgentsIds]
-        return await this._streamChatService.createChannel(
+        const qaChannel = await this._streamChatService.createChannel(
           channelTypes.QA_ROOM,
           `${user.id}-${activity.id}`,
           'Q & A',
           activity.name,
-          members,
+          [user.id],
           firstQAAgent.pic_url
         )
+        //Reset support agents
+        const oldAgentMembers = await qaChannel.queryMembers({user_id: {$nin: [user.id]}})
+
+        if (oldAgentMembers && oldAgentMembers.members.length > 0) {
+          const oldAgentMemberIds = oldAgentMembers.members.map(m => m.user_id)
+          await this._streamChatService.removeMembers(qaChannel, oldAgentMemberIds)
+        }
+        await this._streamChatService.addMembers(qaChannel, qaAgentsIds)
+        return qaChannel
       }
     } catch (error) {
       console.log('error', error)
