@@ -40,13 +40,13 @@ const RoomChannelListContainer = ({
     return defaultScope
   }
 
-  const buildFilter = (scope, id) => {
-    return id
+  const buildFilter = (scope, name) => {
+    return name
       ? {
           type: {
             $in: scope
           },
-          id: { $in: [id] }
+          name: { $eq: name }
         }
       : {
           type: {
@@ -60,7 +60,7 @@ const RoomChannelListContainer = ({
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
       setCurrFilters(
-        value ? buildFilter(currentScope, nameToId(value)) : defaultFilters
+        value ? buildFilter(currentScope, value) : defaultFilters
       )
     }, 300)
 
