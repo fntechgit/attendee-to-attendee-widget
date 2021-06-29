@@ -100,12 +100,12 @@ export const AttendeeInfo = ({
               <nav className='level'>
                 <div className='level-left'>
                   {badgeFeatures.map((bf) => (
-                    <div className='media-left' key={bf.title}>
+                    <div className='media-left' key={bf.name}>
                       <figure className='image is-48x48'>
                         <img
                           className='is-rounded'
-                          alt={bf.title}
-                          src={bf.imgUrl}
+                          alt={bf.name}
+                          src={bf.image}
                         />
                       </figure>
                     </div>

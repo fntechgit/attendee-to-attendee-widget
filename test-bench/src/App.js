@@ -62,8 +62,21 @@ const widgetProps = {
       twitterName: 'romanetar',
       wechatUser: ''
     },
-    badgeFeatures: null,
     bio: '# This is my bio, *in MD*!', //bio: '<p><span>This is my bio in HTML</span></p>'
+    getBadgeFeatures: () => {
+      return [
+        {
+          name: 'Feat A',
+          image:
+            'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
+        },
+        {
+          name: 'Feat B',
+          image:
+            'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
+        }
+      ] //attendee.ticket.badge.features
+    },
     hasPermission: (permission) => {
       switch (permission) {
         case permissions.MANAGE_ROOMS:
@@ -102,18 +115,6 @@ const App = () => {
   widgetProps.user.title = `Full stack developer`
   widgetProps.user.id = idpUserId
   widgetProps.user.idpUserId = idpUserId
-  widgetProps.user.badgeFeatures = [
-    {
-      title: 'feat 1',
-      imgUrl:
-        'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-    },
-    {
-      title: 'feat 2',
-      imgUrl:
-        'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-    }
-  ] //attendee.ticket.badge.features
 
   //From INVITE LINK
   const openChatRoom = (roomId) => {
@@ -137,11 +138,11 @@ const App = () => {
   }
 
   const token1 =
-    '7ZBcmUU_VXLm6kD8eLjPA8Ul6W8x7hZe--JBCGcWxruB2C7VWBGJVNtZTopkNT_xDzzLbiRTf3NKZ68fIDGQPLQlFR6ENG9ogYjfHh.-ZxJ8eoKxIrFRqKcL2CKGDKbN'
+    'T7W7SWlnHJ2cw6xu_Wc59Dr6Doymfc_V06Q9tClEXNn6HM-wybcfEd~2KiAB97RUhP15Qc1SXYk6ADpqOBRx9DtTvvR9z_7SzPLg08RhE50.d9x6iW_omCc6WxEpU407'
   const token2 =
-    'yaWKCMMl0O89NxaN6oWUo-WuwLJeH51jMbBlcpzf4OL~IUtD~w9fT~KO5pPIbBt1hEu2cipFeR~bPXlWW1t~Mx9VVGKw4rea0FlBrP4MAB54kyYrE~2HQGSJ77cpXxPO'
+    'T7W7SWlnHJ2cw6xu_Wc59Dr6Doymfc_V06Q9tClEXNn6HM-wybcfEd~2KiAB97RUhP15Qc1SXYk6ADpqOBRx9DtTvvR9z_7SzPLg08RhE50.d9x6iW_omCc6WxEpU407'
   const token3 =
-    '7ZBcmUU_VXLm6kD8eLjPA8Ul6W8x7hZe--JBCGcWxruB2C7VWBGJVNtZTopkNT_xDzzLbiRTf3NKZ68fIDGQPLQlFR6ENG9ogYjfHh.-ZxJ8eoKxIrFRqKcL2CKGDKbN'
+    'T7W7SWlnHJ2cw6xu_Wc59Dr6Doymfc_V06Q9tClEXNn6HM-wybcfEd~2KiAB97RUhP15Qc1SXYk6ADpqOBRx9DtTvvR9z_7SzPLg08RhE50.d9x6iW_omCc6WxEpU407'
 
   return (
     <Router>

@@ -104,7 +104,6 @@ Tracker.propTypes = {
       twitterName: PropTypes.string,
       wechatUser: PropTypes.string
     }),
-    badgeFeatures: PropTypes.array,
     bio: PropTypes.string
   }).isRequired
 }

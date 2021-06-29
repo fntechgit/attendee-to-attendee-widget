@@ -36,13 +36,15 @@ const widgetProps = {
       twitterName: TWITTER_USER_NAME,
       wechatUser: WECHAT_USER_NAME
     },
-    badgeFeatures: [
-      {
-        title: BADGE_TITLE,
-        imgUrl: BADGE_IMAGE_URL
-      },
-      ...
-    ], //attendee.ticket.badge.features
+    getBadgeFeatures: () => { 
+      return [
+        {
+          name: BADGE_TITLE,
+          image: BADGE_IMAGE_URL
+        },
+        ...
+      ] //attendee.ticket.badge.features
+    },
     bio: BIO, //Could be in Markdown format or HTML
   },
   summitId: 8,

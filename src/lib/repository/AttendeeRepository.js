@@ -20,7 +20,7 @@ export default class AttendeeRepository {
       idpUserId,
       isOnline,
       socialInfo,
-      badgeFeatures,
+      getBadgeFeatures,
       bio
     } = attendeeProfile
 
@@ -35,6 +35,9 @@ export default class AttendeeRepository {
       if (attFetchRes.data && attFetchRes.data.length > 0) {
         const fetchedAttendee = attFetchRes.data[0]
         const user = await signIn(this._client, email, email)
+
+        const badgeFeatures = getBadgeFeatures()
+
         if (
           this._somethigChange(
             fetchedAttendee,
@@ -82,7 +85,7 @@ export default class AttendeeRepository {
       idpUserId,
       isOnline,
       socialInfo,
-      badgeFeatures,
+      getBadgeFeatures,
       bio
     } = attendeeProfile
 
@@ -93,6 +96,9 @@ export default class AttendeeRepository {
     if (this._sbUser) return this._sbUser
 
     const newUser = await signUp(this._client, email, email)
+
+    const badgeFeatures = getBadgeFeatures()
+
     await this._addAttendee(
       newUser.id,
       fullName,
