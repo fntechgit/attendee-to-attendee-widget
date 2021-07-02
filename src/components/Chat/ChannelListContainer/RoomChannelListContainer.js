@@ -126,7 +126,7 @@ const RoomChannelListContainer = ({
               <span>Help Desk</span>
             </button>
             {activity && (
-              <button className='button is-light is-large' onClick={onQAClick}>
+              <button className='button is-light is-large ml-3' onClick={onQAClick}>
                 <span className='icon'>
                   <i className='fa fa-comments'></i>
                 </span>
@@ -135,7 +135,7 @@ const RoomChannelListContainer = ({
             )}
             {user.hasPermission(permissions.MANAGE_ROOMS) && (
               <button
-                className='button is-light is-large'
+                className='button is-light is-large ml-3'
                 onClick={handleRoomCreateClick}
               >
                 <span className='icon'>

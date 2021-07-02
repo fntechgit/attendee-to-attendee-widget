@@ -119,7 +119,7 @@ const DMChannelListContainer = ({
           <span>Help Desk</span>
         </button>
         {activity && (
-          <button className='button is-light is-large ml-1' onClick={onQAClick}>
+          <button className='button is-light is-large ml-4' onClick={onQAClick}>
             <span className='icon'>
               <i className='fa fa-comments'></i>
             </span>

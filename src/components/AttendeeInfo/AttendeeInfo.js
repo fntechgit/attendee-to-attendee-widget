@@ -106,6 +106,7 @@ export const AttendeeInfo = ({
                           className='is-rounded'
                           alt={bf.name}
                           src={bf.image}
+                          title={bf.name}
                         />
                       </figure>
                     </div>
