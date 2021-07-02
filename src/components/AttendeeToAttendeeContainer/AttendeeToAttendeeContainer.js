@@ -259,7 +259,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           {...props}
           accessRepo={accessRepo}
           chatRepo={chatRepo}
+          activity={activity}
           onItemClick={handleAttendeeClick}
+          onHelpClick={handleHelpClick}
+          onQAClick={handleQAClick}
         />
       )
     },
@@ -290,7 +293,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           chatClient={chatClient}
           accessRepo={accessRepo}
           chatRepo={chatRepo}
+          activity={activity}
           onItemClick={handleMessageClick}
+          onHelpClick={handleHelpClick}
+          onQAClick={handleQAClick}
           height={props.height}
           openDir={props.openDir}
         />
@@ -306,7 +312,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         onMinimizeButtonClick={() => setMinimized(!isMinimized)}
       />
       {!isMinimized && (
-        <div>
+        <div className='mt-2'>
           <Tabs
             tabList={tabList}
             activeTab={activeTab}

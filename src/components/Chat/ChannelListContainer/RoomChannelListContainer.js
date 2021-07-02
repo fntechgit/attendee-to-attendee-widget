@@ -18,6 +18,9 @@ const RoomChannelListContainer = ({
   chatClient,
   accessRepo,
   chatRepo,
+  activity,
+  onHelpClick,
+  onQAClick,
   onItemClick,
   height,
   openDir
@@ -59,9 +62,7 @@ const RoomChannelListContainer = ({
     const { value } = e.target
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
-      setCurrFilters(
-        value ? buildFilter(currentScope, value) : defaultFilters
-      )
+      setCurrFilters(value ? buildFilter(currentScope, value) : defaultFilters)
     }, 300)
 
     handleSearchDebounce()
@@ -117,19 +118,33 @@ const RoomChannelListContainer = ({
               />
             </Chat>
           </div>
-          {user.hasPermission(permissions.MANAGE_ROOMS) && (
-            <div className='has-text-centered mt-2'>
+          <div className='has-text-centered mt-2'>
+            <button className='button is-light is-large' onClick={onHelpClick}>
+              <span className='icon'>
+                <i className='fa fa-question-circle'></i>
+              </span>
+              <span>Help Desk</span>
+            </button>
+            {activity && (
+              <button className='button is-light is-large' onClick={onQAClick}>
+                <span className='icon'>
+                  <i className='fa fa-comments'></i>
+                </span>
+                <span>Q&A</span>
+              </button>
+            )}
+            {user.hasPermission(permissions.MANAGE_ROOMS) && (
               <button
-                className='button is-large'
+                className='button is-light is-large'
                 onClick={handleRoomCreateClick}
               >
                 <span className='icon'>
-                  <i className='fa fa-plus'></i>
+                  <i className='fa fa-plus-square'></i>
                 </span>
-                <span>New Custom Room</span>
+                <span>New Room</span>
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
       {showRoomsManager && (

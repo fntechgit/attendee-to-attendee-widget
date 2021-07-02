@@ -17,7 +17,15 @@ export const scopes = {
 }
 
 const AttendeesList = (props) => {
-  const { accessRepo, chatRepo, summitId, url } = props
+  const {
+    accessRepo,
+    chatRepo,
+    summitId,
+    url,
+    activity,
+    onHelpClick,
+    onQAClick
+  } = props
   const [hasMore, setHasMore] = useState(true)
   const [currScope, setCurrScope] = useState(scopes.SHOW)
   const [attendeesList, setAttendeesList] = useState([])
@@ -152,6 +160,22 @@ const AttendeesList = (props) => {
               />
             ))}
         </InfiniteScroll>
+        <div className='has-text-centered mt-2'>
+          <button className='button is-light is-large' onClick={onHelpClick}>
+            <span className='icon'>
+              <i className='fa fa-question-circle'></i>
+            </span>
+            <span>Help Desk</span>
+          </button>
+          {activity && (
+            <button className='button is-light is-large ml-1' onClick={onQAClick}>
+              <span className='icon'>
+                <i className='fa fa-comments'></i>
+              </span>
+              <span>Q&A</span>
+            </button>
+          )}
+        </div>
       </div>
     )
   }

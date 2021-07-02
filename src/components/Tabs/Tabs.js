@@ -19,7 +19,7 @@ const Tab = (props) => {
 
 const Tabs = ({ tabList, activeTab, changeActiveTab }) => {
   return (
-    <div className={`${style.tabs} tabs is-fullwidth`}>
+    <div className={`${style.tabs} tabs is-boxed is-fullwidth`}>
       <ul>
         {tabList.map((tab) => (
           <Tab
