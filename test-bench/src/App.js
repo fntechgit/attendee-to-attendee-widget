@@ -52,6 +52,7 @@ const widgetProps = {
     id: null,
     fullName: '',
     email: '',
+    showEmail: true,
     company: '',
     title: '',
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
@@ -111,6 +112,7 @@ const App = () => {
 
   widgetProps.user.fullName = fullName
   widgetProps.user.email = email
+  widgetProps.user.showEmail = true
   widgetProps.user.company = `Tipit`
   widgetProps.user.title = `Full stack developer`
   widgetProps.user.id = idpUserId
@@ -140,7 +142,7 @@ const App = () => {
   const token1 =
     '4n2__6XAZXfJbdcmcLgSxqrfZOm.Fre2YGa~5VtbiuJ..m.JgTHJJDbZPVJWEVlnMA0GlUzq7NBbsDe28GZOUN65WkOZW0vK0QEq33MhIwuhl99Gv20ci6F.0WQyvTQr'
   const token2 =
-    '4n2__6XAZXfJbdcmcLgSxqrfZOm.Fre2YGa~5VtbiuJ..m.JgTHJJDbZPVJWEVlnMA0GlUzq7NBbsDe28GZOUN65WkOZW0vK0QEq33MhIwuhl99Gv20ci6F.0WQyvTQr'
+    '6e-0Do6eQgPA5iypW29HH14lMrmqGiV2o7UzCYFBMXbiBlJCeO73Dy059DagkXPqI_VAaIH9FKZclCggZ_c65pJdqkFCj7TpiSTS6ccH.2GbMuANusUg2VuQkdxACUJ~'
   const token3 =
     '4n2__6XAZXfJbdcmcLgSxqrfZOm.Fre2YGa~5VtbiuJ..m.JgTHJJDbZPVJWEVlnMA0GlUzq7NBbsDe28GZOUN65WkOZW0vK0QEq33MhIwuhl99Gv20ci6F.0WQyvTQr'
 
@@ -171,7 +173,7 @@ const App = () => {
         <Route path='/attendance'>
           <div
             style={{
-              width: '400px',
+              width: '420px',
               margin: '20px auto',
               position: 'relative'
             }}

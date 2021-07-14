@@ -4,17 +4,18 @@ create type public.message_status as enum ('UNREAD', 'READ');
 
 -- ATTENDEES
 create table public.attendees (
-  id          uuid references auth.users not null,
-  full_name   text not null,
-  email		    text,
-  company     text,
-  title       text,
-  pic_url	    text,
-  bio	        text,
-  idp_user_id int,
-  is_online   boolean,
-  social_info jsonb,
-  badges_info jsonb
+  id                        uuid references auth.users not null,
+  full_name                 text not null,
+  email		                  text,
+  company                   text,
+  title                     text,
+  pic_url	                  text,
+  bio	                      text,
+  idp_user_id               int,
+  is_online                 boolean,
+  social_info               jsonb,
+  badges_info               jsonb,
+  public_profile_show_email boolean,
   primary key (id)
 );
 

@@ -143,6 +143,7 @@ export default class AccessRepository extends AttendeeRepository {
         .order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
       if (error) throw new Error(error)
+
       return data
     } catch (error) {
       console.log('error', error)

@@ -104,7 +104,8 @@ Tracker.propTypes = {
       twitterName: PropTypes.string,
       wechatUser: PropTypes.string
     }),
-    bio: PropTypes.string
+    bio: PropTypes.string,
+    public_profile_show_email: PropTypes.bool
   }).isRequired
 }
 

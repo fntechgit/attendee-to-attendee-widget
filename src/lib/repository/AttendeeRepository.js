@@ -21,7 +21,8 @@ export default class AttendeeRepository {
       isOnline,
       socialInfo,
       getBadgeFeatures,
-      bio
+      bio,
+      showEmail
     } = attendeeProfile
 
     try {
@@ -49,7 +50,8 @@ export default class AttendeeRepository {
             isOnline,
             socialInfo,
             badgeFeatures,
-            bio
+            bio,
+            showEmail
           )
         ) {
           //console.log('something change')
@@ -63,7 +65,8 @@ export default class AttendeeRepository {
             isOnline,
             socialInfo,
             badgeFeatures,
-            bio
+            bio,
+            showEmail
           )
         }
         return user
@@ -86,7 +89,8 @@ export default class AttendeeRepository {
       isOnline,
       socialInfo,
       getBadgeFeatures,
-      bio
+      bio,
+      showEmail
     } = attendeeProfile
 
     if (this._sbUser) return this._sbUser
@@ -110,7 +114,8 @@ export default class AttendeeRepository {
       isOnline,
       socialInfo,
       badgeFeatures,
-      bio
+      bio,
+      showEmail
     )
     return newUser
   }
@@ -125,7 +130,8 @@ export default class AttendeeRepository {
     isOnline,
     socialInfo,
     badgeFeatures,
-    bio
+    bio,
+    showEmail
   ) {
     let sameBadgeFeatures = true
     if (fetchedAttendee.badges_info && badgeFeatures) {
@@ -155,7 +161,8 @@ export default class AttendeeRepository {
       fetchedAttendee.is_online !== isOnline ||
       !sameSocialInfo ||
       !sameBadgeFeatures ||
-      fetchedAttendee.bio !== bio
+      fetchedAttendee.bio !== bio ||
+      fetchedAttendee.public_profile_show_email !== showEmail
     )
   }
 
@@ -170,7 +177,8 @@ export default class AttendeeRepository {
     isOnline,
     socialInfo,
     badgeFeatures,
-    bio
+    bio,
+    showEmail
   ) {
     const { error } = await this._client.from('attendees').insert([
       {
@@ -184,7 +192,8 @@ export default class AttendeeRepository {
         is_online: isOnline,
         social_info: socialInfo,
         badges_info: badgeFeatures,
-        bio
+        bio,
+        public_profile_show_email: showEmail
       }
     ])
 
@@ -201,7 +210,8 @@ export default class AttendeeRepository {
     isOnline,
     socialInfo,
     badgeFeatures,
-    bio
+    bio,
+    showEmail
   ) {
     const { error } = await this._client
       .from('attendees')
@@ -215,7 +225,8 @@ export default class AttendeeRepository {
           is_online: isOnline,
           social_info: socialInfo,
           badges_info: badgeFeatures,
-          bio
+          bio,
+          public_profile_show_email: showEmail
         }
       ])
       .eq('id', id)
@@ -275,6 +286,7 @@ export default class AttendeeRepository {
           .match({ id: this._sbUser.id })
           .then((data) => {
             console.log(data)
+            this._sbUser = null
           })
       }
     } catch (error) {

@@ -19,7 +19,8 @@ export const AttendeeInfo = ({
     picUrl,
     socialInfo,
     badgeFeatures,
-    bio
+    bio,
+    public_profile_show_email
   } = user
 
   const buildSocialSection = (socialInfo) => {
@@ -136,18 +137,20 @@ export const AttendeeInfo = ({
                       <span>Chat</span>
                     </span>
                   </a>
-                  <a
-                    className='level-item'
-                    href={`mailto:${email}`}
-                    target='_blank'
-                  >
-                    <span className='icon-text has-text-info'>
-                      <span className='icon'>
-                        <i className='fa fa-envelope' aria-hidden='true'></i>
+                  {public_profile_show_email && (
+                    <a
+                      className='level-item'
+                      href={`mailto:${email}`}
+                      target='_blank'
+                    >
+                      <span className='icon-text has-text-info'>
+                        <span className='icon'>
+                          <i className='fa fa-envelope' aria-hidden='true'></i>
+                        </span>
+                        <span>E-mail</span>
                       </span>
-                      <span>E-mail</span>
-                    </span>
-                  </a>
+                    </a>
+                  )}
                 </div>
               </nav>
             </div>
