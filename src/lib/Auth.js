@@ -18,6 +18,6 @@ export const signIn = async (supabase, email, password) => {
 export const signOut = async (supabase) => {
   const { error } = await supabase.auth.signOut()
   if (error) {
-    console.log('signOut -> error: ', error)
+    console.error('signOut -> error: ', error)
   }
 }

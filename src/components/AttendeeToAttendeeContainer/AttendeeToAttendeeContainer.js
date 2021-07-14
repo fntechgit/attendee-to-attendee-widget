@@ -115,8 +115,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         chatApiBaseUrl,
         summitId,
         accessToken,
-        (res) => console.log(res),
-        (err, res) => console.log(err)
+        (res) => {},
+        (err, res) => {}
       )
     }
 

@@ -168,8 +168,9 @@ export default class ChatRepository {
         partnerId
       )
       if (channel) return channel
+
       const id = `${user.id}-${partnerId}`
-      const members = [user.id, partnerId]
+      const members = [user.id, partnerId.toString()]
       return await this._streamChatService.createChannel(
         channelTypes.MESSAGING,
         id,

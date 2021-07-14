@@ -285,7 +285,7 @@ export default class AttendeeRepository {
           .update([{ is_online: false }])
           .match({ id: this._sbUser.id })
           .then((data) => {
-            console.log(data)
+            //console.log(data)
             this._sbUser = null
           })
       }

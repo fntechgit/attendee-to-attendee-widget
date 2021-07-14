@@ -18,7 +18,7 @@ export default class AccessRepository extends AttendeeRepository {
     ])
 
     if (error) {
-      console.log(error)
+      console.error(error)
       throw new Error(error)
     }
   }
@@ -74,7 +74,7 @@ export default class AccessRepository extends AttendeeRepository {
       if (insRes.error) throw new Error(insRes.error)
       if (mustLogAccess) await this._logAccess(insRes.data[0])
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
     }
   }
 
@@ -88,7 +88,7 @@ export default class AccessRepository extends AttendeeRepository {
       if (error) throw new Error(error)
       return data[0]
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
     }
   }
 
@@ -117,7 +117,7 @@ export default class AccessRepository extends AttendeeRepository {
       if (error) throw new Error(error)
       return data
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
     }
   }
 
@@ -146,7 +146,7 @@ export default class AccessRepository extends AttendeeRepository {
 
       return data
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
     }
   }
 
@@ -183,7 +183,7 @@ export default class AccessRepository extends AttendeeRepository {
       })
       return res
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
       return []
     }
   }
@@ -198,7 +198,7 @@ export default class AccessRepository extends AttendeeRepository {
           .match({ attendee_id: this._sbUser.id, summit_id: summitId })
       }
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
     }
   }
 
