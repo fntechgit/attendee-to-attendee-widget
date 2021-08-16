@@ -38,7 +38,7 @@ const Tracker = forwardRef((props, ref) => {
   }
 
   const onLeave = async () => {
-    console.log('leaving tracked page')
+    //console.log('leaving tracked page')
     await accessRepo.trackAccess(props.user, props.summitId, '', '', false)
   }
 

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React, {
   forwardRef,
   useImperativeHandle,
@@ -66,15 +67,19 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
 
   const initUser = async (currUser) => {
     const att = await accessRepo.findByIdpID(currUser.id)
-    currUser.fullName = att.full_name
-    currUser.email = att.email
-    currUser.company = att.company
-    currUser.title = att.title
-    currUser.picUrl = att.pic_url
-    currUser.bio = att.bio
-    currUser.socialInfo = att.social_info
-    currUser.badgeFeatures = att.badges_info
-    setCurrentUser(currUser)
+    if (att) {
+      currUser.fullName = att.full_name
+      currUser.email = att.email
+      currUser.company = att.company
+      currUser.title = att.title
+      currUser.picUrl = att.pic_url
+      currUser.bio = att.bio
+      currUser.socialInfo = att.social_info
+      currUser.badgeFeatures = att.badges_info
+      setCurrentUser(currUser)
+    } else {
+      console.warn(`Could not find a user with id ${currUser.id}`)
+    }
   }
 
   useEffect(() => {
@@ -115,8 +120,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         chatApiBaseUrl,
         summitId,
         accessToken,
-        (res) => console.log(res),
-        (err, res) => console.log(err)
+        (res) => {},
+        (err, res) => {}
       )
     }
 
@@ -352,5 +357,11 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     </div>
   )
 })
+
+AttendeeToAttendeeContainer.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+  }).isRequired
+}
 
 export default AttendeeToAttendeeContainer
