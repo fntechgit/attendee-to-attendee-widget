@@ -6,20 +6,22 @@ import React, {
   useState
 } from 'react'
 import AccessRepository from '../../lib/repository/accessRepository'
-import ChatRepository from '../../lib/repository/chatRepository'
 import AttendeesList from '../AttendeesList/AttendeesList'
+import ChatAPIService from '../../lib/services/ChatAPIService'
+import ChatRepository from '../../lib/repository/chatRepository'
+import ConversationBox from '../Chat/ConversationBox/ConversationBox'
+import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
-import ChatAPIService from '../../lib/services/ChatAPIService'
 import StreamChatService from '../../lib/services/streamChatService'
 import SupabaseClientBuilder from '../../lib/SupabaseClientBuilder'
-import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
-import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 import { copyToClipboard } from '../../utils/clipboardHelper'
 import { roles } from '../../models/userRoles'
 import { permissions } from '../../models/permissions'
 import { extractBaseUrl } from '../../utils/urlHelper'
+import { ErrorBoundary } from 'react-error-boundary'
+import { ErrorBoundaryFallback } from '../ErrorBoundaryFallback/ErrorBoundaryFallback'
 
 import 'font-awesome/css/font-awesome.min.css'
 import 'bulma/css/bulma.css'
@@ -126,7 +128,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     }
 
     const cleanUpChat = async () => {
-      if (chatClient) await chatClient.disconnect()
+      if (chatClient) {
+        console.log('disconnecting chat client...')
+        await chatClient.disconnect()
+      }
     }
 
     if (accessToken) {
@@ -255,6 +260,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   }))
   /*end deep linking section*/
 
+  const ebHandleError = (error, info) => {
+    console.log('Something went wrong with the A2A component', error, info)
+  }
+
   const tabList = [
     {
       name: tabNames.ATTENDEES,
@@ -310,57 +319,59 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   ]
 
   return (
-    <div className={style.widgetContainer}>
-      <MainBar
-        user={currentUser}
-        onHelpClick={handleHelpClick}
-        onMinimizeButtonClick={() => setMinimized(!isMinimized)}
-      />
-      {!isMinimized && (
-        <div className='mt-2'>
-          <Tabs
-            tabList={tabList}
-            activeTab={activeTab}
-            changeActiveTab={changeActiveTab}
+    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback} onError={ebHandleError}>
+      <div className={style.widgetContainer}>
+        <MainBar
+          user={currentUser}
+          onHelpClick={handleHelpClick}
+          onMinimizeButtonClick={() => setMinimized(!isMinimized)}
+        />
+        {!isMinimized && (
+          <div className='mt-2'>
+            <Tabs
+              tabList={tabList}
+              activeTab={activeTab}
+              changeActiveTab={changeActiveTab}
+            />
+            <ActiveTabContent key={activeTab} content={activeTabContent()} />
+          </div>
+        )}
+        {chatClient && chatOpened && currentUser && (
+          <ConversationBox
+            chatClient={chatClient}
+            chatRepo={chatRepo}
+            activeChannel={activeChannel}
+            user={currentUser}
+            chatCounterpart={chatCounterpart}
+            openDir={openDir}
+            summitId={summitId}
+            visible={chatOpened}
+            activity={activity}
+            onClose={() => setChatOpened(false)}
+            onChatMenuSelected={handleChatMenuSelection}
           />
-          <ActiveTabContent key={activeTab} content={activeTabContent()} />
-        </div>
-      )}
-      {chatClient && chatOpened && currentUser && (
-        <ConversationBox
-          chatClient={chatClient}
-          chatRepo={chatRepo}
-          activeChannel={activeChannel}
-          user={currentUser}
-          chatCounterpart={chatCounterpart}
-          openDir={openDir}
-          summitId={summitId}
-          visible={chatOpened}
-          activity={activity}
-          onClose={() => setChatOpened(false)}
-          onChatMenuSelected={handleChatMenuSelection}
-        />
-      )}
-      {chatClient && qaChatOpened && currentUser && (
-        <ConversationBox
-          chatClient={chatClient}
-          chatRepo={chatRepo}
-          user={currentUser}
-          chatCounterpart={roles.QA}
-          openDir={chatOpened && activeChannel ? 'parentLeft' : 'left'}
-          summitId={summitId}
-          activity={activity}
-          visible={qaChatOpened}
-          onClose={() => setQAChatOpened(false)}
-        />
-      )}
-    </div>
+        )}
+        {chatClient && qaChatOpened && currentUser && (
+          <ConversationBox
+            chatClient={chatClient}
+            chatRepo={chatRepo}
+            user={currentUser}
+            chatCounterpart={roles.QA}
+            openDir={chatOpened && activeChannel ? 'parentLeft' : 'left'}
+            summitId={summitId}
+            activity={activity}
+            visible={qaChatOpened}
+            onClose={() => setQAChatOpened(false)}
+          />
+        )}
+      </div>
+    </ErrorBoundary>
   )
 })
 
 AttendeeToAttendeeContainer.propTypes = {
   user: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired
   }).isRequired
 }
 
