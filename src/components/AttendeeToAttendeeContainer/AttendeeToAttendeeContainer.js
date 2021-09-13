@@ -52,6 +52,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
 
   const baseUrl = extractBaseUrl(window.location.href)
 
+  const pendingOps = new Set()
+
   const {
     supabaseUrl,
     supabaseKey,
@@ -82,6 +84,16 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     } else {
       console.warn(`Could not find a user with id ${currUser.id}`)
     }
+  }
+  
+  const addToPendingWork = (promise) => {
+    pendingOps.add(promise)
+    const cleanup = () => pendingOps.delete(promise)
+    promise.then(cleanup).catch(cleanup)
+  }
+
+  const onBeforeUnload = (e) => {
+    addToPendingWork(chatRepo.disconnect())
   }
 
   useEffect(() => {
@@ -126,18 +138,17 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         (err, res) => {}
       )
     }
-
-    const cleanUpChat = async () => {
-      if (chatClient) {
-        console.log('disconnecting chat client...')
-        await chatClient.disconnect()
-      }
-    }
-
     if (accessToken) {
       init()
     }
-    return () => cleanUpChat()
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', onBeforeUnload)
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('beforeunload', onBeforeUnload)
+      }
+    }
   }, [accessToken])
 
   useEffect(() => {

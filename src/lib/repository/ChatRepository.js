@@ -229,4 +229,8 @@ export default class ChatRepository {
       console.error(e)
     }
   }
+
+  async disconnect() {
+    await this._streamChatService.disconnect()
+  }
 }

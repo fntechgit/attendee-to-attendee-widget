@@ -5,7 +5,6 @@ import { roles } from '../../../models/userRoles'
 import styles from './style.module.scss'
 
 const UserChannelPreview = ({
-  client,
   channel,
   member,
   title,
@@ -88,6 +87,7 @@ const DirectMessageChannelPreview = (props) => {
 
   const onChannelClick = async (ev) => {
     ev.preventDefault()
+    if (channel.disconnected) return
     await channel.markRead()
     setActiveChannel(channel)
     if (onItemClick) onItemClick(channel)
@@ -96,6 +96,7 @@ const DirectMessageChannelPreview = (props) => {
   const onDelete = async (ev) => {
     ev.preventDefault()
     ev.stopPropagation()
+    if (channel.disconnected) return
     setActiveChannel(null)
     const response = await channel.hide()
     // const state = await channel.watch();

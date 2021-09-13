@@ -128,4 +128,8 @@ export default class StreamChatService {
       }
     }
   }
+
+  async disconnect() {
+    await this.chatClient?.disconnect()
+  }
 }

@@ -4,6 +4,7 @@ import {
   permissions,
   Tracker
 } from 'attendee-to-attendee-widget'
+import { Link } from 'react-router-dom'
 
 const sbAuthProps = {
   supabaseUrl: process.env.REACT_APP_SUPABASE_URL,
@@ -152,6 +153,9 @@ const TrackedPageExample = () => {
           position: 'relative'
         }}
       >
+        <Link to={'/'}>
+          Back
+        </Link>
         <AttendeeToAttendeeContainer
           {...widgetProps}
           ref={{ sdcRef, shcRef, sqacRef, ocrRef }}

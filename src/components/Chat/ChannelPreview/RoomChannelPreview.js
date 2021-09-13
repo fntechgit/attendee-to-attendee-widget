@@ -19,6 +19,7 @@ const RoomChannelPreview = ({
 
   const onClick = async (ev) => {
     ev.preventDefault()
+    if (channel.disconnected) return
     await channel.markRead()
     setActiveChannel(channel)
     if (onItemClick) onItemClick(channel)
@@ -27,6 +28,7 @@ const RoomChannelPreview = ({
   const handleDelete = async (ev) => {
     ev.preventDefault()
     ev.stopPropagation()
+    if (channel.disconnected) return
     setActiveChannel(channel)
     if (onDelete) onDelete(channel)
   }
