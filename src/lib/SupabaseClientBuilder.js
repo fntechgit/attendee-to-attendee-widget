@@ -5,7 +5,7 @@ export default class SupabaseClientBuilder {
 
   static getClient(supabaseUrl, supabaseKey) {
     if (!this.client) {
-      this.client = createClient(supabaseUrl, supabaseKey)
+      this.client = createClient(supabaseUrl, supabaseKey, { autoRefreshToken: true })
     }
     return this.client
   }
