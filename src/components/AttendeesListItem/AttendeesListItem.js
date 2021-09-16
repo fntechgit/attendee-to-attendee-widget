@@ -29,6 +29,10 @@ const AttendeesListItem = (props) => {
     setShowAttCard(true)
   }
 
+  const handleTouch = () => {
+    setShowAttCard(true)
+  }
+
   const handleMouseLeave = () => {
     setTimeout(() => {
       if (!isCardHovered) setShowAttCard(false)
@@ -62,19 +66,23 @@ const AttendeesListItem = (props) => {
           <div
             className={style.attendeesListItemContent}
             key={`attendee-${props.item.id}`}
-            onClick={() => handleItemClick(props.item)}
           >
             <div
               className={style.picWrapper}
+              onClick={() => handleItemClick(props.item)}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
+              onTouchStart={handleTouch}
             >
               <div
                 className={style.pic}
                 style={{ backgroundImage: `url(${attendee.pic_url})` }}
               />
             </div>
-            <div className={style.textWrapper}>
+            <div
+              className={style.textWrapper}
+              onClick={() => handleItemClick(props.item)}
+            >
               <div className={style.title}>{attendee.full_name}</div>
               {attendee.company && (
                 <div className={style.subtitle}>
