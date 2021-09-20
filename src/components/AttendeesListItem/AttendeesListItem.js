@@ -25,7 +25,7 @@ const AttendeesListItem = (props) => {
         >
           <div
             className={style.picWrapper}
-            onClick={() => onItemClick(attendee)}
+            //onClick={() => onItemClick(attendee)}
             onMouseEnter={() => onItemPicMouseEnter(attendee)}
             onMouseLeave={onItemPicMouseLeave}
             onTouchStart={() => onItemPicTouch(attendee)}

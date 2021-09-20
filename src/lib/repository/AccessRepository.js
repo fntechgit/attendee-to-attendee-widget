@@ -144,7 +144,10 @@ export default class AccessRepository extends AttendeeRepository {
         .range(lowerIx, upperIx)
       if (error) throw new Error(error)
 
-      return data
+      return data.filter(
+        (v, i, a) =>
+          a.findIndex((t) => t.attendee_id === v.attendee_id) === i
+      )
     } catch (error) {
       console.error('error', error)
     }
