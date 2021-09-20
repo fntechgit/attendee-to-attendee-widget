@@ -76,11 +76,11 @@ const AttendeesList = (props) => {
         )
       }
     }
+    return () => {
+      urlAccessesPageIx = 0
+      showAccessesPageIx = 0
+    }
   }, [attendeesNews])
-
-  useEffect(() => {  
-    showAccessesPageIx = 0
-  }, [])
 
   const fetchMoreData = async () => {
     let nextPage

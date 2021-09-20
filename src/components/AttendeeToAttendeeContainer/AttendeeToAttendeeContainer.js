@@ -88,6 +88,11 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       console.warn(`Could not find a user with id ${currUser.id}`)
     }
   }
+
+  const disconnectChat = () => {
+    console.log('disconnecting chat...')
+    chatRepo.disconnect()
+  }
   
   const addToPendingWork = (promise) => {
     pendingOps.add(promise)
@@ -96,7 +101,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   }
 
   const onBeforeUnload = (e) => {
-    addToPendingWork(chatRepo.disconnect())
+    addToPendingWork(disconnectChat())
   }
 
   useEffect(() => {
