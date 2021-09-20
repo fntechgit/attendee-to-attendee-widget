@@ -78,7 +78,7 @@ const AttendeesList = (props) => {
         )
       } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
 
-        accessRepo.mergeChanges(attendeesList, attendeesNews).then(al => {console.log('fetchCurrentPageAttendees 1', al)})
+        accessRepo.mergeChanges(attendeesList, attendeesNews).then(al => {console.log('fetchCurrentPageAttendees 2', al)})
 
         // merge news
         updateAttendeesList(
