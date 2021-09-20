@@ -28,6 +28,7 @@ import 'bulma/css/bulma.css'
 import 'stream-chat-react/dist/css/index.css'
 
 import style from './style.module.scss'
+import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 
 let accessRepo = null
 let chatRepo = null
@@ -49,6 +50,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [qaChatOpened, setQAChatOpened] = useState(false)
   const [chatClient, setChatClient] = useState(null)
   const [accessToken, setAccessToken] = useState(null)
+  const [attCardItem, setAttCardItem] = useState(null)
+  let isCardHovered = false
 
   const baseUrl = extractBaseUrl(window.location.href)
 
@@ -201,11 +204,34 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
 
   const handleAttendeeClick = (att) => {
     if (
-      att.attendees.idp_user_id != user.idpUserId &&
+      att.idp_user_id != user.idpUserId &&
       user.hasPermission(permissions.CHAT)
     ) {
-      showChatWindow(chatClient, null, att.attendees.idp_user_id)
+      showChatWindow(chatClient, null, att.idp_user_id)
     }
+  }
+
+  const handleAttendeePicTouch = (att) => {
+    setAttCardItem(att)
+  }
+
+  const handleAttendeePicMouseEnter = (att) => {
+    setAttCardItem(att)
+  }
+
+  const handleAttendeePicMouseLeave = () => {
+    setTimeout(() => {
+      if (!isCardHovered) setAttCardItem(null)
+    }, 100)
+  }
+
+  const handleCardMouseEnter = () => {
+    isCardHovered = true
+  }
+
+  const handleCardMouseLeave = () => {
+    isCardHovered = false
+    setAttCardItem(null)
   }
 
   const handleMessageClick = (channel) => {
@@ -286,6 +312,9 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           chatRepo={chatRepo}
           activity={activity}
           onItemClick={handleAttendeeClick}
+          onItemPicTouch={handleAttendeePicTouch}
+          onItemPicMouseEnter={handleAttendeePicMouseEnter}
+          onItemPicMouseLeave={handleAttendeePicMouseLeave}
           onHelpClick={handleHelpClick}
           onQAClick={handleQAClick}
         />
@@ -373,6 +402,15 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             activity={activity}
             visible={qaChatOpened}
             onClose={() => setQAChatOpened(false)}
+          />
+        )}
+        {attCardItem && (
+          <AttendeeInfo
+            user={attCardItem}
+            fullMode={true}
+            onMouseEnter={handleCardMouseEnter}
+            onMouseLeave={handleCardMouseLeave}
+            onChatClick={handleAttendeeClick}
           />
         )}
       </div>

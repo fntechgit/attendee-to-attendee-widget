@@ -22,7 +22,8 @@ export default class AttendeeRepository {
       socialInfo,
       getBadgeFeatures,
       bio,
-      showEmail
+      showEmail,
+      allowChatWithMe
     } = attendeeProfile
 
     try {
@@ -51,7 +52,8 @@ export default class AttendeeRepository {
             socialInfo,
             badgeFeatures,
             bio,
-            showEmail
+            showEmail,
+            allowChatWithMe
           )
         ) {
           //console.log('something change')
@@ -66,7 +68,8 @@ export default class AttendeeRepository {
             socialInfo,
             badgeFeatures,
             bio,
-            showEmail
+            showEmail,
+            allowChatWithMe
           )
         }
         return user
@@ -90,7 +93,8 @@ export default class AttendeeRepository {
       socialInfo,
       getBadgeFeatures,
       bio,
-      showEmail
+      showEmail,
+      allowChatWithMe
     } = attendeeProfile
 
     if (this._sbUser) return this._sbUser
@@ -115,7 +119,8 @@ export default class AttendeeRepository {
       socialInfo,
       badgeFeatures,
       bio,
-      showEmail
+      showEmail,
+      allowChatWithMe
     )
     return newUser
   }
@@ -131,7 +136,8 @@ export default class AttendeeRepository {
     socialInfo,
     badgeFeatures,
     bio,
-    showEmail
+    showEmail,
+    allowChatWithMe
   ) {
     let sameBadgeFeatures = true
     if (fetchedAttendee.badges_info && badgeFeatures) {
@@ -162,7 +168,8 @@ export default class AttendeeRepository {
       !sameSocialInfo ||
       !sameBadgeFeatures ||
       fetchedAttendee.bio !== bio ||
-      fetchedAttendee.public_profile_show_email !== showEmail
+      fetchedAttendee.public_profile_show_email !== showEmail ||
+      fetchedAttendee.public_profile_allow_chat_with_me !== allowChatWithMe
     )
   }
 
@@ -178,7 +185,8 @@ export default class AttendeeRepository {
     socialInfo,
     badgeFeatures,
     bio,
-    showEmail
+    showEmail,
+    allowChatWithMe
   ) {
     const { error } = await this._client.from('attendees').insert([
       {
@@ -193,7 +201,8 @@ export default class AttendeeRepository {
         social_info: socialInfo,
         badges_info: badgeFeatures,
         bio,
-        public_profile_show_email: showEmail
+        public_profile_show_email: showEmail,
+        public_profile_allow_chat_with_me: allowChatWithMe
       }
     ])
 
@@ -211,7 +220,8 @@ export default class AttendeeRepository {
     socialInfo,
     badgeFeatures,
     bio,
-    showEmail
+    showEmail,
+    allowChatWithMe
   ) {
     const { error } = await this._client
       .from('attendees')
@@ -226,7 +236,8 @@ export default class AttendeeRepository {
           social_info: socialInfo,
           badges_info: badgeFeatures,
           bio,
-          public_profile_show_email: showEmail
+          public_profile_show_email: showEmail,
+          public_profile_allow_chat_with_me: allowChatWithMe
         }
       ])
       .eq('id', id)
