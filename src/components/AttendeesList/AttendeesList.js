@@ -62,13 +62,6 @@ const AttendeesList = (props) => {
       }
     } else {
       if (attendeesList.length === 0) {
-
-        accessRepo.fetchCurrentShowAttendees(
-          summitId,
-          showAccessesPageIx,
-          pageSize
-        ).then(al => {console.log('fetchCurrentPageAttendees 1', al)})
-
         updateAttendeesList(
           accessRepo.fetchCurrentShowAttendees(
             summitId,
@@ -77,9 +70,6 @@ const AttendeesList = (props) => {
           )
         )
       } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
-
-        accessRepo.mergeChanges(attendeesList, attendeesNews).then(al => {console.log('fetchCurrentPageAttendees 2', al)})
-
         // merge news
         updateAttendeesList(
           accessRepo.mergeChanges(attendeesList, attendeesNews)
@@ -87,6 +77,10 @@ const AttendeesList = (props) => {
       }
     }
   }, [attendeesNews])
+
+  useEffect(() => {  
+    showAccessesPageIx = 0
+  }, [])
 
   const fetchMoreData = async () => {
     let nextPage
