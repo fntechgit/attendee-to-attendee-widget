@@ -224,7 +224,9 @@ export default class AccessRepository extends AttendeeRepository {
       } else {
         newList.unshift(oldItem)
       }
-      return newList.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)
+      return newList.filter(
+        (v, i, a) => a.findIndex((t) => t.attendee_id === v.attendee_id) === i
+      )
     } else {
       // must fetch from api
       const { data, error } = await this._client
@@ -237,7 +239,12 @@ export default class AccessRepository extends AttendeeRepository {
         if (!mustCheckURL || item.current_url === url) {
           attendeesListLocal.unshift(item)
         }
-        return [...attendeesListLocal.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i)]
+        return [
+          ...attendeesListLocal.filter(
+            (v, i, a) =>
+              a.findIndex((t) => t.attendee_id === v.attendee_id) === i
+          )
+        ]
       }
     }
     return null
