@@ -15,8 +15,12 @@ const SimpleChannelHeader = (props) => {
   let headerSubtitle = null
 
   if (channel.type === channelTypes.MESSAGING && member) {
-    headerImage = member.user.image
-    headerTitle = member.user.name
+    const { user } = member
+    headerImage = user.image
+    headerTitle = user.name
+    if (user.show_fullname === false) {
+      headerTitle = user.first_name
+    }
   } else if (channel.type === channelTypes.QA_ROOM) {
     headerSubtitle = channel.data.description
   }

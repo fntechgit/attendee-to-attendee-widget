@@ -40,7 +40,6 @@ export default class StreamChatService {
             },
             streamServerInfo.token
           )
-
           callback(this.chatClient, { ...streamServerInfo })
         } catch (e) {
           onError(e)
@@ -130,6 +129,6 @@ export default class StreamChatService {
   }
 
   async disconnect() {
-    await this.chatClient?.disconnect()
+    await this.chatClient?.disconnectUser()
   }
 }

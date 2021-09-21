@@ -51,11 +51,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [chatClient, setChatClient] = useState(null)
   const [accessToken, setAccessToken] = useState(null)
   const [attCardItem, setAttCardItem] = useState(null)
+
   let isCardHovered = false
 
   const baseUrl = extractBaseUrl(window.location.href)
-
-  const pendingOps = new Set()
 
   const {
     supabaseUrl,
@@ -87,21 +86,6 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     } else {
       console.warn(`Could not find a user with id ${currUser.id}`)
     }
-  }
-
-  const disconnectChat = () => {
-    console.log('disconnecting chat...')
-    chatRepo.disconnect()
-  }
-  
-  const addToPendingWork = (promise) => {
-    pendingOps.add(promise)
-    const cleanup = () => pendingOps.delete(promise)
-    promise.then(cleanup).catch(cleanup)
-  }
-
-  const onBeforeUnload = (e) => {
-    addToPendingWork(disconnectChat())
   }
 
   useEffect(() => {
@@ -149,14 +133,6 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     if (accessToken) {
       init()
     }
-    if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', onBeforeUnload)
-    }
-    return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('beforeunload', onBeforeUnload)
-      }
-    }
   }, [accessToken])
 
   useEffect(() => {
@@ -164,6 +140,13 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       if (token && token !== accessToken) setAccessToken(token)
     })
   })
+
+  useEffect(() => {
+    return () => {
+      console.log('disconnecting chat...')
+      chatRepo?.disconnect()
+    }
+  }, [])
 
   const showChatWindow = (client, preloadedChannel, counterpart) => {
     if (client) {

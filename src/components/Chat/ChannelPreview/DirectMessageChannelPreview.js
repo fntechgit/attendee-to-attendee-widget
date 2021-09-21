@@ -117,18 +117,26 @@ const DirectMessageChannelPreview = (props) => {
 
   if (!member) return null
 
-  let title = member.user.name
+  const { user } = member
+
+  let memberName = user.name
+
+  if (user.show_fullname === false) {
+    memberName = user.first_name
+  }
+
+  let title = memberName
 
   if (userRole === roles.QA || userRole === roles.HELP) {
     //Agent point of view
     title =
       userRole === roles.QA
-        ? `${member.user.name} have a question`
-        : `${member.user.name} help request`
+        ? `${memberName} have a question`
+        : `${memberName} help request`
   } else {
     //Attendee point of view
-    if (member.user.local_role === roles.QA) title += ' (Q&A)'
-    else if (member.user.local_role === roles.HELP) title += ' (Help Desk)'
+    if (user.local_role === roles.QA) title += ' (Q&A)'
+    else if (user.local_role === roles.HELP) title += ' (Help Desk)'
   }
 
   return (
