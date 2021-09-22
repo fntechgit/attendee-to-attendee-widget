@@ -191,12 +191,16 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   }
 
   const handleAttendeeClick = (att) => {
-    if (
-      att.idp_user_id != user.idpUserId &&
-      user.hasPermission(permissions.CHAT)
-    ) {
-      showChatWindow(chatClient, null, att.idp_user_id)
+    if (att.idp_user_id == user.idpUserId) return
+    if (!att.public_profile_allow_chat_with_me) {
+      console.log("this attendee doesn't have chat enabled")
+      return
     }
+    if (!user.hasPermission(permissions.CHAT)) {
+      console.log("chat permission required")
+      return
+    }
+    showChatWindow(chatClient, null, att.idp_user_id)
   }
 
   const handleAttendeePicTouch = (att) => {

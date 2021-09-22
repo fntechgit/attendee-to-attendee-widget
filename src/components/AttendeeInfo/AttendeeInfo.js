@@ -20,7 +20,8 @@ export const AttendeeInfo = ({
     socialInfo,
     badgeFeatures,
     bio,
-    public_profile_show_email
+    public_profile_show_email,
+    public_profile_allow_chat_with_me
   } = user
 
   const buildSocialSection = (socialInfo) => {
@@ -129,14 +130,16 @@ export const AttendeeInfo = ({
               )}
               <nav className='level'>
                 <div className='level-left'>
-                  <a className='level-item' onClick={onChatClick}>
-                    <span className='icon-text has-text-info'>
-                      <span className='icon'>
-                        <i className='fa fa-comment' aria-hidden='true'></i>
+                  {public_profile_allow_chat_with_me && (
+                    <a className='level-item' onClick={() => onChatClick(user)}>
+                      <span className='icon-text has-text-info'>
+                        <span className='icon'>
+                          <i className='fa fa-comment' aria-hidden='true'></i>
+                        </span>
+                        <span>Chat</span>
                       </span>
-                      <span>Chat</span>
-                    </span>
-                  </a>
+                    </a>
+                  )}
                   {public_profile_show_email && (
                     <a
                       className='level-item'
