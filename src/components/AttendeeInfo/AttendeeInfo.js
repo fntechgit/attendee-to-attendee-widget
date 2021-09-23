@@ -75,6 +75,31 @@ export const AttendeeInfo = ({
       </nav>
     )
   }
+  
+  const buildChatButton = (allowChatWithMe) => {
+    if (allowChatWithMe) {
+      return (
+        <a className='level-item' onClick={() => onChatClick(user)}>
+          <span className='icon-text has-text-info'>
+            <span className='icon'>
+              <i className='fa fa-comment' aria-hidden='true'></i>
+            </span>
+            <span>Chat</span>
+          </span>
+        </a>
+      )
+    }
+    return (
+      <div className='level-item'>
+        <span className='icon-text has-text-info has-text-grey'>
+          <span className='icon'>
+            <i className='fa fa-comment' aria-hidden='true'></i>
+          </span>
+          <span>Chat</span>
+        </span>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -130,16 +155,7 @@ export const AttendeeInfo = ({
               )}
               <nav className='level'>
                 <div className='level-left'>
-                  {public_profile_allow_chat_with_me && (
-                    <a className='level-item' onClick={() => onChatClick(user)}>
-                      <span className='icon-text has-text-info'>
-                        <span className='icon'>
-                          <i className='fa fa-comment' aria-hidden='true'></i>
-                        </span>
-                        <span>Chat</span>
-                      </span>
-                    </a>
-                  )}
+                  {buildChatButton(public_profile_allow_chat_with_me)}
                   {public_profile_show_email && (
                     <a
                       className='level-item'

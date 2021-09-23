@@ -214,7 +214,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const handleAttendeePicMouseLeave = () => {
     setTimeout(() => {
       if (!isCardHovered) setAttCardItem(null)
-    }, 100)
+    }, 300)
   }
 
   const handleCardMouseEnter = () => {
