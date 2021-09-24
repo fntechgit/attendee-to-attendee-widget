@@ -112,7 +112,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         summitId,
         (client) => {
           setChatClient(client)
-          if (activity) chatRepo.setUpActivityRoom(activity, user)
+          //if (activity) chatRepo.setUpActivityRoom(activity, user)
           if (dlCallback) {
             dlCallback(client)
             dlCallback = null

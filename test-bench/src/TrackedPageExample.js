@@ -32,7 +32,7 @@ const widgetProps = {
     id: null,
     fullName: '',
     email: '',
-    showEmail: true,
+    showEmail: false,
     allowChatWithMe: false,
     company: '',
     title: '',
@@ -101,7 +101,6 @@ const TrackedPageExample = () => {
 
     widgetProps.user.fullName = fullName
     widgetProps.user.email = email
-    widgetProps.user.showEmail = true
     widgetProps.user.company = `Tipit`
     widgetProps.user.title = `Full stack developer`
     widgetProps.user.id = idpUserId

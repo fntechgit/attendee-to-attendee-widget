@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
+import ReactTooltip from 'react-tooltip'
 
 import style from './style.module.scss'
 
@@ -90,14 +91,43 @@ export const AttendeeInfo = ({
       )
     }
     return (
-      <div className='level-item'>
+      <a className='level-item' data-tip='Chat disabled'>
         <span className='icon-text has-text-info has-text-grey'>
           <span className='icon'>
             <i className='fa fa-comment' aria-hidden='true'></i>
           </span>
           <span>Chat</span>
         </span>
-      </div>
+      </a>
+    )
+  }
+
+  const buildEmailButton = (allowEmailMe) => {
+    if (allowEmailMe) {
+      return (
+        <a
+          className='level-item'
+          href={`mailto:${email}`}
+          target='_blank'
+        >
+          <span className='icon-text has-text-info'>
+            <span className='icon'>
+              <i className='fa fa-envelope' aria-hidden='true'></i>
+            </span>
+            <span>Email</span>
+          </span>
+        </a>
+      )
+    }
+    return (
+      <a className='level-item' data-tip='Email disabled'>
+        <span className='icon-text has-text-info has-text-grey'>
+          <span className='icon'>
+            <i className='fa fa-envelope' aria-hidden='true'></i>
+          </span>
+          <span>Email</span>
+        </span>
+      </a>
     )
   }
 
@@ -153,23 +183,11 @@ export const AttendeeInfo = ({
                   </ReactMarkdown>
                 </div>
               )}
+              <ReactTooltip place='top' effect='solid' />
               <nav className='level'>
                 <div className='level-left'>
                   {buildChatButton(public_profile_allow_chat_with_me)}
-                  {public_profile_show_email && (
-                    <a
-                      className='level-item'
-                      href={`mailto:${email}`}
-                      target='_blank'
-                    >
-                      <span className='icon-text has-text-info'>
-                        <span className='icon'>
-                          <i className='fa fa-envelope' aria-hidden='true'></i>
-                        </span>
-                        <span>E-mail</span>
-                      </span>
-                    </a>
-                  )}
+                  {buildEmailButton(public_profile_show_email)}
                 </div>
               </nav>
             </div>
