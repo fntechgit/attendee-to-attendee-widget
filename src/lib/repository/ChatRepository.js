@@ -106,7 +106,7 @@ export default class ChatRepository {
         const helpAgentIds = helpAgents.map((h) => h.idp_user_id.toString())
         const firstHelpAgent = await this._getAgentInfo(helpAgentIds[0])
         if (!firstHelpAgent) {
-          console.log('could not find a help agent')
+          //console.log('could not find a help agent')
           return null
         }
         const helpChannel = await this._streamChatService.createChannel(
@@ -141,7 +141,7 @@ export default class ChatRepository {
         const qaAgentsIds = qaAgents.map((h) => h.idp_user_id.toString())
         const firstQAAgent = await this._getAgentInfo(qaAgentsIds[0])
         if (!firstQAAgent) {
-          console.log('could not find a qa agent')
+          //console.log('could not find a qa agent')
           return null
         }
         const qaChannel = await this._streamChatService.createChannel(

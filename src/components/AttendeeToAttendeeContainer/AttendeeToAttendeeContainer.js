@@ -6,6 +6,8 @@ import React, {
   useState
 } from 'react'
 import AccessRepository from '../../lib/repository/accessRepository'
+import Alert from '../Alert/Alert'
+import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import AttendeesList from '../AttendeesList/AttendeesList'
 import ChatAPIService from '../../lib/services/ChatAPIService'
 import ChatRepository from '../../lib/repository/chatRepository'
@@ -28,7 +30,6 @@ import 'bulma/css/bulma.css'
 import 'stream-chat-react/dist/css/index.css'
 
 import style from './style.module.scss'
-import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 
 let accessRepo = null
 let chatRepo = null
@@ -51,6 +52,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [chatClient, setChatClient] = useState(null)
   const [accessToken, setAccessToken] = useState(null)
   const [attCardItem, setAttCardItem] = useState(null)
+  const [alertMessage, setAlertMessage] = useState(null)
 
   let isCardHovered = false
 
@@ -178,6 +180,17 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     }
   }
 
+  const closeAlert = () => {
+    setAlertMessage(null)
+  }
+
+  const showAutoClosingAlert = (message, closeTimeout) => {
+    setAlertMessage(message)
+    setTimeout(() => {
+      closeAlert()
+    }, closeTimeout)
+  }
+
   const handleHelpClick = async () => {
     showChatWindow(chatClient, null, roles.HELP)
   }
@@ -197,7 +210,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       return
     }
     if (!user.hasPermission(permissions.CHAT)) {
-      console.log("chat permission required")
+      console.log('chat permission required')
       return
     }
     showChatWindow(chatClient, null, att.idp_user_id)
@@ -351,7 +364,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   ]
 
   return (
-    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback} onError={ebHandleError}>
+    <ErrorBoundary
+      FallbackComponent={ErrorBoundaryFallback}
+      onError={ebHandleError}
+    >
       <div className={style.widgetContainer}>
         <MainBar
           user={currentUser}
@@ -381,6 +397,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             activity={activity}
             onClose={() => setChatOpened(false)}
             onChatMenuSelected={handleChatMenuSelection}
+            onChatStartError={(error) => showAutoClosingAlert(error, 3000)}
           />
         )}
         {chatClient && qaChatOpened && currentUser && (
@@ -394,6 +411,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             activity={activity}
             visible={qaChatOpened}
             onClose={() => setQAChatOpened(false)}
+            onChatStartError={(error) => showAutoClosingAlert(error, 3000)}
           />
         )}
         {attCardItem && (
@@ -403,6 +421,12 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             onMouseEnter={handleCardMouseEnter}
             onMouseLeave={handleCardMouseLeave}
             onChatClick={handleAttendeeClick}
+          />
+        )}
+        {alertMessage && (
+          <Alert
+            message={alertMessage}
+            onClick={closeAlert}
           />
         )}
       </div>

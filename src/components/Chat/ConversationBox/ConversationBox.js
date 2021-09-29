@@ -29,7 +29,8 @@ const ConversationBox = ({
   visible,
   summitId,
   activity,
-  onChatMenuSelected
+  onChatMenuSelected,
+  onChatStartError
 }) => {
   const [channel, setChannel] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -45,12 +46,20 @@ const ConversationBox = ({
               summitId,
               activity
             )
-            if (qaChannel) setChannel(qaChannel)
+            if (qaChannel) {
+              setChannel(qaChannel)
+            } else if (onChatStartError) {
+              onChatStartError('Q&A is not available right now')
+            }
           }
         } else if (chatCounterpart === roles.HELP) {
           if (user.role !== roles.HELP) {
             const helpChannel = await chatRepo.startHelpChat(user, summitId)
-            if (helpChannel) setChannel(helpChannel)
+            if (helpChannel) {
+              setChannel(helpChannel)
+            } else if (onChatStartError) {
+              onChatStartError('Help Desk is not available right now')
+            }
           }
         } else {
           const dmChannel = await chatRepo.startA2AChat(user, chatCounterpart)
@@ -104,6 +113,7 @@ const ConversationBox = ({
     }
     return (
       <CustomRoomChannelHeader
+        activity={activity}
         me={chatClient.user}
         channel={channel}
         onClose={handleClose}

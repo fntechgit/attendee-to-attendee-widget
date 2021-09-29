@@ -21,6 +21,7 @@
 
 :global(.str-chat__channel-list-messenger) {
   background-color: #fff;
+  min-width: unset;
 }
 
 @media (max-width: 960px) {
