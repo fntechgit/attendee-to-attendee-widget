@@ -18,12 +18,13 @@ const RoomChannelListContainer = ({
   chatClient,
   accessRepo,
   chatRepo,
-  activity,
   onHelpClick,
   onQAClick,
   onItemClick,
   height,
-  openDir
+  openDir,
+  showHelpButton,
+  showQAButton
 }) => {
   const defaultScope = [channelTypes.ACTIVITY_ROOM, channelTypes.CUSTOM_ROOM]
 
@@ -119,14 +120,22 @@ const RoomChannelListContainer = ({
             </Chat>
           </div>
           <div className='has-text-centered mt-2'>
-            <button className='button is-light is-large' onClick={onHelpClick}>
-              <span className='icon'>
-                <i className='fa fa-question-circle'></i>
-              </span>
-              <span>Help Desk</span>
-            </button>
-            {activity && (
-              <button className='button is-light is-large ml-3' onClick={onQAClick}>
+            {showHelpButton && (
+              <button
+                className='button is-light is-large'
+                onClick={onHelpClick}
+              >
+                <span className='icon'>
+                  <i className='fa fa-question-circle'></i>
+                </span>
+                <span>Help Desk</span>
+              </button>
+            )}
+            {showQAButton && (
+              <button
+                className='button is-light is-large ml-3'
+                onClick={onQAClick}
+              >
                 <span className='icon'>
                   <i className='fa fa-comments'></i>
                 </span>

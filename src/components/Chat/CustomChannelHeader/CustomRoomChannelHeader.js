@@ -7,7 +7,7 @@ import style from './style.module.scss'
 
 const CustomRoomChannelHeader = (props) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
-  const { activity, me, channel, onClose, onMenuSelected } = props
+  const { me, channel, onClose, onMenuSelected } = props
 
   const toggleMenu = () => {
     setMenuOpen(!isMenuOpen)
@@ -52,15 +52,6 @@ const CustomRoomChannelHeader = (props) => {
           >
             <span className='is-size-5 has-text-grey'>Copy Invite Link</span>
           </a>
-          {activity && (
-            <a
-              className='dropdown-item mt-2'
-              style={{ textDecoration: 'none' }}
-              onClick={() => handleMenuSelection(3)}
-            >
-              <span className='is-size-5 has-text-grey'>Q&A</span>
-            </a>
-          )}
         </div>
       </div>
       <ReactTooltip place='bottom' effect='solid' />

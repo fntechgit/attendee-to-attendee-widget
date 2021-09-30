@@ -98,6 +98,18 @@ export default class ChatRepository {
     }
   }
 
+  async availableHelpAgents(summitId) {
+    //Fetch all the show help agents from Supabase
+    const helpAgents = await this._getSupportAgents(summitId, 0)
+    return helpAgents && helpAgents.length > 0
+  }
+
+  async availableQAAgents(summitId, eventId) {
+    //Fetch all the activity QA agents from Supabase
+    const qaAgents = await this._getSupportAgents(summitId, eventId)
+    return qaAgents && qaAgents.length > 0
+  }
+
   async startHelpChat(user, summitId) {
     try {
       //Fetch all the show help agents from Supabase

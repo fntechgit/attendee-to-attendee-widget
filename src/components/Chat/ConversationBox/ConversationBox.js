@@ -113,7 +113,6 @@ const ConversationBox = ({
     }
     return (
       <CustomRoomChannelHeader
-        activity={activity}
         me={chatClient.user}
         channel={channel}
         onClose={handleClose}

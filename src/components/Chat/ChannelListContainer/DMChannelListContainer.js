@@ -19,7 +19,9 @@ const DMChannelListContainer = ({
   onHelpClick,
   onItemClick,
   onQAClick,
-  user
+  user,
+  showHelpButton,
+  showQAButton
 }) => {
   const defaultScope = [
     channelTypes.HELP_ROOM,
@@ -112,13 +114,15 @@ const DMChannelListContainer = ({
         </div>
       )}
       <div className='has-text-centered mt-2'>
-        <button className='button is-light is-large' onClick={onHelpClick}>
-          <span className='icon'>
-            <i className='fa fa-question-circle'></i>
-          </span>
-          <span>Help Desk</span>
-        </button>
-        {activity && (
+        {showHelpButton && (
+          <button className='button is-light is-large' onClick={onHelpClick}>
+            <span className='icon'>
+              <i className='fa fa-question-circle'></i>
+            </span>
+            <span>Help Desk</span>
+          </button>
+        )}
+        {showQAButton && (
           <button className='button is-light is-large ml-4' onClick={onQAClick}>
             <span className='icon'>
               <i className='fa fa-comments'></i>

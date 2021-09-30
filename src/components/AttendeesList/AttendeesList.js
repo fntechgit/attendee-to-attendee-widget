@@ -22,9 +22,10 @@ const AttendeesList = (props) => {
     chatRepo,
     summitId,
     url,
-    activity,
     onHelpClick,
-    onQAClick
+    onQAClick,
+    showHelpButton,
+    showQAButton
   } = props
   const [hasMore, setHasMore] = useState(true)
   const [currScope, setCurrScope] = useState(scopes.SHOW)
@@ -170,13 +171,15 @@ const AttendeesList = (props) => {
               ))}
         </InfiniteScroll>
         <div className='has-text-centered mt-2'>
-          <button className='button is-light is-large' onClick={onHelpClick}>
-            <span className='icon'>
-              <i className='fa fa-question-circle'></i>
-            </span>
-            <span>Help Desk</span>
-          </button>
-          {activity && (
+          {showHelpButton && (
+            <button className='button is-light is-large' onClick={onHelpClick}>
+              <span className='icon'>
+                <i className='fa fa-question-circle'></i>
+              </span>
+              <span>Help Desk</span>
+            </button>
+          )}
+          {showQAButton && (
             <button
               className='button is-light is-large ml-4'
               onClick={onQAClick}

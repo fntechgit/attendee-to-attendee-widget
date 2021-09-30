@@ -53,6 +53,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [accessToken, setAccessToken] = useState(null)
   const [attCardItem, setAttCardItem] = useState(null)
   const [alertMessage, setAlertMessage] = useState(null)
+  const [supportPanelSettings, setSupportPanelSettings] = useState({ help: true, qa: false })
 
   let isCardHovered = false
 
@@ -131,6 +132,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         (res) => {},
         (err, res) => {}
       )
+
+      const enableHelpBtn = await chatRepo.availableHelpAgents(summitId)
+      const enableQABtn = activity && await chatRepo.availableQAAgents(summitId, activity.id)
+      setSupportPanelSettings({ help: enableHelpBtn, qa: enableQABtn })
     }
     if (accessToken) {
       init()
@@ -322,6 +327,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           onItemPicMouseLeave={handleAttendeePicMouseLeave}
           onHelpClick={handleHelpClick}
           onQAClick={handleQAClick}
+          showHelpButton={supportPanelSettings.help}
+          showQAButton={supportPanelSettings.qa}
         />
       )
     },
@@ -339,6 +346,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           activity={activity}
           onHelpClick={handleHelpClick}
           onQAClick={handleQAClick}
+          showHelpButton={supportPanelSettings.help}
+          showQAButton={supportPanelSettings.qa}
         />
       )
     },
@@ -358,6 +367,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           onQAClick={handleQAClick}
           height={props.height}
           openDir={props.openDir}
+          showHelpButton={supportPanelSettings.help}
+          showQAButton={supportPanelSettings.qa}
         />
       )
     }
