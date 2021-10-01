@@ -1,7 +1,17 @@
 .tabs {
   font-size: 1.1rem;
   a {
+    position: relative;
     text-decoration: none;
+    .unreadMessagesBadge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: orangered;
+    }
   }
 
   :global(li.is-active a) {

@@ -33,7 +33,7 @@ const widgetProps = {
     fullName: '',
     email: '',
     showEmail: false,
-    allowChatWithMe: false,
+    allowChatWithMe: true,
     company: '',
     title: '',
     picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',

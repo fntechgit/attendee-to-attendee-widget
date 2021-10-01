@@ -36,6 +36,7 @@ let chatRepo = null
 let chatCounterpart = roles.HELP
 let activeChannel = null
 let dlCallback = null
+let chatClientEventsListener = null
 
 const tabNames = {
   ATTENDEES: 'ATTENDEES',
@@ -54,6 +55,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [attCardItem, setAttCardItem] = useState(null)
   const [alertMessage, setAlertMessage] = useState(null)
   const [supportPanelSettings, setSupportPanelSettings] = useState({ help: true, qa: false })
+  const [showMsgNewsBadge, setShowMsgNewsBadge] = useState(false)
 
   let isCardHovered = false
 
@@ -116,6 +118,16 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         (client) => {
           setChatClient(client)
           //if (activity) chatRepo.setUpActivityRoom(activity, user)
+
+          chatClientEventsListener = client.on(event => { 
+            // if (event.type === 'notification.message_new') {
+            //   setShowMsgNewsBadge(true) 
+            // }
+            if (typeof event.total_unread_count !== 'undefined') { 
+              setShowMsgNewsBadge(event.total_unread_count > 0) 
+            } 
+          }); 
+
           if (dlCallback) {
             dlCallback(client)
             dlCallback = null
@@ -151,6 +163,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   useEffect(() => {
     return () => {
       console.log('disconnecting chat...')
+      chatClientEventsListener?.unsubscribe()
       chatRepo?.disconnect()
     }
   }, [])
@@ -315,6 +328,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     {
       name: tabNames.ATTENDEES,
       icon: '',
+      showNewsBadge: false,
       content: chatClient && (
         <AttendeesList
           {...props}
@@ -335,6 +349,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     {
       name: tabNames.MESSAGES,
       icon: '',
+      showNewsBadge: showMsgNewsBadge,
       content: chatClient && (
         <DMChannelListContainer
           user={currentUser}
@@ -354,6 +369,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     {
       name: tabNames.ROOM_CHATS,
       icon: '',
+      showNewsBadge: false,
       content: (
         <RoomChannelListContainer
           user={currentUser}

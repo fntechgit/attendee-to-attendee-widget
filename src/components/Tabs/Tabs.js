@@ -1,10 +1,7 @@
 import React from 'react'
 import style from './style.module.scss'
 
-const Tab = (props) => {
-  const { name } = props.tab
-  const { activeTab, changeActiveTab } = props
-
+const Tab = ({ activeTab, changeActiveTab, tab: { name, showNewsBadge } }) => {
   return (
     <li
       className={name === activeTab ? 'is-active' : ''}
@@ -12,6 +9,7 @@ const Tab = (props) => {
     >
       <a style={{ textDecoration: 'none' }}>
         <span>{name}</span>
+        {showNewsBadge && <span className={style.unreadMessagesBadge}></span>}
       </a>
     </li>
   )

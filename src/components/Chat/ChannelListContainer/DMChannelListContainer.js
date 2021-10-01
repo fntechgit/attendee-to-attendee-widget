@@ -102,7 +102,8 @@ const DMChannelListContainer = ({
           <Chat client={chatClient}>
             <ChannelListContainer
               filters={currFilters}
-              sort={{ supporttype: 1 }}
+              //sort={{ supporttype: 1 }}
+              sort={{ last_message_at: -1 }}
               options={{ watch: true, limit: 20 }}
               user={user}
               summitId={summitId}
