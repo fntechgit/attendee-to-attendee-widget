@@ -120,12 +120,14 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           //if (activity) chatRepo.setUpActivityRoom(activity, user)
 
           chatClientEventsListener = client.on(event => { 
-            // if (event.type === 'notification.message_new') {
-            //   setShowMsgNewsBadge(true) 
-            // }
-            if (typeof event.total_unread_count !== 'undefined') { 
-              setShowMsgNewsBadge(event.total_unread_count > 0) 
+            let showBadge = false
+            if (event.total_unread_count !== undefined) { 
+              showBadge = event.total_unread_count > 0
             } 
+            if (!showBadge && event.unread_channels !== undefined) { 
+              showBadge = event.unread_channels > 0  
+            } 
+            setShowMsgNewsBadge(showBadge) 
           }); 
 
           if (dlCallback) {
