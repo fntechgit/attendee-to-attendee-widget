@@ -9,7 +9,7 @@ import style from './style.module.scss'
 
 let urlAccessesPageIx = 0
 let showAccessesPageIx = 0
-const pageSize = 6
+const pageSize = 30
 
 export const scopes = {
   PAGE: 'page',
@@ -77,11 +77,14 @@ const AttendeesList = (props) => {
         )
       }
     }
+  }, [attendeesNews])
+
+  useEffect(() => {
     return () => {
       urlAccessesPageIx = 0
       showAccessesPageIx = 0
     }
-  }, [attendeesNews])
+  }, [])
 
   const fetchMoreData = async () => {
     let nextPage
@@ -107,12 +110,11 @@ const AttendeesList = (props) => {
   }
 
   let handleSearchDebounce
-  const handleSearch = (e) => {
-    const { value } = e.target
+  const handleSearch = (value, scope) => {
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
       // console.log('value', value)
-      if (currScope === scopes.PAGE) {
+      if (scope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
           ? await accessRepo.findByAttendeeNameOrCompany(value, summitId, url)
@@ -138,16 +140,18 @@ const AttendeesList = (props) => {
   }
 
   const handleFilterModeChange = (mode) => {
-    setCurrScope(mode === 0 ? scopes.SHOW : scopes.PAGE)
+    const scope = mode === 0 ? scopes.SHOW : scopes.PAGE
+    setCurrScope(scope)
+    handleSearch(null, scope)
   }
 
   if (attendeesList) {
     return (
       <div className={style.outerWrapper}>
         <SearchBar
-          onSearch={handleSearch}
+          onSearch={(e) => handleSearch(e.target.value, currScope)}
           onFilterModeChange={handleFilterModeChange}
-          filterMenuOptions={['All Attendees', 'On this Room']}
+          filterMenuOptions={['All Attendees', 'In this Room']}
         />
         <InfiniteScroll
           dataLength={attendeesList.length}

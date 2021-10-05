@@ -144,14 +144,20 @@ export default class AccessRepository extends AttendeeRepository {
         .range(lowerIx, upperIx)
       if (error) throw new Error(error)
 
+      console.log('fetchCurrentShowAttendees access news', data)
+      //console.log('fetchCurrentShowAttendees attendees', data.map(d => d.attendees).length)
+
       return data
     } catch (error) {
       console.error('error', error)
     }
   }
 
-  async findByAttendeeNameOrCompany(filter, summitId, url) {
+  async findByAttendeeNameOrCompany(filter, summitId, url, ageMinutesBackward = 5) {
     try {
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
       const { scopeFieldName, scopeFieldVal } = url
         ? { scopeFieldName: 'current_url', scopeFieldVal: url }
         : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
@@ -161,6 +167,7 @@ export default class AccessRepository extends AttendeeRepository {
         .select(`*, attendees(*)`)
         .eq(scopeFieldName, scopeFieldVal)
         .eq('attendees.is_online', true)
+        .gt('updated_at', ageTreshold)
         .ilike('attendees.full_name', `%${filter}%`)
       if (byNameRes.error) throw new Error(byNameRes.error)
 
@@ -169,6 +176,7 @@ export default class AccessRepository extends AttendeeRepository {
         .select(`*, attendees(*)`)
         .eq(scopeFieldName, scopeFieldVal)
         .eq('attendees.is_online', true)
+        .gt('updated_at', ageTreshold)
         .ilike('attendees.company', `%${filter}%`)
       if (byCompanyRes.error) throw new Error(byCompanyRes.error)
 
