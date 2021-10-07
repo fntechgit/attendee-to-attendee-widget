@@ -9,6 +9,7 @@ export const SearchBar = ({
   filterMenuOptions,
   placeholder
 }) => {
+  const [searchPrefix, setSearchPrefix] = useState('')
   const [isMenuOpen, setMenuOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
 
@@ -17,6 +18,7 @@ export const SearchBar = ({
   }
 
   const handleMenuSelection = (index) => {
+    setSearchPrefix('')
     setSelectedIndex(index)
     onFilterModeChange(index)
     setTimeout(() => {
@@ -26,6 +28,7 @@ export const SearchBar = ({
 
   const handleSearch = (e) => {
     const { value } = e.target
+    setSearchPrefix(value)
     if (onClear && charsCount > 0 && value.length === 0) {
       onClear()
     }
@@ -41,6 +44,7 @@ export const SearchBar = ({
         <input
           className='input is-medium'
           type='search'
+          value={searchPrefix}
           placeholder={placeholder || 'Search by name or company'}
           onChange={handleSearch}
         />
