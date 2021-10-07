@@ -76,7 +76,7 @@ export const AttendeeInfo = ({
       </nav>
     )
   }
-  
+
   const buildChatButton = (allowChatWithMe) => {
     if (allowChatWithMe) {
       return (
@@ -105,11 +105,7 @@ export const AttendeeInfo = ({
   const buildEmailButton = (allowEmailMe) => {
     if (allowEmailMe) {
       return (
-        <a
-          className='level-item'
-          href={`mailto:${email}`}
-          target='_blank'
-        >
+        <a className='level-item' href={`mailto:${email}`} target='_blank'>
           <span className='icon-text has-text-info'>
             <span className='icon'>
               <i className='fa fa-envelope' aria-hidden='true'></i>
@@ -173,26 +169,24 @@ export const AttendeeInfo = ({
             )}
           </div>
         </article>
-        {fullMode && (
-          <article className='mt-2'>
-            <div>
-              {bio && (
-                <div className='content'>
-                  <ReactMarkdown rehypePlugins={[rehypeRaw]}>
-                    {bio}
-                  </ReactMarkdown>
-                </div>
-              )}
-              <ReactTooltip place='top' effect='solid' />
+        <article className='mt-2'>
+          <div>
+            {bio && (
+              <div className='content'>
+                <ReactMarkdown rehypePlugins={[rehypeRaw]}>{bio}</ReactMarkdown>
+              </div>
+            )}
+            <ReactTooltip place='top' effect='solid' />
+            {fullMode && (
               <nav className='level'>
                 <div className='level-left'>
                   {buildChatButton(public_profile_allow_chat_with_me)}
                   {buildEmailButton(public_profile_show_email)}
                 </div>
               </nav>
-            </div>
-          </article>
-        )}
+            )}
+          </div>
+        </article>
       </div>
     </div>
   )
