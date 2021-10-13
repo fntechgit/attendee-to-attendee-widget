@@ -76,6 +76,10 @@
             top: calc(100% - 39px);
           }
         }
+
+        :global(.str-chat__input-footer) {
+          display: none;
+        }
       }
     }
   }

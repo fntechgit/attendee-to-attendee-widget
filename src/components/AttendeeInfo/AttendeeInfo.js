@@ -151,13 +151,13 @@ export const AttendeeInfo = ({
             {socialInfo && buildSocialSection(socialInfo)}
             {badgeFeatures && (
               <nav className='level'>
-                <div className='level-left'>
+                <div className={`level-left ${style.scrollContainer}`}>
                   {badgeFeatures.map((bf) => (
                     <div className='media-left' key={bf.name}>
                       <figure className='image is-48x48'>
                         <img
                           className='is-rounded'
-                          alt={bf.name}
+                          alt=''
                           src={bf.image}
                           title={bf.name}
                         />
