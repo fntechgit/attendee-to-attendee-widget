@@ -92,8 +92,7 @@ class Autocomplete extends React.Component {
       this.handleSearchDebounce = debounce(async () => {
         const res = await dataSource(query)
         this.setState({
-          matches: query.length >= 2 ? await dataSource(query) : [],
-          query
+          matches: query.length >= 2 ? await dataSource(query) : []
         })
       }, 300)
       this.handleSearchDebounce()

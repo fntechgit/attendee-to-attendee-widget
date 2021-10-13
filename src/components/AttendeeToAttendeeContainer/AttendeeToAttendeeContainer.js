@@ -120,6 +120,15 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           //if (activity) chatRepo.setUpActivityRoom(activity, user)
 
           chatClientEventsListener = client.on(event => { 
+
+            if (event.total_unread_count) {
+              console.log('unread messages', event.total_unread_count)
+            }
+
+            if (event.unread_channels) {
+              console.log('unread channels', event.unread_channels)
+            }
+
             let showBadge = false
             if (event.total_unread_count !== undefined) { 
               showBadge = event.total_unread_count > 0
@@ -182,7 +191,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     }
   }
 
-  const handleChatMenuSelection = (index, channel) => {
+  const handleChatMenuSelection = (index, channel, me) => {
     switch (index) {
       case 1:
         chatRepo.removeMember(channel, me.id)

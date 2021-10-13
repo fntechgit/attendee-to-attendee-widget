@@ -15,7 +15,7 @@ const CustomRoomChannelHeader = (props) => {
 
   const handleMenuSelection = (index) => {
     setMenuOpen(false)
-    if (onMenuSelected) onMenuSelected(index, channel)
+    if (onMenuSelected) onMenuSelected(index, channel, me)
   }
 
   const renderMoreMenu = () => (
@@ -64,7 +64,11 @@ const CustomRoomChannelHeader = (props) => {
 
   let headerImage = channel.data.image
   let headerTitle = channel.data.name
-  let headerSubTitle = `${channel.data.member_count ?? 0} participants`
+  let headerSubTitle = ''
+
+  if (channel.data.member_count) {
+    headerSubTitle = `${channel.data.member_count} participants`
+  }
 
   if (channel.type === channelTypes.MESSAGING && member) {
     headerImage = member.user.image

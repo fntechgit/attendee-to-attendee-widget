@@ -121,6 +121,10 @@ const ConversationBox = ({
     )
   }
 
+  const getMessageActions = () => {
+    return ["flag", "pin", "react"]
+  };
+
   if (isLoading) {
     return (
       <div className={`${style.conversation} ${style[openDir]}`}>
@@ -140,7 +144,7 @@ const ConversationBox = ({
           <Channel channel={channel}>
             <Window hideOnThread={true}>
               {buildChannelHeader()}
-              <MessageList client={chatClient} closeThread={console.log} />
+              <MessageList client={chatClient} messageActions={getMessageActions()} closeThread={console.log} />
               <MessageInput focus />
             </Window>
             <Thread fullWidth />

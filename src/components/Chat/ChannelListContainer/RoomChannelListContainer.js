@@ -39,8 +39,9 @@ const RoomChannelListContainer = ({
   const [showRoomsManager, setShowRoomsManager] = useState(false)
 
   const getScope = (mode) => {
-    if (mode === 1) return [channelTypes.ACTIVITY_ROOM]
-    if (mode === 2) return [channelTypes.CUSTOM_ROOM]
+    // if (mode === 1) return [channelTypes.ACTIVITY_ROOM]
+    // if (mode === 2) return [channelTypes.CUSTOM_ROOM]
+    if (mode === 1) return [channelTypes.CUSTOM_ROOM]
     return defaultScope
   }
 
@@ -100,7 +101,7 @@ const RoomChannelListContainer = ({
             onFilterModeChange={handleFilterModeChange}
             filterMenuOptions={[
               'All Chat Rooms',
-              'Activity Rooms',
+              //'Activity Rooms',
               'Custom Rooms'
             ]}
             placeholder='Search by room name'

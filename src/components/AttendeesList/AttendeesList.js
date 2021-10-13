@@ -18,6 +18,7 @@ export const scopes = {
 
 const AttendeesList = (props) => {
   const {
+    user,
     accessRepo,
     chatRepo,
     summitId,
@@ -146,6 +147,7 @@ const AttendeesList = (props) => {
   }
 
   if (attendeesList) {
+
     return (
       <div className={style.outerWrapper}>
         <SearchBar
@@ -164,7 +166,8 @@ const AttendeesList = (props) => {
             attendeesList
               .filter(
                 (v, i, a) =>
-                  a.findIndex((t) => t.attendee_id === v.attendee_id) === i
+                  a.findIndex((t) => t.attendee_id === v.attendee_id) === i && 
+                  v.attendees.idp_user_id != user.idpUserId
               )
               .map((item) => (
                 <AttendeesListItem
