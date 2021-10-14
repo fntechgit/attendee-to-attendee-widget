@@ -58,6 +58,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [showMsgNewsBadge, setShowMsgNewsBadge] = useState(false)
 
   let isCardHovered = false
+  let isAttHovered = false
 
   const baseUrl = extractBaseUrl(window.location.href)
 
@@ -77,20 +78,22 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   props = { ...props, url: baseUrl }
 
   const initUser = async (currUser) => {
-    const att = await accessRepo.findByIdpID(currUser.id)
-    if (att) {
-      currUser.fullName = att.full_name
-      currUser.email = att.email
-      currUser.company = att.company
-      currUser.title = att.title
-      currUser.picUrl = att.pic_url
-      currUser.bio = att.bio
-      currUser.socialInfo = att.social_info
-      currUser.badgeFeatures = att.badges_info
-      setCurrentUser(currUser)
-    } else {
-      console.warn(`Could not find a user with id ${currUser.id}`)
-    }
+    currUser.badgeFeatures = currUser.getBadgeFeatures()
+    setCurrentUser(currUser)
+  //   const att = await accessRepo.findByIdpID(currUser.id)
+  //   if (att) {
+  //     currUser.fullName = att.full_name
+  //     currUser.email = att.email
+  //     currUser.company = att.company
+  //     currUser.title = att.title
+  //     currUser.picUrl = att.pic_url
+  //     currUser.bio = att.bio
+  //     currUser.socialInfo = att.social_info
+  //     currUser.badgeFeatures = att.badges_info
+  //     setCurrentUser(currUser)
+  //   } else {
+  //     console.warn(`Could not find a user with id ${currUser.id}`)
+  //   }
   }
 
   useEffect(() => {
@@ -250,12 +253,14 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   }
 
   const handleAttendeePicMouseEnter = (att) => {
+    isAttHovered = true
     setAttCardItem(att)
   }
 
   const handleAttendeePicMouseLeave = () => {
+    isAttHovered = false
     setTimeout(() => {
-      if (!isCardHovered) setAttCardItem(null)
+      if (!isCardHovered && !isAttHovered) setAttCardItem(null)
     }, 300)
   }
 

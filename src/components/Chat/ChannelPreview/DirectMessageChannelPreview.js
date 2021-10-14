@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { withChatContext } from 'stream-chat-react'
 import { roles } from '../../../models/userRoles'
 
@@ -13,14 +13,14 @@ const UserChannelPreview = ({
   onClick,
   onDelete
 }) => {
-  const [showDelete, setShowDelete] = useState(false)
+  //const [showDelete, setShowDelete] = useState(false)
   const statusClass = member.user.online ? styles.online : styles.offline
 
   return (
     <div
       className={styles.channelPreview}
-      onMouseEnter={() => setShowDelete(true)}
-      onMouseLeave={() => setShowDelete(false)}
+      //onMouseEnter={() => setShowDelete(true)}
+      //onMouseLeave={() => setShowDelete(false)}
     >
       <div className={`${styles.channel} list-group-item`}>
         <a href='' id={`channel-${channel.id}`} onClick={onClick}>
@@ -46,24 +46,21 @@ const UserChannelPreview = ({
               )}
             </div>
           </div>
-
-          {showDelete && (
-            <div className={styles.delete} onClick={onDelete}>
-              <svg
-                width='20'
-                height='20'
-                viewBox='0 0 30 30'
-                fill='gray'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  fillRule='evenodd'
-                  clipRule='evenodd'
-                  d='M15 13.5858L21.364 7.22183L22.7782 8.63604L16.4143 15L22.7782 21.364L21.364 22.7782L15 16.4142L8.63608 22.7782L7.22187 21.364L13.5858 15L7.22187 8.63604L8.63608 7.22183L15 13.5858Z'
-                />
-              </svg>
-            </div>
-          )}
+          <div className={styles.delete} onClick={onDelete}>
+            <svg
+              width='20'
+              height='20'
+              viewBox='0 0 30 30'
+              fill='gray'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <path
+                fillRule='evenodd'
+                clipRule='evenodd'
+                d='M15 13.5858L21.364 7.22183L22.7782 8.63604L16.4143 15L22.7782 21.364L21.364 22.7782L15 16.4142L8.63608 22.7782L7.22187 21.364L13.5858 15L7.22187 8.63604L8.63608 7.22183L15 13.5858Z'
+              />
+            </svg>
+          </div>
           {channel.state.unreadCount > 0 && (
             <div className={styles.unreadCount}>
               <span>{channel.state.unreadCount}</span>

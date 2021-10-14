@@ -127,6 +127,34 @@ export const AttendeeInfo = ({
     )
   }
 
+  const buildBadgesSection = (badgeFeatures, itemsPerRow) => {
+    const groups = badgeFeatures.reduce((resultArray, item, index) => {
+      const chunkIndex = Math.floor(index / itemsPerRow)
+      if (!resultArray[chunkIndex]) resultArray[chunkIndex] = []
+      resultArray[chunkIndex].push(item)
+      return resultArray
+    }, [])
+
+    return groups.map((group, ix) => (
+      <nav className='level' key={ix}>
+        <div className='level-left'>
+          {group.map((bf) => (
+            <div className='media-left' key={bf.name}>
+              <figure className='image is-48x48'>
+                <img
+                  className='is-rounded'
+                  alt=''
+                  src={bf.image}
+                  title={bf.name}
+                />
+              </figure>
+            </div>
+          ))}
+        </div>
+      </nav>
+    ))
+  }
+
   return (
     <div
       className={style.attendeeInfoContainer}
@@ -149,24 +177,7 @@ export const AttendeeInfo = ({
               <div className='is-size-4 has-text-grey'>{company}</div>
             </div>
             {socialInfo && buildSocialSection(socialInfo)}
-            {badgeFeatures && (
-              <nav className='level'>
-                <div className={`level-left ${style.scrollContainer}`}>
-                  {badgeFeatures.map((bf) => (
-                    <div className='media-left' key={bf.name}>
-                      <figure className='image is-48x48'>
-                        <img
-                          className='is-rounded'
-                          alt=''
-                          src={bf.image}
-                          title={bf.name}
-                        />
-                      </figure>
-                    </div>
-                  ))}
-                </div>
-              </nav>
-            )}
+            {badgeFeatures && buildBadgesSection(badgeFeatures, 3)}
           </div>
         </article>
         <article className='mt-2'>

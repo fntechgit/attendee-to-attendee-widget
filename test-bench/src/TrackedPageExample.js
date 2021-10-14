@@ -62,17 +62,17 @@ const widgetProps = {
           image:
             'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
         },
-        {
-          name: 'Feat D',
-          image:
-            'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-        }
-        ,
-        {
-          name: 'Feat E',
-          image:
-            'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-        }
+        // {
+        //   name: 'Feat D',
+        //   image:
+        //     'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
+        // }
+        // ,
+        // {
+        //   name: 'Feat E',
+        //   image:
+        //     'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
+        // }
       ] //attendee.ticket.badge.features
     },
     hasPermission: (permission) => {
