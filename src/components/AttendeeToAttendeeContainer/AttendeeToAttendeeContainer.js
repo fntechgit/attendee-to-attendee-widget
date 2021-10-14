@@ -54,7 +54,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [accessToken, setAccessToken] = useState(null)
   const [attCardItem, setAttCardItem] = useState(null)
   const [alertMessage, setAlertMessage] = useState(null)
-  const [supportPanelSettings, setSupportPanelSettings] = useState({ help: true, qa: false })
+  const [supportPanelSettings, setSupportPanelSettings] = useState({
+    help: true,
+    qa: false
+  })
   const [showMsgNewsBadge, setShowMsgNewsBadge] = useState(false)
 
   let isCardHovered = false
@@ -77,25 +80,6 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   } = props
   props = { ...props, url: baseUrl }
 
-  const initUser = async (currUser) => {
-    currUser.badgeFeatures = currUser.getBadgeFeatures()
-    setCurrentUser(currUser)
-  //   const att = await accessRepo.findByIdpID(currUser.id)
-  //   if (att) {
-  //     currUser.fullName = att.full_name
-  //     currUser.email = att.email
-  //     currUser.company = att.company
-  //     currUser.title = att.title
-  //     currUser.picUrl = att.pic_url
-  //     currUser.bio = att.bio
-  //     currUser.socialInfo = att.social_info
-  //     currUser.badgeFeatures = att.badges_info
-  //     setCurrentUser(currUser)
-  //   } else {
-  //     console.warn(`Could not find a user with id ${currUser.id}`)
-  //   }
-  }
-
   useEffect(() => {
     const init = async () => {
       if (!accessRepo) {
@@ -110,7 +94,6 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           new ChatAPIService()
         )
       }
-      await initUser(user)
 
       await chatRepo.initializeClient(
         user,
@@ -122,8 +105,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           setChatClient(client)
           //if (activity) chatRepo.setUpActivityRoom(activity, user)
 
-          chatClientEventsListener = client.on(event => { 
-
+          chatClientEventsListener = client.on((event) => {
             if (event.total_unread_count) {
               console.log('unread messages', event.total_unread_count)
             }
@@ -133,14 +115,14 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             }
 
             let showBadge = false
-            if (event.total_unread_count !== undefined) { 
+            if (event.total_unread_count !== undefined) {
               showBadge = event.total_unread_count > 0
-            } 
-            if (!showBadge && event.unread_channels !== undefined) { 
-              showBadge = event.unread_channels > 0  
-            } 
-            setShowMsgNewsBadge(showBadge) 
-          }); 
+            }
+            if (!showBadge && event.unread_channels !== undefined) {
+              showBadge = event.unread_channels > 0
+            }
+            setShowMsgNewsBadge(showBadge)
+          })
 
           if (dlCallback) {
             dlCallback(client)
@@ -160,7 +142,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       )
 
       const enableHelpBtn = await chatRepo.availableHelpAgents(summitId)
-      const enableQABtn = activity && await chatRepo.availableQAAgents(summitId, activity.id)
+      const enableQABtn =
+        activity && (await chatRepo.availableQAAgents(summitId, activity.id))
       setSupportPanelSettings({ help: enableHelpBtn, qa: enableQABtn })
     }
     if (accessToken) {
@@ -216,6 +199,11 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     setAlertMessage(null)
   }
 
+  const closeAttendeeCard= () => {
+    isAttHovered = false
+    setAttCardItem(null)
+  }
+
   const showAutoClosingAlert = (message, closeTimeout) => {
     setAlertMessage(message)
     setTimeout(() => {
@@ -236,6 +224,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   }
 
   const handleAttendeeClick = (att) => {
+    closeAttendeeCard()
     if (att.idp_user_id == user.idpUserId) return
     if (!att.public_profile_allow_chat_with_me) {
       console.log("this attendee doesn't have chat enabled")
@@ -249,6 +238,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   }
 
   const handleAttendeePicTouch = (att) => {
+    isAttHovered = true
     setAttCardItem(att)
   }
 
@@ -464,14 +454,10 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             onMouseEnter={handleCardMouseEnter}
             onMouseLeave={handleCardMouseLeave}
             onChatClick={handleAttendeeClick}
+            onTap={closeAttendeeCard}
           />
         )}
-        {alertMessage && (
-          <Alert
-            message={alertMessage}
-            onClick={closeAlert}
-          />
-        )}
+        {alertMessage && <Alert message={alertMessage} onClick={closeAlert} />}
       </div>
     </ErrorBoundary>
   )

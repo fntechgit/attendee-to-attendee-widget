@@ -1,11 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { isMobile } from 'react-device-detect'
 import style from './style.module.scss'
 
 const AttendeesListItem = (props) => {
   if (!props.item.attendees) return null
 
-  const { item: {attendees}, onItemClick, onItemPicMouseEnter, onItemPicMouseLeave, onItemPicTouch } = props
+  const {
+    item: { attendees },
+    onItemClick,
+    onItemPicMouseEnter,
+    onItemPicMouseLeave,
+    onItemPicTouch
+  } = props
 
   const attendee = {
     ...attendees,
@@ -22,20 +29,22 @@ const AttendeesListItem = (props) => {
         <div
           className={style.attendeesListItemContent}
           key={`attendee-${props.item.id}`}
+          onMouseEnter={isMobile ? null : () => onItemPicMouseEnter(attendee)}
+          onMouseLeave={isMobile ? null : onItemPicMouseLeave}
         >
           <div
             className={style.picWrapper}
-            //onClick={() => onItemClick(attendee)}
-            onMouseEnter={() => onItemPicMouseEnter(attendee)}
-            onMouseLeave={onItemPicMouseLeave}
-            onTouchStart={() => onItemPicTouch(attendee)}
+            onClick={isMobile ? () => onItemPicTouch(attendee) : () => onItemClick(attendee)}
           >
             <div
               className={style.pic}
               style={{ backgroundImage: `url(${attendee.pic_url})` }}
             />
           </div>
-          <div className={style.textWrapper} onClick={() => onItemClick(attendee)}>
+          <div
+            className={style.textWrapper}
+            onClick={() => onItemClick(attendee)}
+          >
             <div className={style.title}>{attendee.full_name}</div>
             {attendee.company && (
               <div className={style.subtitle}>

@@ -10,7 +10,8 @@ export const AttendeeInfo = ({
   fullMode,
   onMouseEnter,
   onMouseLeave,
-  onChatClick
+  onChatClick,
+  onTap
 }) => {
   const {
     fullName,
@@ -20,6 +21,7 @@ export const AttendeeInfo = ({
     picUrl,
     socialInfo,
     badgeFeatures,
+    getBadgeFeatures,
     bio,
     public_profile_show_email,
     public_profile_allow_chat_with_me
@@ -127,32 +129,26 @@ export const AttendeeInfo = ({
     )
   }
 
-  const buildBadgesSection = (badgeFeatures, itemsPerRow) => {
-    const groups = badgeFeatures.reduce((resultArray, item, index) => {
-      const chunkIndex = Math.floor(index / itemsPerRow)
-      if (!resultArray[chunkIndex]) resultArray[chunkIndex] = []
-      resultArray[chunkIndex].push(item)
-      return resultArray
-    }, [])
-
-    return groups.map((group, ix) => (
-      <nav className='level' key={ix}>
-        <div className='level-left'>
-          {group.map((bf) => (
-            <div className='media-left' key={bf.name}>
-              <figure className='image is-48x48'>
-                <img
-                  className='is-rounded'
-                  alt=''
-                  src={bf.image}
-                  title={bf.name}
-                />
-              </figure>
-            </div>
-          ))}
-        </div>
-      </nav>
-    ))
+  const buildBadgesSection = (badgeFeatures, getBadgeFeatures) => {
+    let bfs = badgeFeatures
+    if (!bfs && getBadgeFeatures) bfs = getBadgeFeatures()
+    if (!bfs) return null
+    return (
+      <div className={style.badgesContainer}>
+        {badgeFeatures.map((bf) => (
+          <div className='media-left' key={bf.name}>
+            <figure className='image is-48x48'>
+              <img
+                className='is-rounded'
+                alt=''
+                src={bf.image}
+                title={bf.name}
+              />
+            </figure>
+          </div>
+        ))}
+      </div>
+    )
   }
 
   return (
@@ -160,6 +156,7 @@ export const AttendeeInfo = ({
       className={style.attendeeInfoContainer}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onTouchStart={onTap}
     >
       <div className='box'>
         <article className='media'>
@@ -177,7 +174,7 @@ export const AttendeeInfo = ({
               <div className='is-size-4 has-text-grey'>{company}</div>
             </div>
             {socialInfo && buildSocialSection(socialInfo)}
-            {badgeFeatures && buildBadgesSection(badgeFeatures, 3)}
+            {badgeFeatures && buildBadgesSection(badgeFeatures)}
           </div>
         </article>
         <article className='mt-2'>
