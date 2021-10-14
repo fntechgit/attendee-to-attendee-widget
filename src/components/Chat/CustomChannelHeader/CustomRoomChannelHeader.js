@@ -54,7 +54,7 @@ const CustomRoomChannelHeader = (props) => {
           </a>
         </div>
       </div>
-      <ReactTooltip place='bottom' effect='solid' />
+      <ReactTooltip place='bottom' effect='solid' multiline={true} />
     </div>
   )
 
@@ -64,10 +64,15 @@ const CustomRoomChannelHeader = (props) => {
 
   let headerImage = channel.data.image
   let headerTitle = channel.data.name
-  let headerSubTitle = ''
+  let headerSubTitle = null
+  let participantsList = ''
 
   if (channel.data.member_count) {
     headerSubTitle = `${channel.data.member_count} participants`
+    participantsList = Object.values(channel.state.members)
+      .map(m => m.user?.name)
+      .sort()
+      .join('<br>')
   }
 
   if (channel.type === channelTypes.MESSAGING && member) {
@@ -85,7 +90,7 @@ const CustomRoomChannelHeader = (props) => {
       </div>
       <div className={style.textWrapper}>
         <span className={style.title}>{headerTitle}</span>
-        <span className={style.subtitle}>{headerSubTitle}</span>
+        { headerSubTitle && <span className={style.subtitle} data-tip={participantsList}>{headerSubTitle}</span> }
       </div>
       <div className={style.controls}>
         {renderMoreMenu()}
