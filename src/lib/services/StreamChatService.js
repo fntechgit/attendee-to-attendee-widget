@@ -31,7 +31,7 @@ export default class StreamChatService {
         localStorage.setItem(this.flag, JSON.stringify(streamServerInfo))
         try {
           await this.chatClient.disconnect()
-          this.chatClient.setUser(
+          this.chatClient.connectUser(
             {
               id: streamServerInfo.id,
               name: streamServerInfo.name,
@@ -53,7 +53,7 @@ export default class StreamChatService {
   getClient() {
     const streamServerInfo = JSON.parse(localStorage.getItem(this.flag))
 
-    this.chatClient.setUser(
+    this.chatClient.connectUser(
       {
         id: streamServerInfo.id,
         name: streamServerInfo.name,
@@ -86,15 +86,19 @@ export default class StreamChatService {
     return null
   }
 
-  async createChannel(type, id, name, description, members, image) {
+  async createChannel(type, id, name, description, members, image, watch) {
     const channel = this.chatClient.channel(type, id, {
       name: name,
       image: image,
       description: description,
       members: members
     })
-    await channel.watch()
-    await channel.show()
+    if (watch) {
+      await channel.watch()
+      await channel.show()
+    } else {
+      await channel.create()
+    }
     return channel
   }
 

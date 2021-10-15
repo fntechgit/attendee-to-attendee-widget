@@ -127,7 +127,8 @@ export default class ChatRepository {
           'Help Desk',
           '',
           [user.id],
-          firstHelpAgent.pic_url
+          firstHelpAgent.pic_url,
+          true
         )
         //Reset support agents
         const oldAgentMembers = await helpChannel.queryMembers({user_id: {$nin: [user.id]}})
@@ -162,7 +163,8 @@ export default class ChatRepository {
           'Q & A',
           activity.name,
           [user.id],
-          firstQAAgent.pic_url
+          firstQAAgent.pic_url,
+          true
         )
         //Reset support agents
         const oldAgentMembers = await qaChannel.queryMembers({user_id: {$nin: [user.id]}})
@@ -197,7 +199,8 @@ export default class ChatRepository {
         id,
         '',
         members,
-        user.picUrl
+        user.picUrl,
+        true
       )
     } catch (error) {
       console.log('error', error)
@@ -226,7 +229,8 @@ export default class ChatRepository {
         name,
         description,
         members,
-        image
+        image,
+        false
       )
     } catch (error) {
       console.log('error', error)
@@ -242,7 +246,8 @@ export default class ChatRepository {
         name,
         name,
         null,
-        imgUrl
+        imgUrl,
+        false
       )
       if (channel) await channel.addMembers([user.idpUserId])
     } catch (e) {

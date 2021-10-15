@@ -6,10 +6,12 @@ import 'attendee-to-attendee-widget/dist/index.css'
 
 const App = () => {
   const token1 =
-    '-LRFCs4bG9qRAsLOoZ2uet5Zsm__XMUtCgnh_btcdOqOv~iT5bq3M5kxSZwnVfsFMTRw89MgJcct1~WzPHxh4~HV_luHVP-VGcHyCwzLj-jHC139OqlYmSoY0QlUJgKr'
+    'DG-gRfEcqXb-MABmjPVIpIcWBFR1y5dPowxwWrAJT0H.Q4OCvs0J1FCpjEk4~3kr56h0A_QUfoNPZQzqI7OpCYxhiXDER4LWWtJ8pb1oN_40ambCYAh_Zs.pwRqGe.2c'
   const token2 =
-    'NXN09BeAO~zrzDuN9XP68PYRfjOm8MrFCKJLTr29YrNtPX7DpRmKDX_RGJVMb0ut8ya.CSY3wSkH6AjDroxRW.d3CvCdP4-jzYCC2QWLVDDnqrEr5s.Xsft3IaYLKZod'
+    'xPfZRt-N8Xp~iDEXqrAgPPxWMnm8iDKvYzk2bn8cZv74A9Ammyzhd9Il4FIDBh8ZaodLixqMnqcRbfApHW.DH1iAoOVlabHr_Dq.tTXRyFD31SFsSV..lFCBV2ldmDsY'
   const token3 =
+    'Z.txbiYmeZGtWj.kK1R14RMe~mAqTize~scBvfJVj2JDtWlAfIarw5P5lZaTXps4Ll.VR13c4a.htchbwtL6TmHyOxOJd6WnfNyy93DzX2UmCjAZiEKVtYjQE2w7lstx'
+  const token4 =
     'l~23GCO2zSh9Dix.6iTQbLOPzaC97o_ifhQeCJDkDWEsZz6OmMiCi1W3lCU4_hXLzOVKB00n1XV6wFuw67T9XHfYM7AUBwkOSRr1r9ktMTDr~JwqYa.SsZqBoZe1PYkq'
 
   return (
@@ -26,7 +28,13 @@ const App = () => {
             <Link
               to={`/attendance?accessToken=${token2}&fullName=Roman Gutierrez&email=roman.gutierrez@gmail.com&idpUserId=13`}
             >
-              Attendees
+              Attendee 1
+            </Link>
+            <br />
+            <Link
+              to={`/attendance?accessToken=${token3}&fullName=Joe Alternate&email=cespin+7@gmail.com&idpUserId=1108`}
+            >
+              Attendee 2
             </Link>
             <br />
             <Link

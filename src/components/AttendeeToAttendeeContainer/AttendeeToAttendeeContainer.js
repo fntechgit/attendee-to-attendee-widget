@@ -106,22 +106,16 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           //if (activity) chatRepo.setUpActivityRoom(activity, user)
 
           chatClientEventsListener = client.on((event) => {
-            if (event.total_unread_count) {
-              console.log('unread messages', event.total_unread_count)
+
+            //console.log('event', event)
+
+            if (event.type === 'message.new' || event.type === 'notification.message_new') {
+              setShowMsgNewsBadge(event.total_unread_count > 0)
             }
 
-            if (event.unread_channels) {
-              console.log('unread channels', event.unread_channels)
+            if (event.type === 'notification.mark_read') {
+              setShowMsgNewsBadge(event.total_unread_count > 0)
             }
-
-            let showBadge = false
-            if (event.total_unread_count !== undefined) {
-              showBadge = event.total_unread_count > 0
-            }
-            // if (!showBadge && event.unread_channels !== undefined) {
-            //   showBadge = event.unread_channels > 0
-            // }
-            setShowMsgNewsBadge(showBadge)
           })
 
           if (dlCallback) {
