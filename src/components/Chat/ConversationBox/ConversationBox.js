@@ -122,8 +122,14 @@ const ConversationBox = ({
   }
 
   const getMessageActions = () => {
-    return ["flag", "pin", "react"]
-  };
+    const channelType = activeChannel
+      ? activeChannel.type
+      : getChanTypeByCounterpart(chatCounterpart)
+
+    return channelType === channelTypes.MESSAGING
+      ? ['edit', 'delete', 'flag', 'mute', 'pin', 'quote', 'react', 'reply']
+      : ['flag', 'pin', 'react', 'reply']
+  }
 
   if (isLoading) {
     return (
@@ -144,7 +150,11 @@ const ConversationBox = ({
           <Channel channel={channel}>
             <Window hideOnThread={true}>
               {buildChannelHeader()}
-              <MessageList client={chatClient} messageActions={getMessageActions()} closeThread={console.log} />
+              <MessageList
+                client={chatClient}
+                messageActions={getMessageActions()}
+                closeThread={console.log}
+              />
               <MessageInput focus />
             </Window>
             <Thread fullWidth />

@@ -113,6 +113,7 @@ const DirectMessageChannelPreview = (props) => {
       return m.user.id !== client.user.id
     }
   }
+
   const member = Object.values(channel.state.members).find(memberLookup)
 
   if (!member) return null

@@ -65,8 +65,8 @@
     "react-markdown": "^6.0.2",
     "react-tooltip": "^4.2.19",
     "rehype-raw": "^5.1.0",
-    "stream-chat": "2.12.0",
-    "stream-chat-react": "3.2.2",
+    "stream-chat": "4.2.0",
+    "stream-chat-react": "4.1.3",
     "yup": "^0.32.9"
   }
 }

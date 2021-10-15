@@ -17,6 +17,7 @@ const RoomChannelPreview = ({
   const [showDelete, setShowDelete] = useState(isMobile)
 
   const title = channel.data.name
+  const subtitle = channel.data.description
 
   const onClick = async (ev) => {
     ev.preventDefault()
@@ -52,7 +53,8 @@ const RoomChannelPreview = ({
               {channel.type !== channelTypes.QA_ROOM &&
                 channel.type !== channelTypes.HELP_ROOM && (
                   <div className={styles.participants}>
-                    {channel.data.member_count ? `${channel.data.member_count} Participants` : '' }
+                    {/* {channel.data.member_count ? `${channel.data.member_count} Participants` : '' } */}
+                    {subtitle}
                   </div>
                 )}
             </div>

@@ -118,9 +118,9 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             if (event.total_unread_count !== undefined) {
               showBadge = event.total_unread_count > 0
             }
-            if (!showBadge && event.unread_channels !== undefined) {
-              showBadge = event.unread_channels > 0
-            }
+            // if (!showBadge && event.unread_channels !== undefined) {
+            //   showBadge = event.unread_channels > 0
+            // }
             setShowMsgNewsBadge(showBadge)
           })
 

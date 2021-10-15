@@ -17,7 +17,9 @@ export const useStore = (props) => {
     if (!accessListener) {
       setAccessListener(
         accessRepo.subscribe((payload) => {
-          handleAccessNews(payload)
+          if (props.summitId === payload.summit_id) {
+            handleAccessNews(payload)
+          }
         })
       )
     }

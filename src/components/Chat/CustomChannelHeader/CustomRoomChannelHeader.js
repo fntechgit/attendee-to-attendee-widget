@@ -64,16 +64,16 @@ const CustomRoomChannelHeader = (props) => {
 
   let headerImage = channel.data.image
   let headerTitle = channel.data.name
-  let headerSubTitle = null
-  let participantsList = ''
+  let headerSubTitle = channel.data.description
+  // let participantsList = ''
 
-  if (channel.data.member_count) {
-    headerSubTitle = `${channel.data.member_count} participants`
-    participantsList = Object.values(channel.state.members)
-      .map(m => m.user?.name)
-      .sort()
-      .join('<br>')
-  }
+  // if (channel.data.member_count) {
+  //   headerSubTitle = `${channel.data.member_count} participants`
+  //   participantsList = Object.values(channel.state.members)
+  //     .map(m => m.user?.name)
+  //     .sort()
+  //     .join('<br>')
+  // }
 
   if (channel.type === channelTypes.MESSAGING && member) {
     headerImage = member.user.image
@@ -90,10 +90,11 @@ const CustomRoomChannelHeader = (props) => {
       </div>
       <div className={style.textWrapper}>
         <span className={style.title}>{headerTitle}</span>
-        { headerSubTitle && <span className={style.subtitle} data-tip={participantsList}>{headerSubTitle}</span> }
+        {/* { headerSubTitle && <span className={style.subtitle} data-tip={participantsList}>{headerSubTitle}</span> } */}
+        { headerSubTitle && <span className={style.subtitle}>{headerSubTitle}</span> }
       </div>
       <div className={style.controls}>
-        {renderMoreMenu()}
+        {/* {renderMoreMenu()} */}
         <div onClick={onClose} className={style.close}>
           <svg
             width='10px'
