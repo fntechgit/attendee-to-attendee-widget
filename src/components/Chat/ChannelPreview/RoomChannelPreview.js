@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
+import { isMobile } from 'react-device-detect'
 import { channelTypes } from '../../../models/channelTypes'
 import { permissions } from '../../../models/permissions'
 
@@ -13,7 +14,7 @@ const RoomChannelPreview = ({
   onDelete
 }) => {
   const allowDeletion = user.hasPermission(permissions.MANAGE_ROOMS)
-  const [showDelete, setShowDelete] = useState(false)
+  const [showDelete, setShowDelete] = useState(isMobile)
 
   const title = channel.data.name
 
@@ -36,8 +37,8 @@ const RoomChannelPreview = ({
   return (
     <div
       className={styles.channelPreview}
-      onMouseEnter={() => setShowDelete(true)}
-      onMouseLeave={() => setShowDelete(false)}
+      onMouseEnter={isMobile ? null : () => setShowDelete(true)}
+      onMouseLeave={isMobile ? null : () => setShowDelete(false)}
     >
       <div className={`${styles.channel} list-group-item`}>
         <a href='' id={`channel-${channel.id}`} onClick={onClick}>
