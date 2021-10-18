@@ -120,7 +120,6 @@ export const AttendeesWidget = ({ user, event }) => {
     streamApiKey: ...,
     apiBaseUrl: ...,
     chatApiBaseUrl: ...,
-    forumSlug: ...,
     onAuthError: (err, res) => console.log(err),
     openDir: 'left',
     activity: null,

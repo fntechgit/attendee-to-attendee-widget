@@ -71,7 +71,6 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     streamApiKey,
     apiBaseUrl,
     chatApiBaseUrl,
-    forumSlug,
     user,
     summitId,
     openDir,

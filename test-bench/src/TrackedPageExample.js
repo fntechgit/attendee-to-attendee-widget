@@ -15,7 +15,6 @@ const chatProps = {
   streamApiKey: '29gtgpyz5hht',
   apiBaseUrl: 'https://idp.dev.fnopen.com',
   chatApiBaseUrl: 'https://chat-api.dev.fnopen.com',
-  forumSlug: 'fnvirtual-poc',
   getAccessToken: async () => {},
   onAuthError: (err, res) => console.log(err),
   openDir: 'left',
