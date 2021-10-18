@@ -127,7 +127,7 @@ const ConversationBox = ({
       : getChanTypeByCounterpart(chatCounterpart)
 
     return channelType === channelTypes.MESSAGING
-      ? ['edit', 'delete', 'flag', 'mute', 'pin', 'quote', 'react', 'reply']
+      ? ['flag', 'pin', 'quote', 'react', 'reply']
       : ['flag', 'pin', 'react', 'reply']
   }
 

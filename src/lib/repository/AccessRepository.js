@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
 import AttendeeRepository from './attendeeRepository'
 
+const default_min_backward = 5
+
 export default class AccessRepository extends AttendeeRepository {
   constructor(supabaseService) {
     super(supabaseService, null)
@@ -96,7 +98,7 @@ export default class AccessRepository extends AttendeeRepository {
     url,
     pageIx = 0,
     pageSize = 6,
-    ageMinutesBackward = 5
+    ageMinutesBackward = default_min_backward
   ) {
     try {
       const ageTreshold = DateTime.utc()
@@ -125,7 +127,7 @@ export default class AccessRepository extends AttendeeRepository {
     summitId,
     pageIx = 0,
     pageSize = 6,
-    ageMinutesBackward = 5
+    ageMinutesBackward = default_min_backward
   ) {
     try {
       const ageTreshold = DateTime.utc()
@@ -153,7 +155,7 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  async findByAttendeeNameOrCompany(filter, summitId, url, ageMinutesBackward = 5) {
+  async findByAttendeeNameOrCompany(filter, summitId, url, ageMinutesBackward = default_min_backward) {
     try {
       const ageTreshold = DateTime.utc()
         .minus({ minutes: ageMinutesBackward })
@@ -210,8 +212,7 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  async mergeChanges(attendeesListLocal, attendeesNews, url) {
-    const mustCheckURL = arguments.length > 2
+  async mergeChanges(summitId, attendeesListLocal, attendeesNews, url) {
     let oldItem = null
 
     const oldItemVerOccurrences = attendeesListLocal.filter(
@@ -224,27 +225,26 @@ export default class AccessRepository extends AttendeeRepository {
       const newList = attendeesListLocal.filter(
         (item) => item.id !== attendeesNews.id
       )
-      if (mustCheckURL) {
-        if (attendeesNews.current_url === url) {
-          oldItem.current_url = attendeesNews.current_url
-          newList.unshift(oldItem)
-        }
-      } else {
-        newList.unshift(oldItem)
+      if (url && attendeesNews.current_url === url) {
+        oldItem.current_url = attendeesNews.current_url
       }
+      newList.unshift(oldItem)
+
       return newList.filter(
         (v, i, a) => a.findIndex((t) => t.attendee_id === v.attendee_id) === i
       )
     } else {
       // must fetch from api
+      console.log('merge fetching from api')
       const { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
+        .eq('summit_id', summitId)
         .eq('id', attendeesNews.id)
 
       if (!error && data && data.length > 0) {
         const item = data[0]
-        if (!mustCheckURL || item.current_url === url) {
+        if (!url || item.current_url === url) {
           attendeesListLocal.unshift(item)
         }
         return [
@@ -254,8 +254,8 @@ export default class AccessRepository extends AttendeeRepository {
           )
         ]
       }
+      return attendeesListLocal
     }
-    return null
   }
 
   subscribe(handleAccessNews) {

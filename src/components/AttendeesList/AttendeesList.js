@@ -59,7 +59,7 @@ const AttendeesList = (props) => {
       } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
         // merge news
         updateAttendeesList(
-          accessRepo.mergeChanges(attendeesList, attendeesNews, url)
+          accessRepo.mergeChanges(summitId, attendeesList, attendeesNews, url)
         )
       }
     } else {
@@ -72,9 +72,10 @@ const AttendeesList = (props) => {
           )
         )
       } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
+        //console.log('rt att news', attendeesNews)
         // merge news
         updateAttendeesList(
-          accessRepo.mergeChanges(attendeesList, attendeesNews)
+          accessRepo.mergeChanges(summitId, attendeesList, attendeesNews)
         )
       }
     }

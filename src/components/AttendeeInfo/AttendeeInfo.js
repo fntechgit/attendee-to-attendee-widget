@@ -131,7 +131,7 @@ export const AttendeeInfo = ({
 
   const buildBadgesSection = (badgeFeatures, getBadgeFeatures) => {
     let bfs = badgeFeatures
-    if (!bfs && getBadgeFeatures) bfs = getBadgeFeatures()
+    if (getBadgeFeatures) bfs = getBadgeFeatures()
     if (!bfs) return null
     return (
       <div className={style.badgesContainer}>
