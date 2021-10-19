@@ -52,7 +52,7 @@
     "dist"
   ],
   "dependencies": {
-    "@supabase/supabase-js": "^1.24.0",
+    "@supabase/supabase-js": "^1.22.6",
     "bulma": "^0.9.2",
     "font-awesome": "^4.7.0",
     "formik": "^2.2.6",

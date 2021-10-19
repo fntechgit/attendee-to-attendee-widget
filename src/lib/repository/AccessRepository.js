@@ -155,7 +155,12 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  async findByAttendeeNameOrCompany(filter, summitId, url, ageMinutesBackward = default_min_backward) {
+  async findByAttendeeNameOrCompany(
+    filter,
+    summitId,
+    url,
+    ageMinutesBackward = default_min_backward
+  ) {
     try {
       const ageTreshold = DateTime.utc()
         .minus({ minutes: ageMinutesBackward })
@@ -212,8 +217,19 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  async mergeChanges(summitId, attendeesListLocal, attendeesNews, url) {
+  async mergeChanges(
+    summitId,
+    attendeesListLocal,
+    attendeesNews,
+    url,
+    ageMinutesBackward = default_min_backward
+  ) {
     let oldItem = null
+    console.log('merging access news...', attendeesNews)
+
+    const ageTreshold = DateTime.utc()
+      .minus({ minutes: ageMinutesBackward })
+      .toString()
 
     const oldItemVerOccurrences = attendeesListLocal.filter(
       (item) => item.id === attendeesNews.id
@@ -231,7 +247,9 @@ export default class AccessRepository extends AttendeeRepository {
       newList.unshift(oldItem)
 
       return newList.filter(
-        (v, i, a) => a.findIndex((t) => t.attendee_id === v.attendee_id) === i
+        (v, i, a) =>
+          a.findIndex((t) => t.attendee_id === v.attendee_id) === i &&
+          t.updated_at < ageTreshold
       )
     } else {
       // must fetch from api
@@ -250,7 +268,8 @@ export default class AccessRepository extends AttendeeRepository {
         return [
           ...attendeesListLocal.filter(
             (v, i, a) =>
-              a.findIndex((t) => t.attendee_id === v.attendee_id) === i
+              a.findIndex((t) => t.attendee_id === v.attendee_id) === i &&
+              t.updated_at < ageTreshold
           )
         ]
       }
