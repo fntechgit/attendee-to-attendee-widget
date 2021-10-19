@@ -8,6 +8,7 @@ export const useStore = (props) => {
   const accessRepo = props.accessRepository
 
   useEffect(() => {
+    console.log('rt access news', !!accessNews)
     if (accessNews) {
       setAttendeesNews(accessNews)
     }
@@ -18,7 +19,7 @@ export const useStore = (props) => {
       setAccessListener(
         accessRepo.subscribe((payload) => {
           if (props.summitId === payload.summit_id) {
-            console.log('rt access news')
+            console.log('rt att id', payload.attendee_id)
             handleAccessNews(payload)
           }
         })

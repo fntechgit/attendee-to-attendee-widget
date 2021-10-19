@@ -8,7 +8,8 @@ import { extractBaseUrl } from '../utils/urlHelper'
 const Tracker = forwardRef((props, ref) => {
   const { supabaseUrl, supabaseKey } = props
   const accessRepo = new AccessRepository(
-    SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
+    SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
+    false
   )
   const pendingOps = new Set()
   let timerHandler = null

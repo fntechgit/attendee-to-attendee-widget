@@ -83,7 +83,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     const init = async () => {
       if (!accessRepo) {
         accessRepo = new AccessRepository(
-          SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey)
+          SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
+          true
         )
       }
       if (!chatRepo) {

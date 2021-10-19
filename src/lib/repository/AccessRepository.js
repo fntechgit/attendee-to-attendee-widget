@@ -4,8 +4,10 @@ import AttendeeRepository from './attendeeRepository'
 const default_min_backward = 5
 
 export default class AccessRepository extends AttendeeRepository {
-  constructor(supabaseService) {
+  constructor(supabaseService, subscribeToRealtime) {
     super(supabaseService, null)
+    this._newsListener = null
+    if (subscribeToRealtime) this._subscribeToRealtime()
   }
 
   async _logAccess(accessEntry) {
@@ -22,6 +24,27 @@ export default class AccessRepository extends AttendeeRepository {
     if (error) {
       console.error(error)
       throw new Error(error)
+    }
+  }
+
+  _subscribeToRealtime() {
+    //const subscriptions = this._client.getSubscriptions()
+    if (this._subscription && this._subscription.state === 'joined') {
+      return
+    }
+
+    //resubscription
+    if (this._subscription) this._client.removeSubscription(this._subscription)
+    this._subscription = this._client
+        .from(`accesses`)
+        .on('INSERT', (payload) => this._handleRTSubscriptionNews(payload.new))
+        .on('UPDATE', (payload) => this._handleRTSubscriptionNews(payload.new))
+        .subscribe()
+  }
+
+  _handleRTSubscriptionNews(news) {
+    if (this._newsListener) {
+      this._newsListener(news)
     }
   }
 
@@ -217,19 +240,9 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  async mergeChanges(
-    summitId,
-    attendeesListLocal,
-    attendeesNews,
-    url,
-    ageMinutesBackward = default_min_backward
-  ) {
+  async mergeChanges(summitId, attendeesListLocal, attendeesNews, url) {
     let oldItem = null
-    console.log('merging access news...', attendeesNews)
-
-    const ageTreshold = DateTime.utc()
-      .minus({ minutes: ageMinutesBackward })
-      .toString()
+    console.log('merging access news...')
 
     const oldItemVerOccurrences = attendeesListLocal.filter(
       (item) => item.id === attendeesNews.id
@@ -247,9 +260,7 @@ export default class AccessRepository extends AttendeeRepository {
       newList.unshift(oldItem)
 
       return newList.filter(
-        (v, i, a) =>
-          a.findIndex((t) => t.attendee_id === v.attendee_id) === i &&
-          t.updated_at < ageTreshold
+        (v, i, a) => a.findIndex((t) => t.attendee_id === v.attendee_id) === i
       )
     } else {
       // must fetch from api
@@ -268,8 +279,7 @@ export default class AccessRepository extends AttendeeRepository {
         return [
           ...attendeesListLocal.filter(
             (v, i, a) =>
-              a.findIndex((t) => t.attendee_id === v.attendee_id) === i &&
-              t.updated_at < ageTreshold
+              a.findIndex((t) => t.attendee_id === v.attendee_id) === i
           )
         ]
       }
@@ -277,12 +287,7 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  subscribe(handleAccessNews) {
-    if (this._subscription) this._client.removeSubscription(this._subscription)
-    this._subscription = this._client
-      .from(`accesses`)
-      .on('INSERT', (payload) => handleAccessNews(payload.new))
-      .on('UPDATE', (payload) => handleAccessNews(payload.new))
-      .subscribe()
+  subscribe(listener) {
+    this._newsListener = listener
   }
 }
