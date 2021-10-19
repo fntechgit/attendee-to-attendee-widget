@@ -135,7 +135,7 @@ export const AttendeeInfo = ({
     if (!bfs) return null
     return (
       <div className={style.badgesContainer}>
-        {badgeFeatures.map((bf) => (
+        {bfs.map((bf) => (
           <div className='media-left' key={bf.name}>
             <figure className='image is-48x48'>
               <img
@@ -174,7 +174,7 @@ export const AttendeeInfo = ({
               <div className='is-size-4 has-text-grey'>{company}</div>
             </div>
             {socialInfo && buildSocialSection(socialInfo)}
-            {badgeFeatures && buildBadgesSection(badgeFeatures)}
+            {buildBadgesSection(badgeFeatures, getBadgeFeatures)}
           </div>
         </article>
         <article className='mt-2'>
