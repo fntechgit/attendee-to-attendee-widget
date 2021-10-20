@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import AttendeeRepository from './attendeeRepository'
 
+const default_page_size = 30
 const default_min_backward = 5
 
 export default class AccessRepository extends AttendeeRepository {
@@ -36,16 +37,28 @@ export default class AccessRepository extends AttendeeRepository {
     //resubscription
     if (this._subscription) this._client.removeSubscription(this._subscription)
     this._subscription = this._client
-        .from(`accesses`)
-        .on('INSERT', (payload) => this._handleRTSubscriptionNews(payload.new))
-        .on('UPDATE', (payload) => this._handleRTSubscriptionNews(payload.new))
-        .subscribe()
+      .from(`accesses`)
+      .on('INSERT', (payload) => this._handleRTSubscriptionNews(payload.new))
+      .on('UPDATE', (payload) => this._handleRTSubscriptionNews(payload.new))
+      .subscribe()
   }
 
   _handleRTSubscriptionNews(news) {
     if (this._newsListener) {
       this._newsListener(news)
     }
+  }
+
+  _sortAccessesByAttName(accesses) {
+    return accesses
+      .filter((d) => d.attendees && d.attendees.full_name)
+      .sort((a, b) => {
+        let fa = a.attendees.full_name.toLowerCase(),
+          fb = b.attendees.full_name.toLowerCase()
+        if (fa < fb) return -1
+        if (fa > fb) return 1
+        return 0
+      })
   }
 
   async trackAccess(attendeeProfile, summitId, url, fromIP, mustLogAccess) {
@@ -120,7 +133,7 @@ export default class AccessRepository extends AttendeeRepository {
   async fetchCurrentPageAttendees(
     url,
     pageIx = 0,
-    pageSize = 6,
+    pageSize = default_page_size,
     ageMinutesBackward = default_min_backward
   ) {
     try {
@@ -136,11 +149,11 @@ export default class AccessRepository extends AttendeeRepository {
         .eq('current_url', url)
         .eq('attendees.is_online', true)
         .gt('updated_at', ageTreshold)
-        .order('updated_at', { ascending: false })
+        //.order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
 
       if (error) throw new Error(error)
-      return data
+      return this._sortAccessesByAttName(data)
     } catch (error) {
       console.error('error', error)
     }
@@ -149,7 +162,7 @@ export default class AccessRepository extends AttendeeRepository {
   async fetchCurrentShowAttendees(
     summitId,
     pageIx = 0,
-    pageSize = 6,
+    pageSize = default_page_size,
     ageMinutesBackward = default_min_backward
   ) {
     try {
@@ -164,15 +177,15 @@ export default class AccessRepository extends AttendeeRepository {
         .select(`*, attendees(*)`)
         .eq('summit_id', summitId)
         .eq('attendees.is_online', true)
+        .neq('attendees.full_name', null)
         .gt('updated_at', ageTreshold)
-        .order('updated_at', { ascending: false })
+        //.order('updated_at', { ascending: false })
         .range(lowerIx, upperIx)
       if (error) throw new Error(error)
 
-      console.log('fetchCurrentShowAttendees access news', data)
+      //console.log('fetchCurrentShowAttendees access news', data)
       //console.log('fetchCurrentShowAttendees attendees', data.map(d => d.attendees).length)
-
-      return data
+      return this._sortAccessesByAttName(data)
     } catch (error) {
       console.error('error', error)
     }
@@ -259,9 +272,10 @@ export default class AccessRepository extends AttendeeRepository {
       }
       newList.unshift(oldItem)
 
-      return newList.filter(
+      const res = newList.filter(
         (v, i, a) => a.findIndex((t) => t.attendee_id === v.attendee_id) === i
       )
+      return this._sortAccessesByAttName(res)
     } else {
       // must fetch from api
       console.log('merge fetching from api')
@@ -276,12 +290,13 @@ export default class AccessRepository extends AttendeeRepository {
         if (!url || item.current_url === url) {
           attendeesListLocal.unshift(item)
         }
-        return [
+        const res = [
           ...attendeesListLocal.filter(
             (v, i, a) =>
               a.findIndex((t) => t.attendee_id === v.attendee_id) === i
           )
         ]
+        return this._sortAccessesByAttName(res)
       }
       return attendeesListLocal
     }

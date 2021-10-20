@@ -40,8 +40,8 @@ let chatClientEventsListener = null
 
 const tabNames = {
   ATTENDEES: 'ATTENDEES',
-  MESSAGES: 'MESSAGES',
-  ROOM_CHATS: 'ROOM CHATS'
+  MESSAGES: 'DIRECT MESSAGES',
+  ROOM_CHATS: 'GROUP CHAT'
 }
 
 const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
