@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
 import { isMobile } from 'react-device-detect'
+import ReactTooltip from 'react-tooltip'
 import { roles } from '../../../models/userRoles'
+import { HelpIcon, QAIcon, CrossIcon } from '../../../utils/predesignedImgsHelper'
 
 import styles from './style.module.scss'
 
@@ -17,6 +19,12 @@ const UserChannelPreview = ({
   const [showDelete, setShowDelete] = useState(isMobile)
   const statusClass = member.user.online ? styles.online : styles.offline
 
+  const getPicImage = (user) => {
+    if (user.local_role === roles.QA) return <QAIcon width='50' height='50' />
+    if (user.local_role === roles.HELP) return <HelpIcon width='50' height='50' />
+    return <img src={member.user.image} alt='' />
+  }
+
   return (
     <div
       className={styles.channelPreview}
@@ -27,12 +35,12 @@ const UserChannelPreview = ({
         <a href='' id={`channel-${channel.id}`} onClick={onClick}>
           <div className={`${styles.channelPreview} ${statusClass}`}>
             <div className={styles.pic}>
-              <img src={member.user.image} alt='' />
+              {getPicImage(member.user)}
               <div className={styles.status} />
             </div>
             <div className={styles.info}>
               <div>
-                <div className={styles.name} data-user={member.user.id}>
+                <div className={styles.name} data-user={member.user.id} data-tip={title.length > 30 ? title : null}>
                   {title}
                 </div>
               </div>
@@ -49,19 +57,7 @@ const UserChannelPreview = ({
           </div>
           {showDelete && (
             <div className={styles.delete} onClick={onDelete}>
-              <svg
-                width='20'
-                height='20'
-                viewBox='0 0 30 30'
-                fill='gray'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  fillRule='evenodd'
-                  clipRule='evenodd'
-                  d='M15 13.5858L21.364 7.22183L22.7782 8.63604L16.4143 15L22.7782 21.364L21.364 22.7782L15 16.4142L8.63608 22.7782L7.22187 21.364L13.5858 15L7.22187 8.63604L8.63608 7.22183L15 13.5858Z'
-                />
-              </svg>
+              <CrossIcon width='20' height='20' />
             </div>
           )}
           {channel.state.unreadCount > 0 && (
@@ -71,6 +67,7 @@ const UserChannelPreview = ({
           )}
         </a>
       </div>
+      <ReactTooltip place='top' effect='solid' />
     </div>
   )
 }
@@ -105,16 +102,14 @@ const DirectMessageChannelPreview = (props) => {
 
   const userRole = client.user.local_role
 
-  const memberLookup = (m) => {
+  const member = Object.values(channel.state.members).find((m) => {
     if (userRole === roles.HELP || userRole === roles.QA) {
       //Get the user who needs support
       return m.role === 'owner'
     } else {
       return m.user.id !== client.user.id
     }
-  }
-
-  const member = Object.values(channel.state.members).find(memberLookup)
+  })
 
   if (!member) return null
 
@@ -132,12 +127,12 @@ const DirectMessageChannelPreview = (props) => {
     //Agent point of view
     title =
       userRole === roles.QA
-        ? `${memberName} have a question`
+        ? `${memberName} asking a question through Q&A`
         : `${memberName} help request`
   } else {
     //Attendee point of view
-    if (user.local_role === roles.QA) title += ' (Q&A)'
-    else if (user.local_role === roles.HELP) title += ' (Help Desk)'
+    if (user.local_role === roles.QA) title = 'Q & A'
+    else if (user.local_role === roles.HELP) title = 'Help Desk'
   }
 
   return (

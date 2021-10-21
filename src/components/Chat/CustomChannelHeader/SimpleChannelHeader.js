@@ -1,6 +1,13 @@
 import React from 'react'
 import { withChatContext } from 'stream-chat-react'
-import { channelTypes } from '../../../models/channelTypes'
+import ReactTooltip from 'react-tooltip'
+import { roles } from '../../../models/userRoles'
+import {
+  HelpIcon,
+  QAIcon,
+  CrossIcon
+} from '../../../utils/predesignedImgsHelper'
+
 import style from './style.module.scss'
 
 const SimpleChannelHeader = (props) => {
@@ -10,49 +17,53 @@ const SimpleChannelHeader = (props) => {
     (m) => m.user.id !== me.id
   )
 
-  let headerImage = channel.data.image
+  if (!member) return null
+
+  const counterpartUser = member.user
+
   let headerTitle = channel.data.name
   let headerSubtitle = null
+  let channelImage = null
 
-  if (channel.type === channelTypes.MESSAGING && member) {
-    const { user } = member
-    headerImage = user.image
-    headerTitle = user.name
-    if (user.show_fullname === false) {
-      headerTitle = user.first_name
-    }
-  } else if (channel.type === channelTypes.QA_ROOM) {
+  if (counterpartUser.local_role === roles.QA) {
+    headerTitle = 'Q & A'
     headerSubtitle = channel.data.description
+    channelImage = <div className={style.supportPicWrapper}><QAIcon width='40' height='40' /></div>
+  } else if (counterpartUser.local_role === roles.HELP) {
+    headerTitle = 'Help Desk'
+    channelImage = <div className={style.supportPicWrapper}><HelpIcon width='50' height='50' className={style.pic} /></div>
+  } else {
+    headerTitle = counterpartUser.name
+    channelImage = (
+      <div className={style.picWrapper}>
+        <div
+          className={style.pic}
+          style={{ backgroundImage: `url(${counterpartUser.image})` }}
+        />
+      </div>
+    )
+    if (counterpartUser.show_fullname === false) {
+      headerTitle = counterpartUser.first_name
+    }
   }
 
   return (
     <div className={style.simpleHeader}>
-      <div className={style.picWrapper}>
-        <div
-          className={style.pic}
-          style={{ backgroundImage: `url(${headerImage})` }}
-        />
-      </div>
+      {channelImage}
       <div className={style.textWrapper}>
         <span className={style.title}>
-          {headerTitle}{' '}
+          {headerTitle}
           {headerSubtitle && (
-            <span className={style.subtitle}>{` - ${headerSubtitle}`}</span>
+            <span className={style.subtitle} data-tip={headerSubtitle}>{` - ${headerSubtitle}`}</span>
           )}
         </span>
       </div>
       <div className={style.controls}>
         <div onClick={onClose} className={style.close}>
-          <svg
-            width='10px'
-            height='10px'
-            viewBox='0 0 365.696 365.696'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path d='m243.1875 182.859375 113.132812-113.132813c12.5-12.5 12.5-32.765624 0-45.246093l-15.082031-15.082031c-12.503906-12.503907-32.769531-12.503907-45.25 0l-113.128906 113.128906-113.132813-113.152344c-12.5-12.5-32.765624-12.5-45.246093 0l-15.105469 15.082031c-12.5 12.503907-12.5 32.769531 0 45.25l113.152344 113.152344-113.128906 113.128906c-12.503907 12.503907-12.503907 32.769531 0 45.25l15.082031 15.082031c12.5 12.5 32.765625 12.5 45.246093 0l113.132813-113.132812 113.128906 113.132812c12.503907 12.5 32.769531 12.5 45.25 0l15.082031-15.082031c12.5-12.503906 12.5-32.769531 0-45.25zm0 0' />
-          </svg>
+          <CrossIcon width='20' height='20' />
         </div>
       </div>
+      <ReactTooltip place='top' effect='solid' />
     </div>
   )
 }

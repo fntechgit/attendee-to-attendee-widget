@@ -45,7 +45,6 @@ const tabNames = {
 }
 
 const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
-  const [currentUser, setCurrentUser] = useState(props.user)
   const [activeTab, setActiveTab] = useState(tabNames.ATTENDEES)
   const [isMinimized, setMinimized] = useState(false)
   const [chatOpened, setChatOpened] = useState(false)
@@ -352,7 +351,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       showNewsBadge: showMsgNewsBadge,
       content: chatClient && (
         <DMChannelListContainer
-          user={currentUser}
+          user={user}
           summitId={summitId}
           chatClient={chatClient}
           accessRepo={accessRepo}
@@ -372,7 +371,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       showNewsBadge: false,
       content: (
         <RoomChannelListContainer
-          user={currentUser}
+          user={user}
           summitId={summitId}
           chatClient={chatClient}
           accessRepo={accessRepo}
@@ -397,7 +396,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     >
       <div className={style.widgetContainer}>
         <MainBar
-          user={currentUser}
+          user={user}
           onHelpClick={handleHelpClick}
           onMinimizeButtonClick={() => setMinimized(!isMinimized)}
         />
@@ -411,12 +410,12 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             <ActiveTabContent key={activeTab} content={activeTabContent()} />
           </div>
         )}
-        {chatClient && chatOpened && currentUser && (
+        {chatClient && chatOpened && user && (
           <ConversationBox
             chatClient={chatClient}
             chatRepo={chatRepo}
             activeChannel={activeChannel}
-            user={currentUser}
+            user={user}
             chatCounterpart={chatCounterpart}
             openDir={openDir}
             summitId={summitId}
@@ -427,11 +426,11 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             onChatStartError={(error) => showAutoClosingAlert(error, 3000)}
           />
         )}
-        {chatClient && qaChatOpened && currentUser && (
+        {chatClient && qaChatOpened && user && (
           <ConversationBox
             chatClient={chatClient}
             chatRepo={chatRepo}
-            user={currentUser}
+            user={user}
             chatCounterpart={roles.QA}
             openDir={chatOpened && activeChannel ? 'parentLeft' : 'left'}
             summitId={summitId}

@@ -66,6 +66,17 @@
       background-size: cover;
     }
   }
+  .supportPicWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -20px;
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    border: 1px solid #aaa;
+    background-color: #fff;
+  }
 }
 .customRoomHeader {
   height: 90px;
