@@ -3,51 +3,84 @@ import { withChatContext } from 'stream-chat-react'
 import { isMobile } from 'react-device-detect'
 import ReactTooltip from 'react-tooltip'
 import { roles } from '../../../models/userRoles'
-import { HelpIcon, QAIcon, CrossIcon } from '../../../utils/predesignedImgsHelper'
+import {
+  HelpIcon,
+  QAIcon,
+  CrossIcon
+} from '../../../utils/predesignedImgsHelper'
 
-import styles from './style.module.scss'
+import style from './style.module.scss'
 
 const UserChannelPreview = ({
+  client,
   channel,
   member,
-  title,
   latestMessage,
   unread,
   onClick,
   onDelete
 }) => {
   const [showDelete, setShowDelete] = useState(isMobile)
-  const statusClass = member.user.online ? styles.online : styles.offline
+  const statusClass = member.user.online ? style.online : style.offline
 
-  const getPicImage = (user) => {
-    if (user.local_role === roles.QA) return <QAIcon width='50' height='50' />
-    if (user.local_role === roles.HELP) return <HelpIcon width='50' height='50' />
-    return <img src={member.user.image} alt='' />
+  const setupItem = (currUser, counterpartUser) => {
+    let memberName =
+      counterpartUser.show_fullname === false
+        ? counterpartUser.first_name
+        : counterpartUser.name
+
+    let title = memberName
+    let pic = <img src={counterpartUser.image} alt='' />
+
+    const userRole = currUser.local_role
+    if (userRole === roles.QA || userRole === roles.HELP) {
+      //Agent point of view
+      title =
+        userRole === roles.QA
+          ? `${memberName} has a question`
+          : `${memberName} help request`
+    } else {
+      //Attendee point of view
+      if (counterpartUser.local_role === roles.QA) {
+        title = 'Q & A'
+        pic = <QAIcon width='50' height='50' />
+      } else if (counterpartUser.local_role === roles.HELP) {
+        title = 'Help Desk'
+        pic = <HelpIcon width='50' height='50' />
+      }
+    }
+    return { title: title, pic: pic }
   }
+
+  const { title, pic } = setupItem(client.user, member.user)
 
   return (
     <div
-      className={styles.channelPreview}
+      className={style.channelPreview}
       onMouseEnter={isMobile ? null : () => setShowDelete(true)}
       onMouseLeave={isMobile ? null : () => setShowDelete(false)}
     >
-      <div className={`${styles.channel} list-group-item`}>
+      <div className={`${style.channel} list-group-item`}>
         <a href='' id={`channel-${channel.id}`} onClick={onClick}>
-          <div className={`${styles.channelPreview} ${statusClass}`}>
-            <div className={styles.pic}>
-              {getPicImage(member.user)}
-              <div className={styles.status} />
+          <div className={`${style.channelPreview} ${statusClass}`}>
+            <div className={style.pic}>
+              {pic}
+              <div className={style.status} />
             </div>
-            <div className={styles.info}>
+            <div className={style.info}>
               <div>
-                <div className={styles.name} data-user={member.user.id} data-tip={title.length > 30 ? title : null}>
+                <div
+                  className={style.name}
+                  data-user={member.user.id}
+                  data-tip={title.length > 30 ? title : null}
+                >
                   {title}
                 </div>
               </div>
               {latestMessage && (
                 <div
-                  className={`${styles.lastMessage} ${
-                    unread ? styles.unread : null
+                  className={`${style.lastMessage} ${
+                    unread ? style.unread : null
                   }`}
                 >
                   {latestMessage}
@@ -56,12 +89,12 @@ const UserChannelPreview = ({
             </div>
           </div>
           {showDelete && (
-            <div className={styles.delete} onClick={onDelete}>
+            <div className={style.delete} onClick={onDelete}>
               <CrossIcon width='20' height='20' />
             </div>
           )}
           {channel.state.unreadCount > 0 && (
-            <div className={styles.unreadCount}>
+            <div className={style.unreadCount}>
               <span>{channel.state.unreadCount}</span>
             </div>
           )}
@@ -74,6 +107,7 @@ const UserChannelPreview = ({
 
 const DirectMessageChannelPreview = (props) => {
   const {
+    user,
     channel,
     setActiveChannel,
     latestMessage,
@@ -100,47 +134,33 @@ const DirectMessageChannelPreview = (props) => {
     await channel.stopWatching()
   }
 
-  const userRole = client.user.local_role
+  const getCounterpartMember = (currentUserId, members, isSupport) => {
+    const member = Object.values(members).find((m) => {
+      if (isSupport) {
+        //Get the user who needs support (channel owner)
+        return m.role === 'owner'
+      } else {
+        return m.user.id !== currentUserId
+      }
+    })
+    return member
+  }
 
-  const member = Object.values(channel.state.members).find((m) => {
-    if (userRole === roles.HELP || userRole === roles.QA) {
-      //Get the user who needs support
-      return m.role === 'owner'
-    } else {
-      return m.user.id !== client.user.id
-    }
-  })
+  const userRole = client.user.local_role
+  const isSupportAgent = userRole === roles.HELP || userRole === roles.QA
+  const member = getCounterpartMember(
+    client.user.id,
+    channel.state.members,
+    isSupportAgent
+  )
 
   if (!member) return null
-
-  const { user } = member
-
-  let memberName = user.name
-
-  if (user.show_fullname === false) {
-    memberName = user.first_name
-  }
-
-  let title = memberName
-
-  if (userRole === roles.QA || userRole === roles.HELP) {
-    //Agent point of view
-    title =
-      userRole === roles.QA
-        ? `${memberName} asking a question through Q&A`
-        : `${memberName} help request`
-  } else {
-    //Attendee point of view
-    if (user.local_role === roles.QA) title = 'Q & A'
-    else if (user.local_role === roles.HELP) title = 'Help Desk'
-  }
 
   return (
     <UserChannelPreview
       client={client}
       channel={channel}
       member={member}
-      title={title}
       latestMessage={latestMessage}
       unread={unread}
       onDelete={onDelete}

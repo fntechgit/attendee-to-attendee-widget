@@ -11,39 +11,83 @@ import {
 import style from './style.module.scss'
 
 const SimpleChannelHeader = (props) => {
-  const { me, channel, onClose } = props
+  const { me, client, channel, onClose } = props
 
-  const member = Object.values(channel.state.members).find(
-    (m) => m.user.id !== me.id
+  const buildRawAttendeePic = (image) => {
+    return (
+      <div className={style.picWrapper}>
+        <div
+          className={style.pic}
+          style={{ backgroundImage: `url(${image})` }}
+        />
+      </div>
+    )
+  }
+
+  const getCounterpartMember = (currentUserId, members, isSupport) => {
+    const member = Object.values(members).find((m) => {
+      if (isSupport) {
+        //Get the user who needs support (channel owner)
+        return m.role === 'owner'
+      } else {
+        return m.user.id !== currentUserId
+      }
+    })
+    return member
+  }
+
+  const userRole = client.user.local_role
+  const isSupportAgent = userRole === roles.HELP || userRole === roles.QA
+  let headerTitle = channel.data.name
+  let headerSubtitle = null
+  let channelImage = null
+
+  const member = getCounterpartMember(
+    client.user.id,
+    channel.state.members,
+    isSupportAgent
   )
 
   if (!member) return null
 
   const counterpartUser = member.user
 
-  let headerTitle = channel.data.name
-  let headerSubtitle = null
-  let channelImage = null
+  let memberName =
+    counterpartUser.show_fullname === false
+      ? counterpartUser.first_name
+      : counterpartUser.name
 
-  if (counterpartUser.local_role === roles.QA) {
-    headerTitle = 'Q & A'
+  if (userRole === roles.QA || userRole === roles.HELP) {
+    //Agent point of view
+    headerTitle =
+      userRole === roles.QA
+        ? `${memberName} has a question`
+        : `${memberName} help request`
     headerSubtitle = channel.data.description
-    channelImage = <div className={style.supportPicWrapper}><QAIcon width='40' height='40' /></div>
-  } else if (counterpartUser.local_role === roles.HELP) {
-    headerTitle = 'Help Desk'
-    channelImage = <div className={style.supportPicWrapper}><HelpIcon width='50' height='50' className={style.pic} /></div>
+    channelImage = buildRawAttendeePic(counterpartUser.image)
   } else {
-    headerTitle = counterpartUser.name
-    channelImage = (
-      <div className={style.picWrapper}>
-        <div
-          className={style.pic}
-          style={{ backgroundImage: `url(${counterpartUser.image})` }}
-        />
-      </div>
-    )
-    if (counterpartUser.show_fullname === false) {
-      headerTitle = counterpartUser.first_name
+    //Attendee point of view
+    if (counterpartUser.local_role === roles.QA) {
+      headerTitle = 'Q & A'
+      headerSubtitle = channel.data.description
+      channelImage = (
+        <div className={style.supportPicWrapper}>
+          <QAIcon width='40' height='40' />
+        </div>
+      )
+    } else if (counterpartUser.local_role === roles.HELP) {
+      headerTitle = 'Help Desk'
+      channelImage = (
+        <div className={style.supportPicWrapper}>
+          <HelpIcon width='50' height='50' className={style.pic} />
+        </div>
+      )
+    } else {
+      headerTitle = counterpartUser.name
+      channelImage = buildRawAttendeePic(counterpartUser.image)
+      if (counterpartUser.show_fullname === false) {
+        headerTitle = counterpartUser.first_name
+      }
     }
   }
 
@@ -51,12 +95,15 @@ const SimpleChannelHeader = (props) => {
     <div className={style.simpleHeader}>
       {channelImage}
       <div className={style.textWrapper}>
-        <span className={style.title}>
+        <span className={style.title} data-tip={headerTitle}>
           {headerTitle}
-          {headerSubtitle && (
-            <span className={style.subtitle} data-tip={headerSubtitle}>{` - ${headerSubtitle}`}</span>
-          )}
         </span>
+        {headerSubtitle && (
+          <span
+            className={style.subtitle}
+            data-tip={headerSubtitle}
+          >{` - ${headerSubtitle}`}</span>
+        )}
       </div>
       <div className={style.controls}>
         <div onClick={onClose} className={style.close}>
