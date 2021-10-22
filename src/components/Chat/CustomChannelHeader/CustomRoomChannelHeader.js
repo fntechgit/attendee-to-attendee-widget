@@ -85,7 +85,7 @@ const CustomRoomChannelHeader = (props) => {
       <div className={style.picWrapper}>
         <div
           className={style.pic}
-          style={{ backgroundImage: `url(${headerImage})` }}
+          style={{ backgroundImage: `url(${encodeURI(headerImage)})` }}
         />
       </div>
       <div className={style.textWrapper}>
