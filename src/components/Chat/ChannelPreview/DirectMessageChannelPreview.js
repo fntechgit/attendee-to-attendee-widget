@@ -12,47 +12,17 @@ import {
 import style from './style.module.scss'
 
 const UserChannelPreview = ({
-  client,
   channel,
   member,
   latestMessage,
   unread,
+  title,
+  pic,
   onClick,
   onDelete
 }) => {
   const [showDelete, setShowDelete] = useState(isMobile)
   const statusClass = member.user.online ? style.online : style.offline
-
-  const setupItem = (currUser, counterpartUser) => {
-    let memberName =
-      counterpartUser.show_fullname === false
-        ? counterpartUser.first_name
-        : counterpartUser.name
-
-    let title = memberName
-    let pic = <img src={counterpartUser.image} alt='' />
-
-    const userRole = currUser.local_role
-    if (userRole === roles.QA || userRole === roles.HELP) {
-      //Agent point of view
-      title =
-        userRole === roles.QA
-          ? `${memberName} has a question`
-          : `${memberName} help request`
-    } else {
-      //Attendee point of view
-      if (counterpartUser.local_role === roles.QA) {
-        title = 'Q & A'
-        pic = <QAIcon width='50' height='50' />
-      } else if (counterpartUser.local_role === roles.HELP) {
-        title = 'Help Desk'
-        pic = <HelpIcon width='50' height='50' />
-      }
-    }
-    return { title: title, pic: pic }
-  }
-
-  const { title, pic } = setupItem(client.user, member.user)
 
   return (
     <div
@@ -107,7 +77,6 @@ const UserChannelPreview = ({
 
 const DirectMessageChannelPreview = (props) => {
   const {
-    user,
     channel,
     setActiveChannel,
     latestMessage,
@@ -146,6 +115,35 @@ const DirectMessageChannelPreview = (props) => {
     return member
   }
 
+  const setupItem = (currUser, counterpartUser) => {
+    let memberName =
+      counterpartUser.show_fullname === false
+        ? counterpartUser.first_name
+        : counterpartUser.name
+
+    let title = memberName
+    let pic = <img src={counterpartUser.image} alt='' />
+
+    const userRole = currUser.local_role
+    if (userRole === roles.QA || userRole === roles.HELP) {
+      //Agent point of view
+      title =
+        userRole === roles.QA
+          ? `${memberName} has a question`
+          : `${memberName} help request`
+    } else {
+      //Attendee point of view
+      if (counterpartUser.local_role === roles.QA) {
+        title = 'Q & A'
+        pic = <QAIcon width='50' height='50' />
+      } else if (counterpartUser.local_role === roles.HELP) {
+        title = 'Help Desk'
+        pic = <HelpIcon width='50' height='50' />
+      }
+    }
+    return { title: title, pic: pic }
+  }
+
   const userRole = client.user.local_role
   const isSupportAgent = userRole === roles.HELP || userRole === roles.QA
   const member = getCounterpartMember(
@@ -156,13 +154,16 @@ const DirectMessageChannelPreview = (props) => {
 
   if (!member) return null
 
+  const { title, pic } = setupItem(client.user, member.user)
+
   return (
     <UserChannelPreview
-      client={client}
       channel={channel}
       member={member}
       latestMessage={latestMessage}
       unread={unread}
+      title={title}
+      pic={pic}
       onDelete={onDelete}
       onClick={onChannelClick}
     />
