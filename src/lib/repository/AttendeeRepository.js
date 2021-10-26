@@ -270,11 +270,12 @@ export default class AttendeeRepository {
     }
   }
 
-  async getRole(idpUserId) {
+  async getRole(idpUserId, summitId) {
     try {
       const { data, error } = await this._client
         .from('summit_attendee_roles')
         .select('summit_id, summit_event_id')
+        .eq('summit_id', summitId)
         .eq('idp_user_id', idpUserId)
       if (error) throw new Error(error)
       if (data.length === 0) return roles.USER
