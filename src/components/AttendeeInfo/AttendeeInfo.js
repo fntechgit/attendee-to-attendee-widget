@@ -136,7 +136,7 @@ export const AttendeeInfo = ({
     return (
       <div className={style.badgesContainer}>
         {bfs.map((bf) => (
-          <div className='media-left' key={bf.name}>
+          <div className={`media-left ${style.badgeContainer}`} key={bf.name}>
             <figure className='image is-48x48'>
               <img
                 className='is-rounded'
