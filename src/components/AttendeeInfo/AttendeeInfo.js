@@ -139,7 +139,7 @@ export const AttendeeInfo = ({
           <div className={`media-left ${style.badgeContainer}`} key={bf.name}>
             <figure className='image is-48x48'>
               <img
-                className='is-rounded fixable-background'
+                className='fixable-background'
                 alt=''
                 src={bf.image}
                 title={bf.name}
