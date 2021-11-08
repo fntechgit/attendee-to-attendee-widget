@@ -35,6 +35,7 @@ const Tracker = forwardRef((props, ref) => {
   const stopKeepAlive = () => {
     if (timerHandler) {
       clearInterval(timerHandler)
+      timerHandler = null
     }
   }
 
@@ -72,6 +73,7 @@ const Tracker = forwardRef((props, ref) => {
       document.addEventListener('visibilitychange', onVisibilitychange)
     }
     return () => {
+      stopKeepAlive()
       onLeave()
       if (typeof window !== 'undefined') {
         window.removeEventListener('beforeunload', onBeforeUnload)

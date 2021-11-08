@@ -17,6 +17,13 @@
     width: 230px;
     display: flex;
     flex-wrap: wrap;
+    .badgeContainer {
+      margin-bottom: 15px;
+      img {
+        width: 48px;
+        height: 48px;
+      }
+    }
   }
 }
 

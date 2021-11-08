@@ -49,7 +49,7 @@ export default class ChatRepository {
     onError,
     onAuthError
   ) {
-    const role = await accessRepo.getRole(user.id)
+    const role = await accessRepo.getRole(user.id, summitId)
     user.role = role
     await this._streamChatService.initializeClient(
       user,

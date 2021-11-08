@@ -1,6 +1,7 @@
 import React from 'react'
 import { withChatContext } from 'stream-chat-react'
 import ReactTooltip from 'react-tooltip'
+import { channelTypes } from '../../../models/channelTypes'
 import { roles } from '../../../models/userRoles'
 import {
   HelpIcon,
@@ -67,7 +68,7 @@ const SimpleChannelHeader = (props) => {
     channelImage = buildRawAttendeePic(counterpartUser.image)
   } else {
     //Attendee point of view
-    if (counterpartUser.local_role === roles.QA) {
+    if (channel.type === channelTypes.QA_ROOM) {
       headerTitle = 'Q & A'
       headerSubtitle = channel.data.description
       channelImage = (
@@ -75,7 +76,7 @@ const SimpleChannelHeader = (props) => {
           <QAIcon width='40' height='40' />
         </div>
       )
-    } else if (counterpartUser.local_role === roles.HELP) {
+    } else if (channel.type === channelTypes.HELP_ROOM) {
       headerTitle = 'Help Desk'
       channelImage = (
         <div className={style.supportPicWrapper}>

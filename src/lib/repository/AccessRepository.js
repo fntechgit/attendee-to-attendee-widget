@@ -255,7 +255,7 @@ export default class AccessRepository extends AttendeeRepository {
 
   async mergeChanges(summitId, attendeesListLocal, attendeesNews, url) {
     let oldItem = null
-    console.log('merging access news...')
+    //console.log('merging access news...')
 
     const oldItemVerOccurrences = attendeesListLocal.filter(
       (item) => item.id === attendeesNews.id
@@ -278,7 +278,7 @@ export default class AccessRepository extends AttendeeRepository {
       return this._sortAccessesByAttName(res)
     } else {
       // must fetch from api
-      console.log('merge fetching from api')
+      //console.log('merge fetching from api')
       const { data, error } = await this._client
         .from('accesses')
         .select(`*, attendees(*)`)
