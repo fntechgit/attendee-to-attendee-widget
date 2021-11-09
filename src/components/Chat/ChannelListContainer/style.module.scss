@@ -6,6 +6,10 @@
   background-color: #fff;
   overflow: hidden;
 
+  & > div {
+    height: 100%;
+  }
+
   :global(.str-chat) {
     height: 100%;
   }
