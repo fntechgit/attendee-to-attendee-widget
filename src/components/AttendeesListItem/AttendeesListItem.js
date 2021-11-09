@@ -16,7 +16,7 @@ const AttendeesListItem = (props) => {
 
   const attendee = {
     ...attendees,
-    fullName: attendees.full_name,
+    fullName: attendees.full_name != 'null' ? attendees.full_name : 'Private',
     picUrl: attendees.pic_url,
     socialInfo: attendees.social_info,
     badgeFeatures: attendees.badges_info,
@@ -45,7 +45,7 @@ const AttendeesListItem = (props) => {
             className={style.textWrapper}
             onClick={() => onItemClick(attendee)}
           >
-            <div className={style.title}>{attendee.full_name}</div>
+            <div className={style.title}>{attendee.fullName}</div>
             {attendee.company && (
               <div className={style.subtitle}>
                 {attendee.title ? `${attendee.title} at ` : ''}

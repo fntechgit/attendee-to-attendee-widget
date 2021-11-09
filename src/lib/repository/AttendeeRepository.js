@@ -191,7 +191,7 @@ export default class AttendeeRepository {
     const { error } = await this._client.from('attendees').insert([
       {
         id,
-        full_name: fullName,
+        full_name: fullName && fullName != 'null' ?  fullName : 'Private',
         email,
         company,
         title,
