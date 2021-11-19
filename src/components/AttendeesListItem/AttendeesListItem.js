@@ -4,10 +4,10 @@ import { isMobile } from 'react-device-detect'
 import style from './style.module.scss'
 
 const AttendeesListItem = (props) => {
-  if (!props.item.attendees) return null
+  if (!props.item) return null
 
   const {
-    item: { attendees },
+    item,
     onItemClick,
     onItemPicMouseEnter,
     onItemPicMouseLeave,
@@ -15,12 +15,12 @@ const AttendeesListItem = (props) => {
   } = props
 
   const attendee = {
-    ...attendees,
-    fullName: attendees.full_name != 'null' ? attendees.full_name : 'Private',
-    picUrl: attendees.pic_url,
-    socialInfo: attendees.social_info,
-    badgeFeatures: attendees.badges_info,
-    bio: attendees.bio
+    ...item,
+    fullName: item.full_name != 'null' ? item.full_name : 'Private',
+    picUrl: item.pic_url,
+    socialInfo: item.social_info,
+    badgeFeatures: item.badges_info,
+    bio: item.bio
   }
 
   return (
@@ -28,7 +28,7 @@ const AttendeesListItem = (props) => {
       <li className={style.attendeesListItem}>
         <div
           className={style.attendeesListItemContent}
-          key={`attendee-${props.item.id}`}
+          key={`attendee-${item.id}`}
           onMouseEnter={isMobile ? null : () => onItemPicMouseEnter(attendee)}
           onMouseLeave={isMobile ? null : onItemPicMouseLeave}
         >

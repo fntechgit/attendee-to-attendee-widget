@@ -167,7 +167,7 @@ const AttendeesList = (props) => {
               .filter(
                 (v, i, a) =>
                   a.findIndex((t) => t.attendee_id === v.attendee_id) === i && 
-                  v.attendees?.idp_user_id != user.idpUserId
+                  v.idp_user_id != user.idpUserId
               )
               .map((item) => (
                 <AttendeesListItem

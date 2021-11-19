@@ -1,7 +1,16 @@
+import { DateTime } from 'luxon'
 import { signIn, signUp } from '../auth'
 import { roles } from '../../models/userRoles'
 
+const ATTTENDEES_SELECT_PROJ = 
+  'attendee_id, full_name, email, company, title, pic_url, bio, idp_user_id, is_online, social_info, badges_info, public_profile_show_email, public_profile_allow_chat_with_me'
+
+const DEFAULT_PAGE_SIZE = 30
+
+const DEFAULT_MIN_BACKWARD = 500
+
 export default class AttendeeRepository {
+
   constructor(supabaseService, user) {
     this._client = supabaseService
     this._sbUser = null
@@ -28,14 +37,15 @@ export default class AttendeeRepository {
 
     try {
       const attFetchRes = await this._client
-        .from('attendees')
-        .select(`*`)
+        .from('attendees_news')
+        .select(ATTTENDEES_SELECT_PROJ)
         .eq('email', email)
 
       if (attFetchRes.error) throw new Error(attFetchRes.error)
 
       if (attFetchRes.data && attFetchRes.data.length > 0) {
         const fetchedAttendee = attFetchRes.data[0]
+
         const user = await signIn(this._client, email, email)
 
         const badgeFeatures = getBadgeFeatures()
@@ -58,7 +68,7 @@ export default class AttendeeRepository {
         ) {
           //console.log('something change')
           this._updateAttendee(
-            fetchedAttendee.id,
+            fetchedAttendee.attendee_id,
             fullName,
             company,
             title,
@@ -81,7 +91,7 @@ export default class AttendeeRepository {
     }
   }
 
-  async _initializeAttendeeUser(attendeeProfile) {
+  async _initializeAttendeeUser(attendeeProfile, summitId) {
     const {
       email,
       fullName,
@@ -120,7 +130,8 @@ export default class AttendeeRepository {
       badgeFeatures,
       bio,
       showEmail,
-      allowChatWithMe
+      allowChatWithMe,
+      summitId
     )
     return newUser
   }
@@ -186,12 +197,14 @@ export default class AttendeeRepository {
     badgeFeatures,
     bio,
     showEmail,
-    allowChatWithMe
+    allowChatWithMe,
+    summitId
   ) {
-    const { error } = await this._client.from('attendees').insert([
+    const { error } = await this._client.from('attendees_news').insert([
       {
-        id,
-        full_name: fullName && fullName != 'null' ?  fullName : 'Private',
+        attendee_id: id,
+        summit_id: summitId,
+        full_name: fullName && fullName != 'null' ? fullName : 'Private',
         email,
         company,
         title,
@@ -202,11 +215,16 @@ export default class AttendeeRepository {
         badges_info: badgeFeatures,
         bio,
         public_profile_show_email: showEmail,
-        public_profile_allow_chat_with_me: allowChatWithMe
+        public_profile_allow_chat_with_me: allowChatWithMe,
+        current_url: '', 
+        attendee_ip: ''
       }
     ])
 
-    if (error) throw new Error(error)
+    if (error) {
+      console.log('_addAttendee', error)
+      throw new Error(error)
+    } 
   }
 
   async _updateAttendee(
@@ -224,7 +242,7 @@ export default class AttendeeRepository {
     allowChatWithMe
   ) {
     const { error } = await this._client
-      .from('attendees')
+      .from('attendees_news')
       .update([
         {
           full_name: fullName,
@@ -240,15 +258,15 @@ export default class AttendeeRepository {
           public_profile_allow_chat_with_me: allowChatWithMe
         }
       ])
-      .eq('id', id)
+      .eq('attendee_id', id)
     if (error) throw new Error(error)
   }
 
   async findByIdpID(id) {
     try {
       const { data, error } = await this._client
-        .from('attendees')
-        .select('*')
+        .from('attendees_news')
+        .select(ATTTENDEES_SELECT_PROJ)
         .eq('idp_user_id', id)
       if (error) throw new Error(error)
       return data[0]
@@ -260,13 +278,74 @@ export default class AttendeeRepository {
   async findByFullName(filter) {
     try {
       const { data, error } = await this._client
-        .from('attendees')
-        .select('*')
+        .from('attendees_news')
+        .select(ATTTENDEES_SELECT_PROJ)
         .ilike('full_name', `%${filter}%`)
       if (error) throw new Error(error)
       return data
     } catch (error) {
       console.log('error', error)
+    }
+  }
+
+  async fetchCurrentPageAttendees(
+    url,
+    pageIx = 0,
+    pageSize = DEFAULT_PAGE_SIZE,
+    ageMinutesBackward = DEFAULT_MIN_BACKWARD
+  ) {
+    try {
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
+
+      const lowerIx = pageIx * pageSize
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
+      const { data, error } = await this._client
+        .from('attendees_news')
+        .select('*')
+        .eq('current_url', url)
+        .eq('is_online', true)
+        .gt('updated_at', ageTreshold)
+        //.order('updated_at', { ascending: false })
+        .range(lowerIx, upperIx)
+
+      if (error) throw new Error(error)
+      return this._sortAccessesByAttName(data)
+    } catch (error) {
+      console.error('error', error)
+    }
+  }
+
+  async fetchCurrentShowAttendees(
+    summitId,
+    pageIx = 0,
+    pageSize = DEFAULT_PAGE_SIZE,
+    ageMinutesBackward = DEFAULT_MIN_BACKWARD
+  ) {
+    try {
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
+      const lowerIx = pageIx * pageSize
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
+
+      const { data, error } = await this._client
+        .from('attendees_news')
+        .select('*')
+        .eq('summit_id', summitId)
+        .eq('is_online', true)
+        .neq('full_name', null)
+        .gt('updated_at', ageTreshold)
+        //.order('updated_at', { ascending: false })
+        .range(lowerIx, upperIx)
+      if (error) throw new Error(error)
+
+      //console.log('fetchCurrentShowAttendees access news', data)
+      //console.log('fetchCurrentShowAttendees attendees', data.map(d => d.attendees).length)
+      return this._sortAccessesByAttName(data)
+    } catch (error) {
+      console.error('error', error)
     }
   }
 
@@ -293,7 +372,7 @@ export default class AttendeeRepository {
       if (this._sbUser) {
         // await signOut(this._client)
         return this._client
-          .from('attendees')
+          .from('attendees_news')
           .update([{ is_online: false }])
           .match({ id: this._sbUser.id })
           .then((data) => {

@@ -1,9 +1,6 @@
 import { DateTime } from 'luxon'
 import AttendeeRepository from './attendeeRepository'
 
-const default_page_size = 30
-const default_min_backward = 5
-
 export default class AccessRepository extends AttendeeRepository {
   constructor(supabaseService, subscribeToRealtime) {
     super(supabaseService, null)
@@ -15,7 +12,7 @@ export default class AccessRepository extends AttendeeRepository {
     // console.log('_logAccess: ', accessEntry)
     const { error } = await this._client.from('access_tracking').insert([
       {
-        access_id: accessEntry.id,
+        atendee_news_id: accessEntry.id,
         summit_id: accessEntry.summit_id,
         url: accessEntry.current_url,
         attendee_ip: accessEntry.attendee_ip
@@ -35,12 +32,17 @@ export default class AccessRepository extends AttendeeRepository {
     }
 
     //resubscription
-    if (this._subscription) this._client.removeSubscription(this._subscription)
+    _unsubscribeFromRealtime()
+
     this._subscription = this._client
-      .from(`accesses`)
+      .from('attendees_news')
       .on('INSERT', (payload) => this._handleRTSubscriptionNews(payload.new))
       .on('UPDATE', (payload) => this._handleRTSubscriptionNews(payload.new))
       .subscribe()
+  }
+
+  _unsubscribeFromRealtime() {
+    if (this._subscription) this._client.removeSubscription(this._subscription)
   }
 
   _handleRTSubscriptionNews(news) {
@@ -51,10 +53,10 @@ export default class AccessRepository extends AttendeeRepository {
 
   _sortAccessesByAttName(accesses) {
     return accesses
-      .filter((d) => d.attendees && d.attendees.full_name)
+      .filter((d) => d.full_name)
       .sort((a, b) => {
-        let fa = a.attendees.full_name.toLowerCase(),
-          fb = b.attendees.full_name.toLowerCase()
+        let fa = a.full_name.toLowerCase(),
+          fb = b.full_name.toLowerCase()
         if (fa < fb) return -1
         if (fa > fb) return 1
         return 0
@@ -70,47 +72,28 @@ export default class AccessRepository extends AttendeeRepository {
         this._sbUser.email !== attendeeProfile.email ||
         this._sbUser.is_online !== attendeeProfile.isOnline
       ) {
-        this._sbUser = await this._initializeAttendeeUser(attendeeProfile)
+        this._sbUser = await this._initializeAttendeeUser(
+          attendeeProfile,
+          summitId
+        )
       }
-
       if (!this._sbUser) throw new Error('User not found')
 
-      // check existing access entry
-      const fetchRes = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
-        .match({ attendee_id: this._sbUser.id, summit_id: summitId })
-
-      if (fetchRes.error) throw new Error(fetchRes.error)
-      // there was a previous access from this user
-      if (fetchRes.data && fetchRes.data.length > 0) {
-        const access = fetchRes.data[0]
-        const { data, error } = await this._client
-          .from('accesses')
-          .update([
-            {
-              current_url: url,
-              attendee_ip: fromIP
-            }
-          ])
-          .eq('id', access.id)
-        if (error) throw new Error(error)
-        if (mustLogAccess) {
-          await this._logAccess(data[0])
-        }
-        return
+      const { data, error } = await this._client
+        .from('attendees_news')
+        .update([
+          {
+            current_url: url,
+            attendee_ip: fromIP
+          }
+        ])
+        .eq('attendee_id', this._sbUser.id)
+        .eq('summit_id', summitId)
+      if (error) throw new Error(error)
+      if (mustLogAccess) {
+        await this._logAccess(data[0])
       }
-      // no access so far (first time)
-      const insRes = await this._client.from('accesses').insert([
-        {
-          attendee_id: this._sbUser.id,
-          summit_id: summitId,
-          current_url: url,
-          attendee_ip: fromIP
-        }
-      ])
-      if (insRes.error) throw new Error(insRes.error)
-      if (mustLogAccess) await this._logAccess(insRes.data[0])
+      return
     } catch (error) {
       console.error('error', error)
     }
@@ -119,73 +102,12 @@ export default class AccessRepository extends AttendeeRepository {
   async findByAttendeeId(attendeeId, summitId) {
     try {
       const { data, error } = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
+        .from('attendees_news')
+        .select('*')
         .eq('summit_id', summitId)
         .eq('attendee_id', attendeeId)
       if (error) throw new Error(error)
       return data[0]
-    } catch (error) {
-      console.error('error', error)
-    }
-  }
-
-  async fetchCurrentPageAttendees(
-    url,
-    pageIx = 0,
-    pageSize = default_page_size,
-    ageMinutesBackward = default_min_backward
-  ) {
-    try {
-      const ageTreshold = DateTime.utc()
-        .minus({ minutes: ageMinutesBackward })
-        .toString()
-
-      const lowerIx = pageIx * pageSize
-      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
-      const { data, error } = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
-        .eq('current_url', url)
-        .eq('attendees.is_online', true)
-        .gt('updated_at', ageTreshold)
-        //.order('updated_at', { ascending: false })
-        .range(lowerIx, upperIx)
-
-      if (error) throw new Error(error)
-      return this._sortAccessesByAttName(data)
-    } catch (error) {
-      console.error('error', error)
-    }
-  }
-
-  async fetchCurrentShowAttendees(
-    summitId,
-    pageIx = 0,
-    pageSize = default_page_size,
-    ageMinutesBackward = default_min_backward
-  ) {
-    try {
-      const ageTreshold = DateTime.utc()
-        .minus({ minutes: ageMinutesBackward })
-        .toString()
-      const lowerIx = pageIx * pageSize
-      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
-
-      const { data, error } = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
-        .eq('summit_id', summitId)
-        .eq('attendees.is_online', true)
-        .neq('attendees.full_name', null)
-        .gt('updated_at', ageTreshold)
-        //.order('updated_at', { ascending: false })
-        .range(lowerIx, upperIx)
-      if (error) throw new Error(error)
-
-      //console.log('fetchCurrentShowAttendees access news', data)
-      //console.log('fetchCurrentShowAttendees attendees', data.map(d => d.attendees).length)
-      return this._sortAccessesByAttName(data)
     } catch (error) {
       console.error('error', error)
     }
@@ -206,25 +128,25 @@ export default class AccessRepository extends AttendeeRepository {
         : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
 
       const byNameRes = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
+        .from('attendees_news')
+        .select('*')
         .eq(scopeFieldName, scopeFieldVal)
-        .eq('attendees.is_online', true)
+        .eq('is_online', true)
         .gt('updated_at', ageTreshold)
-        .ilike('attendees.full_name', `%${filter}%`)
+        .ilike('full_name', `%${filter}%`)
       if (byNameRes.error) throw new Error(byNameRes.error)
 
       const byCompanyRes = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
+        .from('attendees_news')
+        .select('*')
         .eq(scopeFieldName, scopeFieldVal)
-        .eq('attendees.is_online', true)
+        .eq('is_online', true)
         .gt('updated_at', ageTreshold)
-        .ilike('attendees.company', `%${filter}%`)
+        .ilike('company', `%${filter}%`)
       if (byCompanyRes.error) throw new Error(byCompanyRes.error)
 
-      const attByName = byNameRes.data.filter((el) => el.attendees)
-      const attByCompany = byCompanyRes.data.filter((el) => el.attendees)
+      const attByName = byNameRes.data.filter((el) => el)
+      const attByCompany = byCompanyRes.data.filter((el) => el)
 
       const seen = new Set()
       const res = [...attByName, ...attByCompany].filter((el) => {
@@ -244,7 +166,7 @@ export default class AccessRepository extends AttendeeRepository {
       if (this._sbUser) {
         this.signOut()
         return this._client
-          .from('accesses')
+          .from('attendees_news')
           .update([{ current_url: '', attendee_ip: '' }])
           .match({ attendee_id: this._sbUser.id, summit_id: summitId })
       }
@@ -261,6 +183,8 @@ export default class AccessRepository extends AttendeeRepository {
       (item) => item.id === attendeesNews.id
     )
     if (oldItemVerOccurrences.length > 0) {
+      //console.log('merge')
+
       oldItem = oldItemVerOccurrences[0]
       oldItem.notification_status = attendeesNews.notification_status
 
@@ -279,9 +203,10 @@ export default class AccessRepository extends AttendeeRepository {
     } else {
       // must fetch from api
       //console.log('merge fetching from api')
+      
       const { data, error } = await this._client
-        .from('accesses')
-        .select(`*, attendees(*)`)
+        .from('attendees_news')
+        .select('*')
         .eq('summit_id', summitId)
         .eq('id', attendeesNews.id)
 
@@ -304,5 +229,10 @@ export default class AccessRepository extends AttendeeRepository {
 
   subscribe(listener) {
     this._newsListener = listener
+  }
+
+  disconnect() {
+    console.log('unsubscribing from real time...')
+    _unsubscribeFromRealtime()
   }
 }
