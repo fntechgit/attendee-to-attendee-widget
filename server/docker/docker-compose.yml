@@ -62,7 +62,7 @@ services:
 
       GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
-
+  
   rest:
     container_name: supabase-rest
     image: postgrest/postgrest:v8.0.0.20211102
@@ -75,6 +75,7 @@ services:
       PGRST_DB_ANON_ROLE: anon
       PGRST_JWT_SECRET: ${JWT_SECRET}
       PGRST_DB_USE_LEGACY_GUCS: "false"
+  
   realtime:
     container_name: supabase-realtime
     image: supabase/realtime:v0.15.0
@@ -141,15 +142,21 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - /var/lib/postgresql/data/pgdata
+      - volume_db:/var/lib/postgresql/data/pgdata
       - type: bind
         source: ./volumes/db/init
         target: /docker-entrypoint-initdb.d
 
 volumes:
   volume_storage: 
-    driver: local
+    driver: local     # On Windows disable "Docker Compose V2"
     driver_opts:
       type: none
       device: ./volumes/storage/data
+      o: bind
+  volume_db:
+    driver: local     # On Windows disable "Docker Compose V2"
+    driver_opts:
+      type: none
+      device: ./volumes/db/data/a2a
       o: bind

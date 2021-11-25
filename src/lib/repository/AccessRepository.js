@@ -32,7 +32,7 @@ export default class AccessRepository extends AttendeeRepository {
     }
 
     //resubscription
-    _unsubscribeFromRealtime()
+    this._unsubscribeFromRealtime()
 
     this._subscription = this._client
       .from('attendees_news')
