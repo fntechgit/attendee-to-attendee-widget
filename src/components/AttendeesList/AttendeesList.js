@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash.debounce'
 import { useStore } from '../../lib/store'
+import { useAttendeesNews, useUpdateAttendeesNews } from '../../lib/attendeesContext'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
 import { SearchBar } from '../SearchBar/SearchBar'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -30,7 +31,10 @@ const AttendeesList = (props) => {
   } = props
   const [hasMore, setHasMore] = useState(true)
   const [currScope, setCurrScope] = useState(scopes.SHOW)
-  const [attendeesList, setAttendeesList] = useState([])
+  //const [attendeesList, setAttendeesList] = useState([])
+
+  const attendeesList = useAttendeesNews()
+  const setAttendeesList = useUpdateAttendeesNews() 
 
   const { attendeesNews } = useStore({
     url,
@@ -38,7 +42,7 @@ const AttendeesList = (props) => {
     accessRepository: accessRepo,
     chatRepository: chatRepo
   })
-
+  
   const updateAttendeesList = (promise) => {
     promise
       .then((response) => {

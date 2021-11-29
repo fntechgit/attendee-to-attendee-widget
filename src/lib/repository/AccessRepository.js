@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import AttendeeRepository from './attendeeRepository'
+import AttendeeRepository, { DEFAULT_MIN_BACKWARD } from './attendeeRepository'
 
 export default class AccessRepository extends AttendeeRepository {
   constructor(supabaseService, subscribeToRealtime) {
@@ -117,7 +117,7 @@ export default class AccessRepository extends AttendeeRepository {
     filter,
     summitId,
     url,
-    ageMinutesBackward = default_min_backward
+    ageMinutesBackward = DEFAULT_MIN_BACKWARD
   ) {
     try {
       const ageTreshold = DateTime.utc()
@@ -177,54 +177,35 @@ export default class AccessRepository extends AttendeeRepository {
 
   async mergeChanges(summitId, attendeesListLocal, attendeesNews, url) {
     let oldItem = null
-    //console.log('merging access news...')
+    let res = null
 
     const oldItemVerOccurrences = attendeesListLocal.filter(
       (item) => item.id === attendeesNews.id
     )
+    //already exists locally
     if (oldItemVerOccurrences.length > 0) {
-      //console.log('merge')
-
+      console.log('merge with an existing element')
       oldItem = oldItemVerOccurrences[0]
       oldItem.notification_status = attendeesNews.notification_status
 
-      const newList = attendeesListLocal.filter(
+      res = attendeesListLocal.filter(
         (item) => item.id !== attendeesNews.id
       )
       if (url && attendeesNews.current_url === url) {
         oldItem.current_url = attendeesNews.current_url
       }
-      newList.unshift(oldItem)
+      res.unshift(oldItem)
+    } else {
+      console.log('merge with a new element')
+      res = [...attendeesListLocal]
+      res.unshift(attendeesNews)
+    }
 
-      const res = newList.filter(
+    return this._sortAccessesByAttName(
+      res.filter(
         (v, i, a) => a.findIndex((t) => t.attendee_id === v.attendee_id) === i
       )
-      return this._sortAccessesByAttName(res)
-    } else {
-      // must fetch from api
-      //console.log('merge fetching from api')
-      
-      const { data, error } = await this._client
-        .from('attendees_news')
-        .select('*')
-        .eq('summit_id', summitId)
-        .eq('id', attendeesNews.id)
-
-      if (!error && data && data.length > 0) {
-        const item = data[0]
-        if (!url || item.current_url === url) {
-          attendeesListLocal.unshift(item)
-        }
-        const res = [
-          ...attendeesListLocal.filter(
-            (v, i, a) =>
-              a.findIndex((t) => t.attendee_id === v.attendee_id) === i
-          )
-        ]
-        return this._sortAccessesByAttName(res)
-      }
-      return attendeesListLocal
-    }
+    )
   }
 
   subscribe(listener) {
@@ -233,6 +214,6 @@ export default class AccessRepository extends AttendeeRepository {
 
   disconnect() {
     console.log('unsubscribing from real time...')
-    _unsubscribeFromRealtime()
+    this._unsubscribeFromRealtime()
   }
 }

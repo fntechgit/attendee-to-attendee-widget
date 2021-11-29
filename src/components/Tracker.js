@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types'
 import { forwardRef, useImperativeHandle, useEffect } from 'react'
 import publicIp from 'public-ip'
-import AccessRepository from '../lib/repository/AccessRepository'
-import SupabaseClientBuilder from '../lib/SupabaseClientBuilder'
+import AccessRepository from '../lib/repository/accessRepository'
+import SupabaseClientBuilder from '../lib/supabaseClientBuilder'
 import { extractBaseUrl } from '../utils/urlHelper'
+import { trackingLevel } from '../models/trackingLevel'
 
 const Tracker = forwardRef((props, ref) => {
   const { supabaseUrl, supabaseKey } = props
@@ -66,18 +67,19 @@ const Tracker = forwardRef((props, ref) => {
   }
 
   useEffect(() => {
+    const pageScopeTracking = props.trackingLevel === trackingLevel.PAGE_SCOPED_PRESENCE
     trackAccess()
-    startKeepAlive()
+    if (props.keepAliveEnabled) startKeepAlive()
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', onBeforeUnload)
-      document.addEventListener('visibilitychange', onVisibilitychange)
+      if (pageScopeTracking) document.addEventListener('visibilitychange', onVisibilitychange)
     }
     return () => {
-      stopKeepAlive()
+      if (props.keepAliveEnabled) stopKeepAlive()
       onLeave()
       if (typeof window !== 'undefined') {
         window.removeEventListener('beforeunload', onBeforeUnload)
-        document.removeEventListener('visibilitychange', onVisibilitychange)
+        if (pageScopeTracking) document.removeEventListener('visibilitychange', onVisibilitychange)
       }
     }
   }, [])
@@ -109,7 +111,14 @@ Tracker.propTypes = {
     }),
     bio: PropTypes.string,
     public_profile_show_email: PropTypes.bool
-  }).isRequired
+  }).isRequired,
+  trackingLevel: PropTypes.string,
+  keepAliveEnabled: PropTypes.bool
+}
+
+Tracker.defaultProps = {
+  trackingLevel: trackingLevel.PAGE_SCOPED_PRESENCE,
+  keepAliveEnabled: true
 }
 
 export default Tracker

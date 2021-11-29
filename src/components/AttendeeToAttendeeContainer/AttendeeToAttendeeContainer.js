@@ -1,22 +1,23 @@
 import PropTypes from 'prop-types'
 import React, {
   forwardRef,
-  useImperativeHandle,
   useEffect,
+  useImperativeHandle,
   useState
 } from 'react'
 import AccessRepository from '../../lib/repository/accessRepository'
 import Alert from '../Alert/Alert'
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import AttendeesList from '../AttendeesList/AttendeesList'
-import ChatAPIService from '../../lib/services/ChatAPIService'
+import { AttendeesNewsProvider } from '../../lib/attendeesContext'
+import ChatAPIService from '../../lib/services/chatAPIService'
 import ChatRepository from '../../lib/repository/chatRepository'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import { MainBar } from '../MainBar/MainBar'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
 import StreamChatService from '../../lib/services/streamChatService'
-import SupabaseClientBuilder from '../../lib/SupabaseClientBuilder'
+import SupabaseClientBuilder from '../../lib/supabaseClientBuilder'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
 import { copyToClipboard } from '../../utils/clipboardHelper'
 import { roles } from '../../models/userRoles'
@@ -105,10 +106,12 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           //if (activity) chatRepo.setUpActivityRoom(activity, user)
 
           chatClientEventsListener = client.on((event) => {
-
             //console.log('event', event)
 
-            if (event.type === 'message.new' || event.type === 'notification.message_new') {
+            if (
+              event.type === 'message.new' ||
+              event.type === 'notification.message_new'
+            ) {
               setShowMsgNewsBadge(event.total_unread_count > 0)
             }
 
@@ -193,7 +196,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     setAlertMessage(null)
   }
 
-  const closeAttendeeCard= () => {
+  const closeAttendeeCard = () => {
     isAttHovered = false
     setAttCardItem(null)
   }
@@ -350,7 +353,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       name: tabNames.MESSAGES,
       icon: '',
       showNewsBadge: showMsgNewsBadge,
-      content: chatClient && (
+      content: chatClient && chatClient.user && (
         <DMChannelListContainer
           user={user}
           summitId={summitId}
@@ -370,7 +373,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       name: tabNames.ROOM_CHATS,
       icon: '',
       showNewsBadge: false,
-      content: (
+      content: chatClient && chatClient.user && (
         <RoomChannelListContainer
           user={user}
           summitId={summitId}
@@ -396,21 +399,29 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       onError={ebHandleError}
     >
       <div className={style.widgetContainer}>
-        <MainBar
-          user={user}
-          onHelpClick={handleHelpClick}
-          onMinimizeButtonClick={() => setMinimized(!isMinimized)}
-        />
-        {!isMinimized && (
-          <div className='mt-2'>
-            <Tabs
-              tabList={tabList}
-              activeTab={activeTab}
-              changeActiveTab={changeActiveTab}
-            />
-            <ActiveTabContent key={activeTab} content={activeTabContent()} />
-          </div>
-        )}
+        <AttendeesNewsProvider>
+          <MainBar
+            user={user}
+            onHelpClick={handleHelpClick}
+            onMinimizeButtonClick={() => setMinimized(!isMinimized)}
+          />
+          {!isMinimized && (
+            <div className='mt-2'>
+              <Tabs
+                tabList={tabList}
+                activeTab={activeTab}
+                changeActiveTab={changeActiveTab}
+              />
+              {accessRepo && (
+                <ActiveTabContent
+                  key={activeTab}
+                  content={activeTabContent()}
+                />
+              )}
+            </div>
+          )}
+        </AttendeesNewsProvider>
+
         {chatClient && chatOpened && user && (
           <ConversationBox
             chatClient={chatClient}

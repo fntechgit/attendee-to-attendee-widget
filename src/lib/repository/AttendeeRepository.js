@@ -2,15 +2,14 @@ import { DateTime } from 'luxon'
 import { signIn, signUp } from '../auth'
 import { roles } from '../../models/userRoles'
 
-const ATTTENDEES_SELECT_PROJ = 
+const ATTTENDEES_SELECT_PROJ =
   'attendee_id, full_name, email, company, title, pic_url, bio, idp_user_id, is_online, social_info, badges_info, public_profile_show_email, public_profile_allow_chat_with_me'
 
 const DEFAULT_PAGE_SIZE = 30
 
-const DEFAULT_MIN_BACKWARD = 500
+export const DEFAULT_MIN_BACKWARD = 500
 
 export default class AttendeeRepository {
-
   constructor(supabaseService, user) {
     this._client = supabaseService
     this._sbUser = null
@@ -216,7 +215,7 @@ export default class AttendeeRepository {
         bio,
         public_profile_show_email: showEmail,
         public_profile_allow_chat_with_me: allowChatWithMe,
-        current_url: '', 
+        current_url: '',
         attendee_ip: ''
       }
     ])
@@ -224,7 +223,7 @@ export default class AttendeeRepository {
     if (error) {
       console.log('_addAttendee', error)
       throw new Error(error)
-    } 
+    }
   }
 
   async _updateAttendee(

@@ -21,35 +21,35 @@ export default class StreamChatService {
       headers: { 'Content-Type': 'application/json' }
     }
 
-    callback(this.chatClient, { })
+    //callback(this.chatClient, { })
 
-    // fetch(
-    //   `${chatApiBaseUrl}/api/v1/sso?access_token=${accessToken}&summit_id=${summitId}`,
-    //   requestOptions
-    // ).then(async (response) => {
-    //   const streamServerInfo = await response.json()
+    fetch(
+      `${chatApiBaseUrl}/api/v1/sso?access_token=${accessToken}&summit_id=${summitId}`,
+      requestOptions
+    ).then(async (response) => {
+      const streamServerInfo = await response.json()
 
-    //   if (response.status === 200 || response.status === 201) {
-    //     localStorage.setItem(this.flag, JSON.stringify(streamServerInfo))
-    //     try {
-    //       await this.chatClient.disconnectUser()
-    //       this.chatClient.connectUser(
-    //         {
-    //           id: streamServerInfo.id,
-    //           name: streamServerInfo.name,
-    //           image: streamServerInfo.image,
-    //           local_role: user.role //local_role: streamServerInfo.role
-    //         },
-    //         streamServerInfo.token
-    //       )
-    //       callback(this.chatClient, { ...streamServerInfo })
-    //     } catch (e) {
-    //       onError(e)
-    //     }
-    //   } else {
-    //     onAuthError(streamServerInfo, response)
-    //   }
-    // })
+      if (response.status === 200 || response.status === 201) {
+        localStorage.setItem(this.flag, JSON.stringify(streamServerInfo))
+        try {
+          await this.chatClient.disconnectUser()
+          this.chatClient.connectUser(
+            {
+              id: streamServerInfo.id,
+              name: streamServerInfo.name,
+              image: streamServerInfo.image,
+              local_role: user.role //local_role: streamServerInfo.role
+            },
+            streamServerInfo.token
+          )
+          callback(this.chatClient, { ...streamServerInfo })
+        } catch (e) {
+          onError(e)
+        }
+      } else {
+        onAuthError(streamServerInfo, response)
+      }
+    })
   }
 
   getClient() {
