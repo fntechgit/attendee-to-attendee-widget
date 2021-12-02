@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash.debounce'
-import { useStore } from '../../lib/store'
-import { useAttendeesNews, useUpdateAttendeesNews } from '../../lib/attendeesContext'
+import {
+  useAttendeesNews,
+  useUpdateAttendeesNews
+} from '../../lib/attendeesContext'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
 import { SearchBar } from '../SearchBar/SearchBar'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -21,7 +23,6 @@ const AttendeesList = (props) => {
   const {
     user,
     accessRepo,
-    chatRepo,
     summitId,
     url,
     onHelpClick,
@@ -31,18 +32,10 @@ const AttendeesList = (props) => {
   } = props
   const [hasMore, setHasMore] = useState(true)
   const [currScope, setCurrScope] = useState(scopes.SHOW)
-  //const [attendeesList, setAttendeesList] = useState([])
 
   const attendeesList = useAttendeesNews()
-  const setAttendeesList = useUpdateAttendeesNews() 
+  const setAttendeesList = useUpdateAttendeesNews()
 
-  const { attendeesNews } = useStore({
-    url,
-    summitId,
-    accessRepository: accessRepo,
-    chatRepository: chatRepo
-  })
-  
   const updateAttendeesList = (promise) => {
     promise
       .then((response) => {
@@ -53,21 +46,13 @@ const AttendeesList = (props) => {
       .catch(console.error)
   }
 
-  // handle real-time updates
   useEffect(() => {
-    if (currScope === scopes.PAGE) {
-      if (attendeesList.length === 0) {
+    if (attendeesList.length === 0) {
+      if (currScope === scopes.PAGE) {
         updateAttendeesList(
           accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
         )
-      } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
-        // merge news
-        updateAttendeesList(
-          accessRepo.mergeChanges(summitId, attendeesList, attendeesNews, url)
-        )
-      }
-    } else {
-      if (attendeesList.length === 0) {
+      } else {
         updateAttendeesList(
           accessRepo.fetchCurrentShowAttendees(
             summitId,
@@ -75,17 +60,8 @@ const AttendeesList = (props) => {
             pageSize
           )
         )
-      } else if (attendeesNews && Object.keys(attendeesNews).length > 0) {
-        //console.log('rt att news', attendeesNews)
-        // merge news
-        updateAttendeesList(
-          accessRepo.mergeChanges(summitId, attendeesList, attendeesNews)
-        )
       }
     }
-  }, [attendeesNews])
-
-  useEffect(() => {
     return () => {
       urlAccessesPageIx = 0
       showAccessesPageIx = 0
@@ -123,7 +99,7 @@ const AttendeesList = (props) => {
       if (scope === scopes.PAGE) {
         urlAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByAttendeeNameOrCompany(value, summitId, url)
+          ? await accessRepo.findByNameOrCompany(value, summitId, url)
           : await accessRepo.fetchCurrentPageAttendees(
               url,
               urlAccessesPageIx,
@@ -133,7 +109,7 @@ const AttendeesList = (props) => {
       } else {
         showAccessesPageIx = 0
         const res = value
-          ? await accessRepo.findByAttendeeNameOrCompany(value, summitId, '')
+          ? await accessRepo.findByNameOrCompany(value, summitId, '')
           : await accessRepo.fetchCurrentShowAttendees(
               summitId,
               showAccessesPageIx,
@@ -170,7 +146,7 @@ const AttendeesList = (props) => {
             attendeesList
               .filter(
                 (v, i, a) =>
-                  a.findIndex((t) => t.attendee_id === v.attendee_id) === i && 
+                  a.findIndex((t) => t.attendee_id === v.attendee_id) === i &&
                   v.idp_user_id != user.idpUserId
               )
               .map((item) => (

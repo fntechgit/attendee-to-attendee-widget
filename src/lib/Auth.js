@@ -7,11 +7,14 @@ const validate = (email, password) => {
 export const signUp = async (supabase, email, password) => {
   const hasErrors = validate(email, password)
   if (hasErrors) throw new Error(hasErrors)
-  const { error, data } = await supabase.auth.signUp({
+
+  let { error, data } = await supabase.auth.signUp({
     email,
     password
   })
-  if (error) throw new Error(error)
+  if (error) {
+    throw new Error(error)
+  }
   return data.user
 }
 

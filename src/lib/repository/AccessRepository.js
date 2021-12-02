@@ -1,5 +1,4 @@
-import { DateTime } from 'luxon'
-import AttendeeRepository, { DEFAULT_MIN_BACKWARD } from './attendeeRepository'
+import AttendeeRepository from './attendeeRepository'
 
 export default class AccessRepository extends AttendeeRepository {
   constructor(supabaseService, subscribeToRealtime) {
@@ -99,68 +98,6 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  async findByAttendeeId(attendeeId, summitId) {
-    try {
-      const { data, error } = await this._client
-        .from('attendees_news')
-        .select('*')
-        .eq('summit_id', summitId)
-        .eq('attendee_id', attendeeId)
-      if (error) throw new Error(error)
-      return data[0]
-    } catch (error) {
-      console.error('error', error)
-    }
-  }
-
-  async findByAttendeeNameOrCompany(
-    filter,
-    summitId,
-    url,
-    ageMinutesBackward = DEFAULT_MIN_BACKWARD
-  ) {
-    try {
-      const ageTreshold = DateTime.utc()
-        .minus({ minutes: ageMinutesBackward })
-        .toString()
-      const { scopeFieldName, scopeFieldVal } = url
-        ? { scopeFieldName: 'current_url', scopeFieldVal: url }
-        : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
-
-      const byNameRes = await this._client
-        .from('attendees_news')
-        .select('*')
-        .eq(scopeFieldName, scopeFieldVal)
-        .eq('is_online', true)
-        .gt('updated_at', ageTreshold)
-        .ilike('full_name', `%${filter}%`)
-      if (byNameRes.error) throw new Error(byNameRes.error)
-
-      const byCompanyRes = await this._client
-        .from('attendees_news')
-        .select('*')
-        .eq(scopeFieldName, scopeFieldVal)
-        .eq('is_online', true)
-        .gt('updated_at', ageTreshold)
-        .ilike('company', `%${filter}%`)
-      if (byCompanyRes.error) throw new Error(byCompanyRes.error)
-
-      const attByName = byNameRes.data.filter((el) => el)
-      const attByCompany = byCompanyRes.data.filter((el) => el)
-
-      const seen = new Set()
-      const res = [...attByName, ...attByCompany].filter((el) => {
-        const duplicate = seen.has(el.id)
-        seen.add(el.id)
-        return !duplicate
-      })
-      return res
-    } catch (error) {
-      console.error('error', error)
-      return []
-    }
-  }
-
   cleanUpAccess(summitId) {
     try {
       if (this._sbUser) {
@@ -175,7 +112,7 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  async mergeChanges(summitId, attendeesListLocal, attendeesNews, url) {
+  async mergeChanges(attendeesListLocal, attendeesNews, url) {
     let oldItem = null
     let res = null
 
@@ -184,7 +121,7 @@ export default class AccessRepository extends AttendeeRepository {
     )
     //already exists locally
     if (oldItemVerOccurrences.length > 0) {
-      console.log('merge with an existing element')
+      //console.log('merge with an existing element')
       oldItem = oldItemVerOccurrences[0]
       oldItem.notification_status = attendeesNews.notification_status
 
@@ -196,7 +133,7 @@ export default class AccessRepository extends AttendeeRepository {
       }
       res.unshift(oldItem)
     } else {
-      console.log('merge with a new element')
+      //console.log('merge with a new element')
       res = [...attendeesListLocal]
       res.unshift(attendeesNews)
     }

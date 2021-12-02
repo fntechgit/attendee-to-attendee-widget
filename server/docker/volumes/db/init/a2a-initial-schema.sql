@@ -24,9 +24,9 @@ create table public.attendees_news (
   attendee_ip	        			        text not null
 );
 
-create unique index IDX_IDP_USER_ID on public.attendees_news (idp_user_id, summit_id);
-create unique index IDX_ATTENDEE_ID on public.attendees_news (attendee_id, summit_id);
-create unique index IDX_EMAIL on public.attendees_news (((lower(email))), summit_id);
+create index IDX_IDP_USER_ID on public.attendees_news (idp_user_id, summit_id);
+create index IDX_ATTENDEE_ID on public.attendees_news (attendee_id, summit_id);
+create index IDX_EMAIL on public.attendees_news (((lower(email))), summit_id);
 
 -- updated_at auto refresh
 create extension if not exists moddatetime schema extensions;

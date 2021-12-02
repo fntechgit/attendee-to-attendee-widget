@@ -7,7 +7,7 @@ const ATTTENDEES_SELECT_PROJ =
 
 const DEFAULT_PAGE_SIZE = 30
 
-export const DEFAULT_MIN_BACKWARD = 500
+export const DEFAULT_MIN_BACKWARD = 15
 
 export default class AttendeeRepository {
   constructor(supabaseService, user) {
@@ -261,29 +261,51 @@ export default class AttendeeRepository {
     if (error) throw new Error(error)
   }
 
-  async findByIdpID(id) {
+  async findByNameOrCompany(
+    filter,
+    summitId,
+    url,
+    ageMinutesBackward = DEFAULT_MIN_BACKWARD
+  ) {
     try {
-      const { data, error } = await this._client
-        .from('attendees_news')
-        .select(ATTTENDEES_SELECT_PROJ)
-        .eq('idp_user_id', id)
-      if (error) throw new Error(error)
-      return data[0]
-    } catch (error) {
-      console.log('error', error)
-    }
-  }
+      const ageTreshold = DateTime.utc()
+        .minus({ minutes: ageMinutesBackward })
+        .toString()
+      const { scopeFieldName, scopeFieldVal } = url
+        ? { scopeFieldName: 'current_url', scopeFieldVal: url }
+        : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
 
-  async findByFullName(filter) {
-    try {
-      const { data, error } = await this._client
+      const byNameRes = await this._client
         .from('attendees_news')
-        .select(ATTTENDEES_SELECT_PROJ)
+        .select('*')
+        .eq(scopeFieldName, scopeFieldVal)
+        .eq('is_online', true)
+        .gt('updated_at', ageTreshold)
         .ilike('full_name', `%${filter}%`)
-      if (error) throw new Error(error)
-      return data
+      if (byNameRes.error) throw new Error(byNameRes.error)
+
+      const byCompanyRes = await this._client
+        .from('attendees_news')
+        .select('*')
+        .eq(scopeFieldName, scopeFieldVal)
+        .eq('is_online', true)
+        .gt('updated_at', ageTreshold)
+        .ilike('company', `%${filter}%`)
+      if (byCompanyRes.error) throw new Error(byCompanyRes.error)
+
+      const attByName = byNameRes.data.filter((el) => el)
+      const attByCompany = byCompanyRes.data.filter((el) => el)
+
+      const seen = new Set()
+      const res = [...attByName, ...attByCompany].filter((el) => {
+        const duplicate = seen.has(el.id)
+        seen.add(el.id)
+        return !duplicate
+      })
+      return res
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
+      return []
     }
   }
 

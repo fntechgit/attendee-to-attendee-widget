@@ -86,7 +86,7 @@ const widgetProps = {
       }
     }
   },
-  summitId: 17,
+  summitId: 13,
   height: 400,
   ...chatProps,
   ...sbAuthProps

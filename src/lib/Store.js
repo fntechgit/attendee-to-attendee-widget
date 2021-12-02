@@ -6,10 +6,7 @@ export const useStore = (props) => {
   const [accessListener, setAccessListener] = useState(null)
   const mounted = useRef(false);
 
-  const accessRepo = props.accessRepository
-
   useEffect(() => {
-    //console.log('rt access news', !!accessNews)
     if (accessNews) {
       setAttendeesNews(accessNews)
     }
@@ -19,9 +16,8 @@ export const useStore = (props) => {
     mounted.current = true;
     if (!accessListener) {
       setAccessListener(
-        accessRepo.subscribe((payload) => {
+        props.accessRepository.subscribe((payload) => {
           if (props.summitId === payload.summit_id && mounted.current) {
-            //console.log('rt att id', payload.attendee_id)
             handleAccessNews(payload)
           }
         })

@@ -5,7 +5,7 @@ import React, {
   useImperativeHandle,
   useState
 } from 'react'
-import AccessRepository from '../../lib/repository/accessRepository'
+import AccessRepositoryBuilder from '../../lib/builders/accessRepositoryBuilder'
 import Alert from '../Alert/Alert'
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import AttendeesList from '../AttendeesList/AttendeesList'
@@ -15,10 +15,10 @@ import ChatRepository from '../../lib/repository/chatRepository'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
 import { MainBar } from '../MainBar/MainBar'
-import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
-import StreamChatService from '../../lib/services/streamChatService'
-import SupabaseClientBuilder from '../../lib/supabaseClientBuilder'
+import { MainContent } from '../MainContent/MainContent'
 import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelListContainer'
+import StreamChatService from '../../lib/services/streamChatService'
+import SupabaseClientBuilder from '../../lib/builders/supabaseClientBuilder'
 import { copyToClipboard } from '../../utils/clipboardHelper'
 import { roles } from '../../models/userRoles'
 import { permissions } from '../../models/permissions'
@@ -32,18 +32,18 @@ import 'stream-chat-react/dist/css/index.css'
 
 import style from './style.module.scss'
 
+const tabNames = {
+  ATTENDEES: 'ATTENDEES',
+  MESSAGES: 'DIRECT MESSAGES',
+  ROOM_CHATS: 'GROUP CHATS'
+}
+
 let accessRepo = null
 let chatRepo = null
 let chatCounterpart = roles.HELP
 let activeChannel = null
 let dlCallback = null
 let chatClientEventsListener = null
-
-const tabNames = {
-  ATTENDEES: 'ATTENDEES',
-  MESSAGES: 'DIRECT MESSAGES',
-  ROOM_CHATS: 'GROUP CHATS'
-}
 
 const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const [activeTab, setActiveTab] = useState(tabNames.ATTENDEES)
@@ -81,12 +81,11 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
 
   useEffect(() => {
     const init = async () => {
-      if (!accessRepo) {
-        accessRepo = new AccessRepository(
-          SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
-          true
-        )
-      }
+      accessRepo = AccessRepositoryBuilder.getRepository(
+        supabaseUrl,
+        supabaseKey,
+        true
+      )
       if (!chatRepo) {
         chatRepo = new ChatRepository(
           SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
@@ -336,7 +335,6 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         <AttendeesList
           {...props}
           accessRepo={accessRepo}
-          chatRepo={chatRepo}
           activity={activity}
           onItemClick={handleAttendeeClick}
           onItemPicTouch={handleAttendeePicTouch}
@@ -405,20 +403,16 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             onHelpClick={handleHelpClick}
             onMinimizeButtonClick={() => setMinimized(!isMinimized)}
           />
-          {!isMinimized && (
-            <div className='mt-2'>
-              <Tabs
-                tabList={tabList}
-                activeTab={activeTab}
-                changeActiveTab={changeActiveTab}
-              />
-              {accessRepo && (
-                <ActiveTabContent
-                  key={activeTab}
-                  content={activeTabContent()}
-                />
-              )}
-            </div>
+          {!isMinimized && accessRepo && (
+            <MainContent
+              accessRepo={accessRepo}
+              tabList={tabList}
+              activeTab={activeTab}
+              url={baseUrl}
+              summitId={summitId}
+              changeActiveTab={changeActiveTab}
+              activeTabContent={activeTabContent}
+            />
           )}
         </AttendeesNewsProvider>
 

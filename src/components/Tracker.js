@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { forwardRef, useImperativeHandle, useEffect } from 'react'
 import publicIp from 'public-ip'
 import AccessRepository from '../lib/repository/accessRepository'
-import SupabaseClientBuilder from '../lib/supabaseClientBuilder'
+import SupabaseClientBuilder from '../lib/builders/supabaseClientBuilder'
 import { extractBaseUrl } from '../utils/urlHelper'
 import { trackingLevel } from '../models/trackingLevel'
 
