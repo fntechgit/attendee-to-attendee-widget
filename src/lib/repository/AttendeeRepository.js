@@ -327,12 +327,14 @@ export default class AttendeeRepository {
         .select('*')
         .eq('current_url', url)
         .eq('is_online', true)
+        .neq('full_name', null)
         .gt('updated_at', ageTreshold)
         //.order('updated_at', { ascending: false })
+        .order('full_name')
         .range(lowerIx, upperIx)
 
       if (error) throw new Error(error)
-      return this._sortAccessesByAttName(data)
+      return data
     } catch (error) {
       console.error('error', error)
     }
@@ -359,12 +361,10 @@ export default class AttendeeRepository {
         .neq('full_name', null)
         .gt('updated_at', ageTreshold)
         //.order('updated_at', { ascending: false })
+        .order('full_name')
         .range(lowerIx, upperIx)
       if (error) throw new Error(error)
-
-      //console.log('fetchCurrentShowAttendees access news', data)
-      //console.log('fetchCurrentShowAttendees attendees', data.map(d => d.attendees).length)
-      return this._sortAccessesByAttName(data)
+      return data
     } catch (error) {
       console.error('error', error)
     }

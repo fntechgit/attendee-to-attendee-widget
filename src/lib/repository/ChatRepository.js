@@ -3,10 +3,9 @@ import { channelTypes } from '../../models/channelTypes'
 import { roles } from '../../models/userRoles'
 
 export default class ChatRepository {
-  constructor(supabaseService, streamChatService, chatAPIService) {
+  constructor(supabaseService, streamChatService) {
     this._supabaseService = supabaseService
     this._streamChatService = streamChatService
-    this._chatAPIService = chatAPIService
   }
 
   async _getSupportAgents(summitId, eventId) {
@@ -69,7 +68,7 @@ export default class ChatRepository {
     callback,
     onAuthError
   ) {
-    await this._chatAPIService.seedChannelTypes(
+    await this._streamChatService.seedChannelTypes(
       chatApiBaseUrl,
       summitId,
       accessToken,

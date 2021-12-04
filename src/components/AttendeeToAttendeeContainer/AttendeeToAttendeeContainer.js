@@ -10,7 +10,6 @@ import Alert from '../Alert/Alert'
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import AttendeesList from '../AttendeesList/AttendeesList'
 import { AttendeesNewsProvider } from '../../lib/attendeesContext'
-import ChatAPIService from '../../lib/services/chatAPIService'
 import ChatRepository from '../../lib/repository/chatRepository'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
@@ -89,8 +88,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       if (!chatRepo) {
         chatRepo = new ChatRepository(
           SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
-          new StreamChatService(streamApiKey),
-          new ChatAPIService()
+          new StreamChatService(streamApiKey)
         )
       }
 

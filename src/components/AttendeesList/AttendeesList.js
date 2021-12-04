@@ -12,7 +12,7 @@ import style from './style.module.scss'
 
 let urlAccessesPageIx = 0
 let showAccessesPageIx = 0
-const pageSize = 30
+const pageSize = 20
 
 export const scopes = {
   PAGE: 'page',
@@ -32,6 +32,7 @@ const AttendeesList = (props) => {
   } = props
   const [hasMore, setHasMore] = useState(true)
   const [currScope, setCurrScope] = useState(scopes.SHOW)
+  const [filteredAttendeesList, setFilteredAttendeesList] = useState(null)
 
   const attendeesList = useAttendeesNews()
   const setAttendeesList = useUpdateAttendeesNews()
@@ -88,7 +89,7 @@ const AttendeesList = (props) => {
       setHasMore(false)
       return
     }
-    setAttendeesList([...attendeesList, ...nextPage])
+    setAttendeesList(accessRepo.sortByAttName([...attendeesList, ...nextPage]))
   }
 
   let handleSearchDebounce
@@ -96,26 +97,20 @@ const AttendeesList = (props) => {
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
       // console.log('value', value)
-      if (scope === scopes.PAGE) {
-        urlAccessesPageIx = 0
-        const res = value
-          ? await accessRepo.findByNameOrCompany(value, summitId, url)
-          : await accessRepo.fetchCurrentPageAttendees(
-              url,
-              urlAccessesPageIx,
-              pageSize
-            )
-        setAttendeesList(res && res.length > 0 ? [...res] : [])
+      if (scope === scopes.PAGE) urlAccessesPageIx = 0
+      else showAccessesPageIx = 0
+
+      if (value) {
+        const res = await accessRepo.findByNameOrCompany(
+          value,
+          summitId,
+          scope === scopes.PAGE ? url : ''
+        )
+        setFilteredAttendeesList(
+          res && res.length > 0 ? accessRepo.sortByAttName([...res]) : []
+        )
       } else {
-        showAccessesPageIx = 0
-        const res = value
-          ? await accessRepo.findByNameOrCompany(value, summitId, '')
-          : await accessRepo.fetchCurrentShowAttendees(
-              summitId,
-              showAccessesPageIx,
-              pageSize
-            )
-        setAttendeesList(res && res.length > 0 ? [...res] : [])
+        setFilteredAttendeesList(null)
       }
     }, 300)
     handleSearchDebounce()
@@ -124,10 +119,19 @@ const AttendeesList = (props) => {
   const handleFilterModeChange = (mode) => {
     const scope = mode === 0 ? scopes.SHOW : scopes.PAGE
     setCurrScope(scope)
-    handleSearch(null, scope)
+    //handleSearch(null, scope)
+    if (scope === scopes.PAGE) {
+      urlAccessesPageIx = 0
+      setFilteredAttendeesList(attendeesList.filter(a => a.current_url === url))
+    } else {
+      showAccessesPageIx = 0
+      setFilteredAttendeesList(attendeesList)
+    }
   }
 
-  if (attendeesList) {
+  const attList = filteredAttendeesList ? filteredAttendeesList : attendeesList
+
+  if (attList) {
     return (
       <div className={style.outerWrapper}>
         <SearchBar
@@ -136,14 +140,14 @@ const AttendeesList = (props) => {
           filterMenuOptions={['All Attendees', 'In this Room']}
         />
         <InfiniteScroll
-          dataLength={attendeesList.length}
+          dataLength={attList.length}
           next={fetchMoreData}
           hasMore={hasMore}
           // loader={<h4>Loading...</h4>}
           height={props.height}
         >
-          {attendeesList.length > 0 &&
-            attendeesList
+          {attList.length > 0 &&
+            attList
               .filter(
                 (v, i, a) =>
                   a.findIndex((t) => t.attendee_id === v.attendee_id) === i &&

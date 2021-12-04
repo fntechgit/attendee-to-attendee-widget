@@ -50,7 +50,7 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  _sortAccessesByAttName(accesses) {
+  sortByAttName(accesses) {
     return accesses
       .filter((d) => d.full_name)
       .sort((a, b) => {
@@ -128,17 +128,20 @@ export default class AccessRepository extends AttendeeRepository {
       res = attendeesListLocal.filter(
         (item) => item.id !== attendeesNews.id
       )
-      if (url && attendeesNews.current_url === url) {
-        oldItem.current_url = attendeesNews.current_url
+     
+      if (attendeesNews.is_online) {
+        res.unshift(oldItem)
+        if (url && attendeesNews.current_url === url) {
+          oldItem.current_url = attendeesNews.current_url
+        }
       }
-      res.unshift(oldItem)
     } else {
       //console.log('merge with a new element')
       res = [...attendeesListLocal]
       res.unshift(attendeesNews)
     }
 
-    return this._sortAccessesByAttName(
+    return this.sortByAttName(
       res.filter(
         (v, i, a) => a.findIndex((t) => t.attendee_id === v.attendee_id) === i
       )

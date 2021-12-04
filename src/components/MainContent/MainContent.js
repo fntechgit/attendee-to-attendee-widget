@@ -27,7 +27,7 @@ export const MainContent = ({ accessRepo, tabList, activeTab, url, summitId, cha
   // handle real-time updates
   useEffect(() => {
     if (attendeesNews && Object.keys(attendeesNews).length > 0) {
-      //console.log('rt att news', attendeesNews)
+      //console.log('rt att news', attendeesNews.full_name)
       // merge news
       updateAttendeesList(accessRepo.mergeChanges(attendeesList, attendeesNews))
     }
