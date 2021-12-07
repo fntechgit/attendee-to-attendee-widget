@@ -23,4 +23,6 @@ yarn-error.log*
 .idea
 
 # test data
-attendees.json
+test-bench/test_data/attendees.json
+test-bench/test_data/attendees.min.json
+test-bench/test_data/attendees.prod.summit31.json

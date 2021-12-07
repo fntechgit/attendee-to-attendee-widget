@@ -1,7 +1,8 @@
 const playwright = require("playwright");
-const attendees = require("./test_data/attendees.json");
+const attendees = require("./test_data/attendees.min.json");
 
-const BASE_URL = "https://localhost:3000";
+//const BASE_URL = "https://a2a-stress-tests.herokuapp.com";
+const BASE_URL = "https://localhost:3000/attendance";
 
 (async () => {
   const browser = await playwright["chromium"].launch({
@@ -13,7 +14,7 @@ const BASE_URL = "https://localhost:3000";
 
   for (const a of attendees) {
     try {
-      const url = `${BASE_URL}/attendance?accessToken=qe2S-CEg~YoEW-RvWXkHAj3IMw.qpBcUOArxd~UHguE~~l9rne6OgAU6y9gHsDq5jBHjPILXkiV9Y6oukohfk1ZGw4c-mcsSryR~BpTF1paREHyPqVUdJ0.CoAifd1sm&fullName=${a.full_name}&email=${a.email}&idpUserId=${a.idp_user_id}`;
+      const url = `${BASE_URL}?accessToken=ACCESS_TOKEN&fullName=${a.full_name}&email=${a.email}&idpUserId=${a.idp_user_id}`;
       const page = await context.newPage();
       //await page.goto(url);
       page.goto(url);

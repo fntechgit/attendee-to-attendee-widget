@@ -8,11 +8,14 @@ export const signUp = async (supabase, email, password) => {
   const hasErrors = validate(email, password)
   if (hasErrors) throw new Error(hasErrors)
 
-  let { error, data } = await supabase.auth.signUp({
+  let { data, error } = await supabase.auth.signUp({
     email,
     password
   })
   if (error) {
+    if (error.status === 400) { //User already registered
+      return await signIn(supabase, email, password)
+    }
     throw new Error(error)
   }
   return data.user
