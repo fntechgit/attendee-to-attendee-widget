@@ -7,10 +7,11 @@ import { extractBaseUrl } from '../utils/urlHelper'
 import { trackingLevel } from '../models/trackingLevel'
 
 const Tracker = forwardRef((props, ref) => {
-  const { supabaseUrl, supabaseKey } = props
+  const { supabaseUrl, supabaseKey, summitId } = props
   const accessRepo = new AccessRepository(
     SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
-    false
+    false,
+    summitId
   )
   const pendingOps = new Set()
   let timerHandler = null
@@ -19,7 +20,6 @@ const Tracker = forwardRef((props, ref) => {
     const clientIP = await publicIp.v4()
     accessRepo.trackAccess(
       props.user,
-      props.summitId,
       extractBaseUrl(window.location.href),
       clientIP,
       true
@@ -42,7 +42,7 @@ const Tracker = forwardRef((props, ref) => {
 
   const onLeave = async () => {
     //console.log('leaving tracked page')
-    await accessRepo.trackAccess(props.user, props.summitId, '', '', false)
+    await accessRepo.trackAccess(props.user, '', '', false)
   }
 
   function addToPendingWork(promise) {
@@ -52,7 +52,7 @@ const Tracker = forwardRef((props, ref) => {
   }
 
   const onBeforeUnload = (e) => {
-    addToPendingWork(accessRepo.cleanUpAccess(props.summitId))
+    addToPendingWork(accessRepo.cleanUpAccess())
     if (pendingOps.size) {
       e.returnValue = 'Are you sure you want to leave?'
     }

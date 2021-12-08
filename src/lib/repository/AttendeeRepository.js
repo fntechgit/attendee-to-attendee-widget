@@ -10,7 +10,8 @@ const DEFAULT_PAGE_SIZE = 30
 export const DEFAULT_MIN_BACKWARD = 15
 
 export default class AttendeeRepository {
-  constructor(supabaseService, user) {
+  constructor(supabaseService, user, summitId) {
+    this._summitId = summitId
     this._client = supabaseService
     this._sbUser = null
     if (user) {
@@ -39,7 +40,8 @@ export default class AttendeeRepository {
         .from('attendees_news')
         .select(ATTTENDEES_SELECT_PROJ)
         .eq('email', email)
-
+        .eq('summit_id', this._summitId)
+  
       if (attFetchRes.error) throw new Error(attFetchRes.error)
 
       if (attFetchRes.data && attFetchRes.data.length > 0) {
@@ -90,7 +92,7 @@ export default class AttendeeRepository {
     }
   }
 
-  async _initializeAttendeeUser(attendeeProfile, summitId) {
+  async _initializeAttendeeUser(attendeeProfile) {
     const {
       email,
       fullName,
@@ -129,8 +131,7 @@ export default class AttendeeRepository {
       badgeFeatures,
       bio,
       showEmail,
-      allowChatWithMe,
-      summitId
+      allowChatWithMe
     )
     return newUser
   }
@@ -196,13 +197,12 @@ export default class AttendeeRepository {
     badgeFeatures,
     bio,
     showEmail,
-    allowChatWithMe,
-    summitId
+    allowChatWithMe
   ) {
     const { error } = await this._client.from('attendees_news').insert([
       {
         attendee_id: id,
-        summit_id: summitId,
+        summit_id: this._summitId,
         full_name: fullName && fullName != 'null' ? fullName : 'Private',
         email,
         company,
@@ -258,12 +258,12 @@ export default class AttendeeRepository {
         }
       ])
       .eq('attendee_id', id)
+      .eq('summit_id', this._summitId)
     if (error) throw new Error(error)
   }
 
   async findByNameOrCompany(
     filter,
-    summitId,
     url,
     ageMinutesBackward = DEFAULT_MIN_BACKWARD
   ) {
@@ -273,7 +273,7 @@ export default class AttendeeRepository {
         .toString()
       const { scopeFieldName, scopeFieldVal } = url
         ? { scopeFieldName: 'current_url', scopeFieldVal: url }
-        : { scopeFieldName: 'summit_id', scopeFieldVal: summitId }
+        : { scopeFieldName: 'summit_id', scopeFieldVal: this._summitId }
 
       const byNameRes = await this._client
         .from('attendees_news')
@@ -341,7 +341,6 @@ export default class AttendeeRepository {
   }
 
   async fetchCurrentShowAttendees(
-    summitId,
     pageIx = 0,
     pageSize = DEFAULT_PAGE_SIZE,
     ageMinutesBackward = DEFAULT_MIN_BACKWARD
@@ -356,7 +355,7 @@ export default class AttendeeRepository {
       const { data, error } = await this._client
         .from('attendees_news')
         .select('*')
-        .eq('summit_id', summitId)
+        .eq('summit_id', this._summitId)
         .eq('is_online', true)
         .neq('full_name', null)
         .gt('updated_at', ageTreshold)
@@ -370,12 +369,12 @@ export default class AttendeeRepository {
     }
   }
 
-  async getRole(idpUserId, summitId) {
+  async getRole(idpUserId) {
     try {
       const { data, error } = await this._client
         .from('summit_attendee_roles')
         .select('summit_id, summit_event_id')
-        .eq('summit_id', summitId)
+        .eq('summit_id', this._summitId)
         .eq('idp_user_id', idpUserId)
       if (error) throw new Error(error)
       if (data.length === 0) return roles.USER

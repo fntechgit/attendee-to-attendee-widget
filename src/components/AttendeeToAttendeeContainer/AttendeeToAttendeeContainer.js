@@ -83,7 +83,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       accessRepo = AccessRepositoryBuilder.getRepository(
         supabaseUrl,
         supabaseKey,
-        true
+        true,
+        summitId
       )
       if (!chatRepo) {
         chatRepo = new ChatRepository(

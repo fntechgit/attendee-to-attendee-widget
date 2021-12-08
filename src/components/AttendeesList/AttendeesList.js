@@ -56,7 +56,6 @@ const AttendeesList = (props) => {
       } else {
         updateAttendeesList(
           accessRepo.fetchCurrentShowAttendees(
-            summitId,
             showAccessesPageIx,
             pageSize
           )
@@ -79,7 +78,6 @@ const AttendeesList = (props) => {
       )
     } else {
       nextPage = await accessRepo.fetchCurrentShowAttendees(
-        summitId,
         ++showAccessesPageIx,
         pageSize
       )
@@ -103,7 +101,6 @@ const AttendeesList = (props) => {
       if (value) {
         const res = await accessRepo.findByNameOrCompany(
           value,
-          summitId,
           scope === scopes.PAGE ? url : ''
         )
         setFilteredAttendeesList(

@@ -1,8 +1,8 @@
 import AttendeeRepository from './attendeeRepository'
 
 export default class AccessRepository extends AttendeeRepository {
-  constructor(supabaseService, subscribeToRealtime) {
-    super(supabaseService, null)
+  constructor(supabaseService, subscribeToRealtime, summitId) {
+    super(supabaseService, null, summitId)
     this._newsListener = null
     if (subscribeToRealtime) this._subscribeToRealtime()
   }
@@ -62,7 +62,7 @@ export default class AccessRepository extends AttendeeRepository {
       })
   }
 
-  async trackAccess(attendeeProfile, summitId, url, fromIP, mustLogAccess) {
+  async trackAccess(attendeeProfile, url, fromIP, mustLogAccess) {
     try {
       attendeeProfile.isOnline = true
 
@@ -71,10 +71,7 @@ export default class AccessRepository extends AttendeeRepository {
         this._sbUser.email !== attendeeProfile.email ||
         this._sbUser.is_online !== attendeeProfile.isOnline
       ) {
-        this._sbUser = await this._initializeAttendeeUser(
-          attendeeProfile,
-          summitId
-        )
+        this._sbUser = await this._initializeAttendeeUser(attendeeProfile)
       }
       if (!this._sbUser) throw new Error('User not found')
 
@@ -87,7 +84,7 @@ export default class AccessRepository extends AttendeeRepository {
           }
         ])
         .eq('attendee_id', this._sbUser.id)
-        .eq('summit_id', summitId)
+        .eq('summit_id', this._summitId)
       if (error) throw new Error(error)
       if (mustLogAccess) {
         await this._logAccess(data[0])
@@ -98,14 +95,14 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  cleanUpAccess(summitId) {
+  cleanUpAccess() {
     try {
       if (this._sbUser) {
         this.signOut()
         return this._client
           .from('attendees_news')
           .update([{ current_url: '', attendee_ip: '' }])
-          .match({ attendee_id: this._sbUser.id, summit_id: summitId })
+          .match({ attendee_id: this._sbUser.id, summit_id: this._summitId })
       }
     } catch (error) {
       console.error('error', error)
@@ -125,10 +122,8 @@ export default class AccessRepository extends AttendeeRepository {
       oldItem = oldItemVerOccurrences[0]
       oldItem.notification_status = attendeesNews.notification_status
 
-      res = attendeesListLocal.filter(
-        (item) => item.id !== attendeesNews.id
-      )
-     
+      res = attendeesListLocal.filter((item) => item.id !== attendeesNews.id)
+
       if (attendeesNews.is_online) {
         res.unshift(oldItem)
         if (url && attendeesNews.current_url === url) {
