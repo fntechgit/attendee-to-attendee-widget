@@ -1,18 +1,13 @@
 import PropTypes from 'prop-types'
 import { forwardRef, useImperativeHandle, useEffect } from 'react'
 import publicIp from 'public-ip'
-import AccessRepository from '../lib/repository/accessRepository'
-import SupabaseClientBuilder from '../lib/builders/supabaseClientBuilder'
+import AccessRepositoryBuilder from '../lib/builders/accessRepositoryBuilder'
 import { extractBaseUrl } from '../utils/urlHelper'
 import { trackingLevel } from '../models/trackingLevel'
 
 const Tracker = forwardRef((props, ref) => {
   const { supabaseUrl, supabaseKey, summitId } = props
-  const accessRepo = new AccessRepository(
-    SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
-    false,
-    summitId
-  )
+  let accessRepo = null
   const pendingOps = new Set()
   let timerHandler = null
 
@@ -67,6 +62,12 @@ const Tracker = forwardRef((props, ref) => {
   }
 
   useEffect(() => {
+    accessRepo = AccessRepositoryBuilder.getRepository(
+      supabaseUrl,
+      supabaseKey,
+      false,
+      summitId
+    )
     const pageScopeTracking = props.trackingLevel === trackingLevel.PAGE_SCOPED_PRESENCE
     trackAccess()
     if (props.keepAliveEnabled) startKeepAlive()
