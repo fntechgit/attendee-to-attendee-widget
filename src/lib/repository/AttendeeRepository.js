@@ -41,7 +41,7 @@ export default class AttendeeRepository {
         .select(ATTTENDEES_SELECT_PROJ)
         .eq('email', email)
         .eq('summit_id', this._summitId)
-  
+
       if (attFetchRes.error) throw new Error(attFetchRes.error)
 
       if (attFetchRes.data && attFetchRes.data.length > 0) {
@@ -307,6 +307,18 @@ export default class AttendeeRepository {
       console.error('error', error)
       return []
     }
+  }
+
+  findByNameOrCompanyLocally(list, filter, url) {
+    const attByName = list.filter(
+      (a) =>
+        a.full_name && a.full_name.toLowerCase().includes(filter.toLowerCase())
+    )
+    const attByCompany = list.filter(
+      (a) => a.company && a.company.toLowerCase().includes(filter.toLowerCase())
+    )
+    const res = [...attByName, ...attByCompany]
+    return url ? res.filter((a) => a.current_url === url) : res
   }
 
   async fetchCurrentPageAttendees(

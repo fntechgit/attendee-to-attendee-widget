@@ -23,7 +23,6 @@ const AttendeesList = (props) => {
   const {
     user,
     accessRepo,
-    summitId,
     url,
     onHelpClick,
     onQAClick,
@@ -55,10 +54,7 @@ const AttendeesList = (props) => {
         )
       } else {
         updateAttendeesList(
-          accessRepo.fetchCurrentShowAttendees(
-            showAccessesPageIx,
-            pageSize
-          )
+          accessRepo.fetchCurrentShowAttendees(showAccessesPageIx, pageSize)
         )
       }
     }
@@ -94,15 +90,20 @@ const AttendeesList = (props) => {
   const handleSearch = (value, scope) => {
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
-      // console.log('value', value)
       if (scope === scopes.PAGE) urlAccessesPageIx = 0
       else showAccessesPageIx = 0
 
       if (value) {
-        const res = await accessRepo.findByNameOrCompany(
+        // const res = await accessRepo.findByNameOrCompany(
+        //    value,
+        //    scope === scopes.PAGE ? url : ''
+        // )
+        const res = accessRepo.findByNameOrCompanyLocally(
+          attendeesList,
           value,
           scope === scopes.PAGE ? url : ''
         )
+
         setFilteredAttendeesList(
           res && res.length > 0 ? accessRepo.sortByAttName([...res]) : []
         )
@@ -119,7 +120,9 @@ const AttendeesList = (props) => {
     //handleSearch(null, scope)
     if (scope === scopes.PAGE) {
       urlAccessesPageIx = 0
-      setFilteredAttendeesList(attendeesList.filter(a => a.current_url === url))
+      setFilteredAttendeesList(
+        attendeesList.filter((a) => a.current_url === url)
+      )
     } else {
       showAccessesPageIx = 0
       setFilteredAttendeesList(attendeesList)
