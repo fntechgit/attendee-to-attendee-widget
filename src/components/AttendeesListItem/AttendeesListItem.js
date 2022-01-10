@@ -16,7 +16,7 @@ const AttendeesListItem = (props) => {
 
   const attendee = {
     ...item,
-    fullName: item.full_name != 'null' ? item.full_name : 'Private',
+    fullName: item.full_name && item.full_name != 'null' ? item.full_name : 'Private',
     picUrl: item.pic_url,
     socialInfo: item.social_info,
     badgeFeatures: item.badges_info,

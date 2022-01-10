@@ -50,12 +50,11 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  sortByAttName(accesses) {
-    return accesses
-      .filter((d) => d.full_name)
+  sortByAttName(attendeesNews) {
+    return attendeesNews
       .sort((a, b) => {
-        let fa = a.full_name.toLowerCase(),
-          fb = b.full_name.toLowerCase()
+        let fa = a.full_name?.toLowerCase(),
+          fb = b.full_name?.toLowerCase()
         if (fa < fb) return -1
         if (fa > fb) return 1
         return 0
