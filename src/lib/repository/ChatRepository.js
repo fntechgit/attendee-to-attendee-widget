@@ -24,12 +24,13 @@ export default class ChatRepository {
     }
   }
 
-  async _getAgentInfo(id) {
+  async _getAgentInfo(summitId, id) {
     try {
       const { data, error } = await this._supabaseService
-        .from('attendees')
+        .from('attendees_news')
         .select('*')
         .eq('idp_user_id', id)
+        .eq('summit_id', summitId)
       if (error) throw new Error(error)
       return data[0]
     } catch (error) {
@@ -115,7 +116,7 @@ export default class ChatRepository {
       const helpAgents = await this._getSupportAgents(summitId, 0)
       if (helpAgents && helpAgents.length > 0) {
         const helpAgentIds = helpAgents.map((h) => h.idp_user_id.toString())
-        const firstHelpAgent = await this._getAgentInfo(helpAgentIds[0])
+        const firstHelpAgent = await this._getAgentInfo(summitId, helpAgentIds[0])
         if (!firstHelpAgent) {
           //console.log('could not find a help agent')
           return null
@@ -151,7 +152,7 @@ export default class ChatRepository {
       const qaAgents = await this._getSupportAgents(summitId, activity.id)
       if (qaAgents && qaAgents.length > 0) {
         const qaAgentsIds = qaAgents.map((h) => h.idp_user_id.toString())
-        const firstQAAgent = await this._getAgentInfo(qaAgentsIds[0])
+        const firstQAAgent = await this._getAgentInfo(summitId, qaAgentsIds[0])
         if (!firstQAAgent) {
           //console.log('could not find a qa agent')
           return null
