@@ -1,0 +1,1 @@
+export const ATTENDEES_LIST_PAGE_SIZE = 10

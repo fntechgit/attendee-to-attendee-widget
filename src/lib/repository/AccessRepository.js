@@ -108,7 +108,7 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  async mergeChanges(attendeesListLocal, attendeesNews, url) {
+  mergeChanges(attendeesListLocal, attendeesNews, url) {
     let oldItem = null
     let res = null
 

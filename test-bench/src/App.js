@@ -26,21 +26,21 @@ const App = () => {
             </Link>
             <br />
             <Link
-              to={`/attendance?accessToken=${token2}&fullName=Roman Gutierrez&email=roman.gutierrez@gmail.com&idpUserId=13`}
+              to={`/attendance?accessToken=${token2}&fullName=Clint23&email=cespin+23@gmail.com&idpUserId=4945`}
             >
-              Attendee 1
+              cespin+23@gmail.com
             </Link>
             <br />
             <Link
-              to={`/attendance?accessToken=${token3}&fullName=Joe Alternate&email=cespin+7@gmail.com&idpUserId=1108`}
+              to={`/attendance?accessToken=${token3}&fullName=Clint24&email=cespin+24@gmail.com&idpUserId=4946`}
             >
-              Attendee 2
+              cespin+24@gmail.com
             </Link>
             <br />
             <Link
-              to={`/attendance?accessToken=${token2}&fullName=Roman Gutierrez&email=roman_ag@hotmail.com&idpUserId=3338`}
+              to={`/attendance?accessToken=${token2}&fullName=Clint Espinoza&email=cespin@gmail.com&idpUserId=2`}
             >
-              Attendees Prod
+              cespin@gmail.com
             </Link>
             <br />
             <Link

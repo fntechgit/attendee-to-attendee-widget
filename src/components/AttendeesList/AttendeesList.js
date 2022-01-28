@@ -5,14 +5,15 @@ import {
   useAttendeesNews,
   useUpdateAttendeesNews
 } from '../../lib/attendeesContext'
+import { ATTENDEES_LIST_PAGE_SIZE } from '../../lib/constants'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
 import { SearchBar } from '../SearchBar/SearchBar'
 import InfiniteScroll from 'react-infinite-scroll-component'
+
 import style from './style.module.scss'
 
 let urlAccessesPageIx = 0
 let showAccessesPageIx = 0
-const pageSize = 20
 
 export const scopes = {
   PAGE: 'page',
@@ -40,7 +41,7 @@ const AttendeesList = (props) => {
     promise
       .then((response) => {
         if (response && response.length > 0) {
-          setAttendeesList(response)
+          setAttendeesList(accessRepo.sortByAttName(response))
         }
       })
       .catch(console.error)
@@ -50,11 +51,11 @@ const AttendeesList = (props) => {
     if (attendeesList.length === 0) {
       if (currScope === scopes.PAGE) {
         updateAttendeesList(
-          accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, pageSize)
+          accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, ATTENDEES_LIST_PAGE_SIZE)
         )
       } else {
         updateAttendeesList(
-          accessRepo.fetchCurrentShowAttendees(showAccessesPageIx, pageSize)
+          accessRepo.fetchCurrentShowAttendees(showAccessesPageIx, ATTENDEES_LIST_PAGE_SIZE)
         )
       }
     }
@@ -70,12 +71,12 @@ const AttendeesList = (props) => {
       nextPage = await accessRepo.fetchCurrentPageAttendees(
         url,
         ++urlAccessesPageIx,
-        pageSize
+        ATTENDEES_LIST_PAGE_SIZE
       )
     } else {
       nextPage = await accessRepo.fetchCurrentShowAttendees(
         ++showAccessesPageIx,
-        pageSize
+        ATTENDEES_LIST_PAGE_SIZE
       )
     }
 
