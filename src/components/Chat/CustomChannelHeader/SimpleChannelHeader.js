@@ -68,7 +68,8 @@ const SimpleChannelHeader = (props) => {
     channelImage = buildRawAttendeePic(counterpartUser.image)
   } else {
     //Attendee point of view
-    if (channel.type === channelTypes.QA_ROOM) {
+    if (counterpartUser.local_role === roles.QA ||
+        channel.type === channelTypes.QA_ROOM) {
       headerTitle = 'Q & A'
       headerSubtitle = channel.data.description
       channelImage = (
@@ -76,7 +77,8 @@ const SimpleChannelHeader = (props) => {
           <QAIcon width='40' height='40' />
         </div>
       )
-    } else if (channel.type === channelTypes.HELP_ROOM) {
+    } else if (counterpartUser.local_role === roles.HELP || 
+      channel.type === channelTypes.HELP_ROOM) {
       headerTitle = 'Help Desk'
       channelImage = (
         <div className={style.supportPicWrapper}>

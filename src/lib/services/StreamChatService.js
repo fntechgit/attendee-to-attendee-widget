@@ -145,15 +145,15 @@ export default class StreamChatService {
     }
   }
 
-  async addMembers(channel, members) {
+  async addMembers(channel, memberIds) {
     if (channel) {
-      await channel.addMembers(members)
+      await channel.addMembers(memberIds)
     }
   }
 
-  async removeMembers(channel, members) {
+  async removeMembers(channel, memberIds) {
     if (channel) {
-      await channel.removeMembers(members)
+      await channel.removeMembers(memberIds)
     }
   }
 

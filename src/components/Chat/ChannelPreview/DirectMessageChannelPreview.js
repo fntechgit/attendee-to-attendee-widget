@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { withChatContext } from 'stream-chat-react'
 import { isMobile } from 'react-device-detect'
 import ReactTooltip from 'react-tooltip'
+import { channelTypes } from '../../../models/channelTypes'
 import { roles } from '../../../models/userRoles'
 import {
   HelpIcon,
@@ -115,7 +116,7 @@ const DirectMessageChannelPreview = (props) => {
     return member
   }
 
-  const setupItem = (currUser, counterpartUser) => {
+  const setupItem = (currUser, counterpartUser, channel) => {
     let memberName =
       counterpartUser.show_fullname === false
         ? counterpartUser.first_name
@@ -133,10 +134,12 @@ const DirectMessageChannelPreview = (props) => {
           : `${memberName} help request`
     } else {
       //Attendee point of view
-      if (counterpartUser.local_role === roles.QA) {
+      if (counterpartUser.local_role === roles.QA ||
+        channel.type === channelTypes.QA_ROOM) {
         title = 'Q & A'
         pic = <QAIcon width='50' height='50' />
-      } else if (counterpartUser.local_role === roles.HELP) {
+      } else if (counterpartUser.local_role === roles.HELP ||
+        channel.type === channelTypes.HELP_ROOM) {
         title = 'Help Desk'
         pic = <HelpIcon width='50' height='50' />
       }
@@ -154,7 +157,7 @@ const DirectMessageChannelPreview = (props) => {
 
   if (!member) return null
 
-  const { title, pic } = setupItem(client.user, member.user)
+  const { title, pic } = setupItem(client.user, member.user, channel)
 
   return (
     <UserChannelPreview
