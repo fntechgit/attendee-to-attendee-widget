@@ -7,11 +7,12 @@ export const SearchBar = ({
   onClear,
   onFilterModeChange,
   filterMenuOptions,
+  defaultMenuIx,
   placeholder
 }) => {
   const [searchPrefix, setSearchPrefix] = useState('')
   const [isMenuOpen, setMenuOpen] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [selectedIndex, setSelectedIndex] = useState(defaultMenuIx ?? 1)
 
   const toggleMenu = (event) => {
     setMenuOpen(!isMenuOpen)

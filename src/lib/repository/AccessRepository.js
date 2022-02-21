@@ -108,7 +108,7 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  mergeChanges(attendeesListLocal, attendeesNews, url) {
+  mergeChanges(attendeesListLocal, attendeesNews) {
     let oldItem = null
     let res = null
 
@@ -125,9 +125,6 @@ export default class AccessRepository extends AttendeeRepository {
 
       if (attendeesNews.is_online) {
         res.unshift(oldItem)
-        if (url && attendeesNews.current_url === url) {
-          oldItem.current_url = attendeesNews.current_url
-        }
       }
     } else {
       //console.log('merge with a new element')
@@ -140,6 +137,10 @@ export default class AccessRepository extends AttendeeRepository {
         (v, i, a) => a.findIndex((t) => t.attendee_id === v.attendee_id) === i
       )
     )
+  }
+
+  filterSameURLAttendees(attendeesList, url) {
+    return attendeesList.filter(a => a.current_url === url)
   }
 
   subscribe(listener) {

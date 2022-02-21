@@ -363,7 +363,6 @@ export default class AttendeeRepository {
         .toString()
       const lowerIx = pageIx * pageSize
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
-
       const { data, error } = await this._client
         .from('attendees_news')
         .select('*')
@@ -374,6 +373,7 @@ export default class AttendeeRepository {
         //.order('updated_at', { ascending: false })
         .order('full_name')
         .range(lowerIx, upperIx)
+
       if (error) throw new Error(error)
       return data
     } catch (error) {

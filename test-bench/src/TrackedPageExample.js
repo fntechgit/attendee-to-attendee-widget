@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import {
   AttendeeToAttendeeContainer,
   permissions,
+  scopes,
   Tracker
 } from 'attendee-to-attendee-widget'
 import { Link } from 'react-router-dom'
@@ -89,6 +90,7 @@ const widgetProps = {
   },
   summitId: 13,
   height: 400,
+  defaultScope: scopes.PAGE,  //Default attendees filter scope (scopes.PAGE | scopes.SHOW)
   ...chatProps,
   ...sbAuthProps
 }

@@ -10,6 +10,7 @@ import Alert from '../Alert/Alert'
 import { AttendeeInfo } from '../AttendeeInfo/AttendeeInfo'
 import AttendeesList from '../AttendeesList/AttendeesList'
 import { AttendeesNewsProvider } from '../../lib/attendeesContext'
+import { FilterSettingsProvider } from '../../lib/filterSettingsContext'
 import ChatRepository from '../../lib/repository/chatRepository'
 import ConversationBox from '../Chat/ConversationBox/ConversationBox'
 import DMChannelListContainer from '../Chat/ChannelListContainer/DMChannelListContainer'
@@ -19,9 +20,9 @@ import RoomChannelListContainer from '../Chat/ChannelListContainer/RoomChannelLi
 import StreamChatService from '../../lib/services/streamChatService'
 import SupabaseClientBuilder from '../../lib/builders/supabaseClientBuilder'
 import { copyToClipboard } from '../../utils/clipboardHelper'
-import { roles } from '../../models/userRoles'
-import { permissions } from '../../models/permissions'
 import { extractBaseUrl } from '../../utils/urlHelper'
+import { permissions } from '../../models/permissions'
+import { roles } from '../../models/userRoles'
 import { ErrorBoundary } from 'react-error-boundary'
 import { ErrorBoundaryFallback } from '../ErrorBoundaryFallback/ErrorBoundaryFallback'
 
@@ -65,16 +66,16 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   const baseUrl = extractBaseUrl(window.location.href)
 
   const {
-    supabaseUrl,
-    supabaseKey,
-    streamApiKey,
-    apiBaseUrl,
-    chatApiBaseUrl,
-    user,
-    summitId,
-    openDir,
     activity,
-    getAccessToken
+    chatApiBaseUrl,
+    defaultScope,
+    getAccessToken,
+    openDir,
+    streamApiKey,
+    summitId,
+    supabaseKey,
+    supabaseUrl,
+    user
   } = props
   props = { ...props, url: baseUrl }
 
@@ -403,15 +404,17 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
             onMinimizeButtonClick={() => setMinimized(!isMinimized)}
           />
           {!isMinimized && accessRepo && (
-            <MainContent
-              accessRepo={accessRepo}
-              tabList={tabList}
-              activeTab={activeTab}
-              url={baseUrl}
-              summitId={summitId}
-              changeActiveTab={changeActiveTab}
-              activeTabContent={activeTabContent}
-            />
+            <FilterSettingsProvider defaultScope={defaultScope}>
+              <MainContent
+                accessRepo={accessRepo}
+                activeTab={activeTab}
+                activeTabContent={activeTabContent}
+                changeActiveTab={changeActiveTab}
+                summitId={summitId}
+                tabList={tabList}
+                url={baseUrl}
+              />
+            </FilterSettingsProvider>
           )}
         </AttendeesNewsProvider>
 

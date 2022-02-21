@@ -154,6 +154,7 @@ export const AttendeesWidget = ({ user, event }) => {
     },
     summitId: SUMMIT_ID,
     height: WIDGET_HEIGHT || 400,
+    defaultScope: scopes.PAGE,  //Default attendees filter scope (scopes.PAGE | scopes.SHOW)
     ...chatProps,
     ...sbAuthProps
   }

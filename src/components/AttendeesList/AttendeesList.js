@@ -5,7 +5,9 @@ import {
   useAttendeesNews,
   useUpdateAttendeesNews
 } from '../../lib/attendeesContext'
+import { useFilterSettings, useUpdateFilterSettings } from '../../lib/filterSettingsContext'
 import { ATTENDEES_LIST_PAGE_SIZE } from '../../lib/constants'
+import { scopes } from '../../models/scopes'
 import AttendeesListItem from '../AttendeesListItem/AttendeesListItem'
 import { SearchBar } from '../SearchBar/SearchBar'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -15,27 +17,23 @@ import style from './style.module.scss'
 let urlAccessesPageIx = 0
 let showAccessesPageIx = 0
 
-export const scopes = {
-  PAGE: 'page',
-  SHOW: 'show'
-}
-
 const AttendeesList = (props) => {
   const {
-    user,
     accessRepo,
-    url,
     onHelpClick,
     onQAClick,
     showHelpButton,
-    showQAButton
+    showQAButton,
+    url,
+    user
   } = props
   const [hasMore, setHasMore] = useState(true)
-  const [currScope, setCurrScope] = useState(scopes.SHOW)
   const [filteredAttendeesList, setFilteredAttendeesList] = useState(null)
 
   const attendeesList = useAttendeesNews()
   const setAttendeesList = useUpdateAttendeesNews()
+  const currentFilterMode = useFilterSettings()
+  const setFilterMode = useUpdateFilterSettings()
 
   const updateAttendeesList = (promise) => {
     promise
@@ -49,7 +47,7 @@ const AttendeesList = (props) => {
 
   useEffect(() => {
     if (attendeesList.length === 0) {
-      if (currScope === scopes.PAGE) {
+      if (currentFilterMode === scopes.PAGE) {
         updateAttendeesList(
           accessRepo.fetchCurrentPageAttendees(url, urlAccessesPageIx, ATTENDEES_LIST_PAGE_SIZE)
         )
@@ -67,7 +65,7 @@ const AttendeesList = (props) => {
 
   const fetchMoreData = async () => {
     let nextPage
-    if (currScope === scopes.PAGE) {
+    if (currentFilterMode === scopes.PAGE) {
       nextPage = await accessRepo.fetchCurrentPageAttendees(
         url,
         ++urlAccessesPageIx,
@@ -95,10 +93,6 @@ const AttendeesList = (props) => {
       else showAccessesPageIx = 0
 
       if (value) {
-        // const res = await accessRepo.findByNameOrCompany(
-        //    value,
-        //    scope === scopes.PAGE ? url : ''
-        // )
         const res = accessRepo.findByNameOrCompanyLocally(
           attendeesList,
           value,
@@ -116,18 +110,7 @@ const AttendeesList = (props) => {
   }
 
   const handleFilterModeChange = (mode) => {
-    const scope = mode === 0 ? scopes.SHOW : scopes.PAGE
-    setCurrScope(scope)
-    //handleSearch(null, scope)
-    if (scope === scopes.PAGE) {
-      urlAccessesPageIx = 0
-      setFilteredAttendeesList(
-        attendeesList.filter((a) => a.current_url === url)
-      )
-    } else {
-      showAccessesPageIx = 0
-      setFilteredAttendeesList(attendeesList)
-    }
+    setFilterMode(mode === 0 ? scopes.SHOW : scopes.PAGE)
   }
 
   const attList = filteredAttendeesList ? filteredAttendeesList : attendeesList
@@ -136,9 +119,10 @@ const AttendeesList = (props) => {
     return (
       <div className={style.outerWrapper}>
         <SearchBar
-          onSearch={(e) => handleSearch(e.target.value, currScope)}
+          onSearch={(e) => handleSearch(e.target.value, currentFilterMode)}
           onFilterModeChange={handleFilterModeChange}
           filterMenuOptions={['All Attendees', 'In this Room']}
+          defaultMenuIx={currentFilterMode === scopes.SHOW ? 0 : 1}
         />
         <InfiniteScroll
           dataLength={attList.length}
