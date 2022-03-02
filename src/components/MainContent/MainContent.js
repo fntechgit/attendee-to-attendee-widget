@@ -41,10 +41,7 @@ export const MainContent = ({
   }
 
   const forceFirstPageFetch = () => {
-    if (
-      attendeesListLength.current > 0 &&
-      attendeesListLength.current < ATTENDEES_LIST_PAGE_SIZE
-    ) {
+    if (attendeesListLength.current < ATTENDEES_LIST_PAGE_SIZE) {
       if (selectedFilterScope.current === scopes.PAGE) {
         updateAttendeesList(
           accessRepo.fetchCurrentPageAttendees(url, 0, ATTENDEES_LIST_PAGE_SIZE)

@@ -146,9 +146,4 @@ export default class AccessRepository extends AttendeeRepository {
   subscribe(listener) {
     this._newsListener = listener
   }
-
-  disconnect() {
-    console.log('unsubscribing from real time...')
-    this._unsubscribeFromRealtime()
-  }
 }

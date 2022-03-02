@@ -157,7 +157,6 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       console.log('disconnecting chat...')
       chatClientEventsListener?.unsubscribe()
       chatRepo?.disconnect()
-      accessRepo?.disconnect()
     }
   }, [])
 

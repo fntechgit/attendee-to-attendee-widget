@@ -109,7 +109,7 @@ const RoomChannelListContainer = ({
             <Chat client={chatClient}>
               <ChannelListContainer
                 filters={currFilters}
-                sort={{ type: -1 }}
+                sort={{ created_at: 1 }}
                 user={user}
                 options={{ watch: true, limit: 20 }}
                 summitId={summitId}
