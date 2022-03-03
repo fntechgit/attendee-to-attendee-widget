@@ -406,7 +406,8 @@ export default class AttendeeRepository {
         return this._client
           .from('attendees_news')
           .update([{ is_online: false }])
-          .match({ id: this._sbUser.id })
+          .eq('attendee_id', this._sbUser.id)
+          .eq('summit_id', this._summitId)
           .then((data) => {
             //console.log(data)
             this._sbUser = null
