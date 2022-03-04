@@ -31,14 +31,12 @@ export default class AccessRepository extends AttendeeRepository {
   }
 
   refreshRealtimeSubscription() {
-    console.log('re-subscribing to realtime...')
- 
     //const subscriptions = this._client.getSubscriptions()
     if (this._subscription && this._subscription.state === 'joined') {
       return
     }
 
-    console.log('removing all previous subscriptions...')
+    console.log('re-subscribing to realtime...')
 
     this._client.removeAllSubscriptions()
 
