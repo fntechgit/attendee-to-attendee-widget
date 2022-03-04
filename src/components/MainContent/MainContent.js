@@ -35,29 +35,34 @@ export const MainContent = ({
       .then((response) => {
         if (response && response.length > 0) {
           setAttendeesList(accessRepo.sortByAttName(response))
+          attendeesListLength.current = response.length
+        } else {
+          setAttendeesList([])
+          attendeesListLength.current = 0
         }
       })
       .catch(console.error)
   }
 
   const forceFirstPageFetch = () => {
-    if (attendeesListLength.current < ATTENDEES_LIST_PAGE_SIZE) {
-      if (selectedFilterScope.current === scopes.PAGE) {
-        updateAttendeesList(
-          accessRepo.fetchCurrentPageAttendees(url, 0, ATTENDEES_LIST_PAGE_SIZE)
-        )
-      } else {
-        updateAttendeesList(
-          accessRepo.fetchCurrentShowAttendees(0, ATTENDEES_LIST_PAGE_SIZE)
-        )
-      }
+    if (selectedFilterScope.current === scopes.PAGE) {
+      updateAttendeesList(
+        accessRepo.fetchCurrentPageAttendees(url, 0, ATTENDEES_LIST_PAGE_SIZE)
+      )
+    } else {
+      updateAttendeesList(
+        accessRepo.fetchCurrentShowAttendees(0, ATTENDEES_LIST_PAGE_SIZE)
+      )
     }
   }
 
   const onVisibilitychange = (_) => {
     if (document.visibilityState === 'visible') {
       // ensure first list page fetch on tab focus in case real-time isn't working properly
-      forceFirstPageFetch()
+      if (attendeesListLength.current < ATTENDEES_LIST_PAGE_SIZE) {
+        forceFirstPageFetch()
+      }
+      accessRepo.refreshRealtimeSubscription()
     }
   }
 
@@ -93,6 +98,7 @@ export const MainContent = ({
   useEffect(() => {
     selectedFilterScope.current = currentFilterMode
     forceFirstPageFetch()
+    accessRepo.refreshRealtimeSubscription()
   }, [currentFilterMode])
 
   return (

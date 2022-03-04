@@ -4,7 +4,7 @@ export default class AccessRepository extends AttendeeRepository {
   constructor(supabaseService, subscribeToRealtime, summitId) {
     super(supabaseService, null, summitId)
     this._newsListener = null
-    if (subscribeToRealtime) this._subscribeToRealtime()
+    if (subscribeToRealtime) this.refreshRealtimeSubscription()
   }
 
   async _logAccess(accessEntry) {
@@ -24,30 +24,31 @@ export default class AccessRepository extends AttendeeRepository {
     }
   }
 
-  _subscribeToRealtime() {
+  _handleRTSubscriptionNews(news) {
+    if (this._newsListener) {
+      this._newsListener(news)
+    }
+  }
+
+  refreshRealtimeSubscription() {
+    console.log('re-subscribing to realtime...')
+ 
     //const subscriptions = this._client.getSubscriptions()
     if (this._subscription && this._subscription.state === 'joined') {
       return
     }
 
-    //resubscription
-    this._unsubscribeFromRealtime()
+    console.log('removing all previous subscriptions...')
+
+    this._client.removeAllSubscriptions()
 
     this._subscription = this._client
       .from('attendees_news')
       .on('INSERT', (payload) => this._handleRTSubscriptionNews(payload.new))
       .on('UPDATE', (payload) => this._handleRTSubscriptionNews(payload.new))
       .subscribe()
-  }
 
-  _unsubscribeFromRealtime() {
-    if (this._subscription) this._client.removeSubscription(this._subscription)
-  }
-
-  _handleRTSubscriptionNews(news) {
-    if (this._newsListener) {
-      this._newsListener(news)
-    }
+    console.log('subscriptions count', this._client.getSubscriptions())
   }
 
   sortByAttName(attendeesNews) {
