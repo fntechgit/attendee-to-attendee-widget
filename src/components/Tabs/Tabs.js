@@ -7,7 +7,7 @@ const Tab = ({ activeTab, changeActiveTab, tab: { name, showNewsBadge } }) => {
       className={name === activeTab ? 'is-active' : ''}
       onClick={() => changeActiveTab(name)}
     >
-      <a style={{ textDecoration: 'none' }}>
+      <a style={{ textDecoration: 'none' }} href='#;'>
         <span>{name}</span>
         {showNewsBadge && <span className={style.unreadMessagesBadge}></span>}
       </a>

@@ -76,6 +76,7 @@ export const SearchBar = ({
                   className='dropdown-item mt-2 pr-0'
                   style={{ textDecoration: 'none' }}
                   key={ix}
+                  href='#;'
                   onClick={() => handleMenuSelection(ix)}
                 >
                   <span className='icon-text is-size-5 has-text-grey'>
