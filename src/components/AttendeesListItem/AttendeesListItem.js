@@ -41,7 +41,8 @@ const AttendeesListItem = (props) => {
               style={{ backgroundImage: `url(${attendee.pic_url})` }}
             />
           </div>
-          <div
+          <a
+            href='#;'
             className={style.textWrapper}
             onClick={() => onItemClick(attendee)}
           >
@@ -52,7 +53,7 @@ const AttendeesListItem = (props) => {
                 {attendee.company}
               </div>
             )}
-          </div>
+          </a>
         </div>
       </li>
     )
