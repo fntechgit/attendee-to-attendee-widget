@@ -52,7 +52,7 @@ export const MainBar = ({ user, onHelpClick, onMinimizeButtonClick }) => {
           />
         </div>
         <div className={style.textWrapper}>
-          <div className={style.title}>Connect</div>
+          <h2 className={style.title}>Connect</h2>
         </div>
         <div className={style.menu}>
           <button className='button is-white is-large' onClick={onHelpClick}>
