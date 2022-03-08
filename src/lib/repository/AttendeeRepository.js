@@ -259,7 +259,8 @@ export default class AttendeeRepository {
       ])
       .eq('attendee_id', id)
       .eq('summit_id', this._summitId)
-    if (error) throw new Error(error)
+      
+    if (error) console.log('_updateAttendee error', error)
   }
 
   async findByNameOrCompany(

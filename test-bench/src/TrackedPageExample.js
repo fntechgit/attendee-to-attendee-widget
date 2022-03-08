@@ -166,7 +166,7 @@ const TrackedPageExample = () => {
     !loading && (
       <div
         style={{
-          width: '420px',
+          width: '400px',
           margin: '20px auto',
           position: 'relative'
         }}

@@ -22,6 +22,7 @@
     .picWrapper {
       height: 50px;
       width: 50px;
+      min-width: 50px;
       border-radius: 50%;
       float: left;
       background-color: lightgrey;
@@ -38,10 +39,19 @@
       display: flex;
       flex-direction: column;
       margin-left: 10px;
+      overflow: hidden;
+      
+      .title, .subtitle {
+        overflow: hidden;
+        white-space: nowrap;
+        width: 100%;
+        text-overflow: ellipsis;
+      }
 
       .title {
         font-size: 16px;
       }
+
       .subtitle {
         font-size: 12px;
       }
