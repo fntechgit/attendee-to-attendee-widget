@@ -1,4 +1,5 @@
 import AttendeeRepository from './attendeeRepository'
+import { CHANNEL_STATES } from '../../lib/constants'
 
 export default class AccessRepository extends AttendeeRepository {
   constructor(supabaseService, subscribeToRealtime, summitId) {
@@ -29,16 +30,22 @@ export default class AccessRepository extends AttendeeRepository {
       this._newsListener(news)
     }
   }
+  
+  _isJoined() {
+    return this._subscription?.state === CHANNEL_STATES.joined
+  }
+  
+  _isJoining() {
+    return this._subscription?.state === CHANNEL_STATES.joining
+  }
 
   refreshRealtimeSubscription() {
     //const subscriptions = this._client.getSubscriptions()
-    if (this._subscription && this._subscription.state === 'joined') {
-      return
-    }
+    if (this._isJoined() || this._isJoining()) return
 
-    console.log('re-subscribing to realtime...')
+    console.log('A2A::AccessRepository::refreshRealtimeSubscription - re-subscribing to realtime...', this._subscription?.state)
 
-    this._client.removeAllSubscriptions()
+    if (this._subscription) this._client.removeSubscription(this._subscription)
 
     this._subscription = this._client
       .from('attendees_news')
@@ -46,7 +53,8 @@ export default class AccessRepository extends AttendeeRepository {
       .on('UPDATE', (payload) => this._handleRTSubscriptionNews(payload.new))
       .subscribe()
 
-    console.log('subscriptions count', this._client.getSubscriptions())
+    //console.log('subscriptions count', this._client.getSubscriptions()?.length)
+    console.log('A2A::AccessRepository::refreshRealtimeSubscription - re-subscribed to realtime...', this._subscription?.state)
   }
 
   sortByAttName(attendeesNews) {
@@ -89,7 +97,7 @@ export default class AccessRepository extends AttendeeRepository {
       }
       return
     } catch (error) {
-      console.error('error', error)
+      console.error('A2A::AccessRepository::trackAccess - error', error)
     }
   }
 
@@ -103,7 +111,7 @@ export default class AccessRepository extends AttendeeRepository {
           .match({ attendee_id: this._sbUser.id, summit_id: this._summitId })
       }
     } catch (error) {
-      console.error('error', error)
+      console.error('A2A::AccessRepository::cleanUpAccess - error', error)
     }
   }
 
