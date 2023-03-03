@@ -97,7 +97,10 @@ const widgetProps = {
 
 const TrackedPageExample = () => {
   const [loading, setLoading] = useState(true)
-  const trackerRef = useRef()
+  const signOutRef = useRef()
+  const bindWLCRef = useRef()
+  const unbindWLCRef = useRef()
+
   const sdcRef = useRef()
   const shcRef = useRef()
   const sqacRef = useRef()
@@ -159,7 +162,15 @@ const TrackedPageExample = () => {
   }
 
   const handleSignOutClick = () => {
-    trackerRef.current.signOut()
+    signOutRef.current.signOut()
+  }
+
+  const handleBindWindowLifecycleClick = () => {
+    bindWLCRef.current.bindToWindowLifecycle()
+  }
+
+  const handleUnbindWindowLifecycleClick = () => {
+    unbindWLCRef.current.unbindFromWindowLifecycle()
   }
 
   return (
@@ -178,7 +189,7 @@ const TrackedPageExample = () => {
           {...widgetProps}
           ref={{ sdcRef, shcRef, sqacRef, ocrRef }}
         />
-        <Tracker {...widgetProps} ref={trackerRef} />
+        <Tracker {...widgetProps} ref={{ signOutRef, bindWLCRef, unbindWLCRef }} />
         <br />
         <hr />
         <button onClick={handleSignOutClick}>SignOut</button>
@@ -188,6 +199,8 @@ const TrackedPageExample = () => {
         </button>
         <button onClick={startHelpChat}>Start Help Chat</button>
         <button onClick={startQAChat}>Start Q&A Chat</button>
+        <button onClick={handleBindWindowLifecycleClick}>Bind Window Lifecycle</button>
+        <button onClick={handleUnbindWindowLifecycleClick}>Unbind Window Lifecycle</button>
       </div>
     )
   )
