@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { forwardRef, useImperativeHandle, useEffect } from 'react'
+import { forwardRef, useImperativeHandle, useCallback, useEffect } from 'react'
 import publicIp from 'public-ip'
 import { extractBaseUrl } from '../utils/urlHelper'
 import { trackingLevel } from '../models/trackingLevel'
@@ -47,7 +47,7 @@ const Tracker = forwardRef((props, ref) => {
     promise.then(cleanup).catch(cleanup)
   }
 
-  const onBeforeUnload = (e) => {
+  const onBeforeUnload = useCallback(e => {
     const promise = accessRepo.cleanUpAccess()
     if (promise) {
       addToPendingWork(promise)
@@ -55,15 +55,15 @@ const Tracker = forwardRef((props, ref) => {
     if (pendingOps.size) {
       e.returnValue = 'Are you sure you want to leave?'
     }
-  }
+  }, []);
 
-  const onVisibilitychange = (_) => {
+  const onVisibilitychange = useCallback(_ => {
     if (document.visibilityState === 'visible') {
       trackAccess()
     } else {
       onLeave()
     }
-  }
+  }, []);
 
   const switchOff = (e) => {
     if (props.keepAliveEnabled) stopKeepAlive()
@@ -96,7 +96,7 @@ const Tracker = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     signOut() {
       switchOff()
-      accessRepo.signOut()
+      accessRepo?.signOut()
     },
     bindToWindowLifecycle() {
       console.log('bindToWindowLifecycle');
