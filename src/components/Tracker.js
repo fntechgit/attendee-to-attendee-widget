@@ -48,7 +48,10 @@ const Tracker = forwardRef((props, ref) => {
   }
 
   const onBeforeUnload = (e) => {
-    addToPendingWork(accessRepo.cleanUpAccess())
+    const promise = accessRepo.cleanUpAccess()
+    if (promise) {
+      addToPendingWork(promise)
+    }
     if (pendingOps.size) {
       e.returnValue = 'Are you sure you want to leave?'
     }
@@ -59,6 +62,15 @@ const Tracker = forwardRef((props, ref) => {
       trackAccess()
     } else {
       onLeave()
+    }
+  }
+
+  const switchOff = (e) => {
+    if (props.keepAliveEnabled) stopKeepAlive()
+    if (typeof window !== 'undefined') {
+      const pageScopeTracking = props.trackingLevel === trackingLevel.PAGE_SCOPED_PRESENCE
+      window.removeEventListener('beforeunload', onBeforeUnload)
+      if (pageScopeTracking) document.removeEventListener('visibilitychange', onVisibilitychange)
     }
   }
 
@@ -76,21 +88,29 @@ const Tracker = forwardRef((props, ref) => {
       if (pageScopeTracking) document.addEventListener('visibilitychange', onVisibilitychange)
     }
     return () => {
-      if (props.keepAliveEnabled) stopKeepAlive()
       onLeave()
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('beforeunload', onBeforeUnload)
-        if (pageScopeTracking) document.removeEventListener('visibilitychange', onVisibilitychange)
-      }
+      switchOff()
     }
   }, [])
 
   useImperativeHandle(ref, () => ({
     signOut() {
+      switchOff()
       accessRepo.signOut()
+    },
+    bindToWindowLifecycle() {
+      console.log('bindToWindowLifecycle');
+      if (typeof window !== 'undefined') {
+        window.addEventListener('beforeunload', onBeforeUnload)
+      }
+    },
+    unbindFromWindowLifecycle() {
+      console.log('unbindFromWindowLifecycle');
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('beforeunload', onBeforeUnload)
+      }
     }
   }))
-
   return null
 })
 

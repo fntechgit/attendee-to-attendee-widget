@@ -98,6 +98,7 @@ const widgetProps = {
 const TrackedPageExample = () => {
   const [loading, setLoading] = useState(true)
   const trackerRef = useRef()
+
   const sdcRef = useRef()
   const shcRef = useRef()
   const sqacRef = useRef()
@@ -162,6 +163,14 @@ const TrackedPageExample = () => {
     trackerRef.current.signOut()
   }
 
+  const handleBindWindowLifecycleClick = () => {
+    trackerRef.current.bindToWindowLifecycle()
+  }
+
+  const handleUnbindWindowLifecycleClick = () => {
+    trackerRef.current.unbindFromWindowLifecycle()
+  }
+
   return (
     !loading && (
       <div
@@ -188,6 +197,8 @@ const TrackedPageExample = () => {
         </button>
         <button onClick={startHelpChat}>Start Help Chat</button>
         <button onClick={startQAChat}>Start Q&A Chat</button>
+        <button onClick={handleBindWindowLifecycleClick}>Bind Window Lifecycle</button>
+        <button onClick={handleUnbindWindowLifecycleClick}>Unbind Window Lifecycle</button>
       </div>
     )
   )
