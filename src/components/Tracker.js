@@ -93,23 +93,17 @@ const Tracker = forwardRef((props, ref) => {
     }
   }, [])
 
-  useImperativeHandle(ref.signOutRef, () => ({
+  useImperativeHandle(ref, () => ({
     signOut() {
       switchOff()
       accessRepo.signOut()
-    }
-  }))
-
-  useImperativeHandle(ref.bindWLCRef, () => ({
+    },
     bindToWindowLifecycle() {
       console.log('bindToWindowLifecycle');
       if (typeof window !== 'undefined') {
         window.addEventListener('beforeunload', onBeforeUnload)
       }
-    }
-  }))
-
-  useImperativeHandle(ref.unbindWLCRef, () => ({
+    },
     unbindFromWindowLifecycle() {
       console.log('unbindFromWindowLifecycle');
       if (typeof window !== 'undefined') {
@@ -117,7 +111,6 @@ const Tracker = forwardRef((props, ref) => {
       }
     }
   }))
-
   return null
 })
 

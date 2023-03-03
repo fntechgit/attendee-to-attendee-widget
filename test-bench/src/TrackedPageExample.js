@@ -97,9 +97,7 @@ const widgetProps = {
 
 const TrackedPageExample = () => {
   const [loading, setLoading] = useState(true)
-  const signOutRef = useRef()
-  const bindWLCRef = useRef()
-  const unbindWLCRef = useRef()
+  const trackerRef = useRef()
 
   const sdcRef = useRef()
   const shcRef = useRef()
@@ -162,15 +160,15 @@ const TrackedPageExample = () => {
   }
 
   const handleSignOutClick = () => {
-    signOutRef.current.signOut()
+    trackerRef.current.signOut()
   }
 
   const handleBindWindowLifecycleClick = () => {
-    bindWLCRef.current.bindToWindowLifecycle()
+    trackerRef.current.bindToWindowLifecycle()
   }
 
   const handleUnbindWindowLifecycleClick = () => {
-    unbindWLCRef.current.unbindFromWindowLifecycle()
+    trackerRef.current.unbindFromWindowLifecycle()
   }
 
   return (
@@ -189,7 +187,7 @@ const TrackedPageExample = () => {
           {...widgetProps}
           ref={{ sdcRef, shcRef, sqacRef, ocrRef }}
         />
-        <Tracker {...widgetProps} ref={{ signOutRef, bindWLCRef, unbindWLCRef }} />
+        <Tracker {...widgetProps} ref={trackerRef} />
         <br />
         <hr />
         <button onClick={handleSignOutClick}>SignOut</button>
