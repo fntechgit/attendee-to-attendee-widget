@@ -23,7 +23,7 @@ const RoomsManager = (props) => {
   const [selectedImageFileName, setSelectedImageFileName] = useState(null)
 
   const handleSearch = async (query) => {
-    return (await accessRepo.findByFullName(query)).map((item) => {
+    return (await accessRepo.findByNameOrCompany(query)).map((item) => {
       return {
         value: item.idp_user_id,
         text: item.full_name,
