@@ -63,7 +63,7 @@ const DMChannelListContainer = ({
     if (handleSearchDebounce) handleSearchDebounce.cancel()
     handleSearchDebounce = debounce(async () => {
       //Fetch attendee info for matched user names
-      const res = await accessRepo.findByFullName(value)
+      const res = await accessRepo.findByNameOrCompany(value)
 
       if (res && res.length > 0) {
         let channelIds = res.map((att) => `${user.id}-${att.idp_user_id}`)
