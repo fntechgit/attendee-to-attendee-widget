@@ -55,13 +55,16 @@ export const MainBar = ({ user, onHelpClick, onMinimizeButtonClick }) => {
           <div className={style.title}>Connect</div>
         </div>
         <div className={style.menu}>
-          <button className='button is-white is-large' onClick={onHelpClick}>
+          <button 
+            className={`button is-white is-large ${style.button}`} 
+            onClick={onHelpClick}
+          >
             <span className='icon'>
               <i className='fa fa-question-circle-o' aria-hidden='true'></i>
             </span>
           </button>
           <button
-            className='button is-white is-large'
+            className={`button is-white is-large ${style.button}`}
             onClick={onMinimizeButtonClick}
           >
             <span className='icon'>

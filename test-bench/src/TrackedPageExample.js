@@ -12,6 +12,11 @@ const sbAuthProps = {
   supabaseKey: process.env.REACT_APP_SUPABASE_KEY
 }
 
+const themes = {
+  LIGHT: 'light',
+  DARK: 'dark',
+}
+
 const chatProps = {
   streamApiKey: '29gtgpyz5hht',
   apiBaseUrl: 'https://idp.dev.fnopen.com',
@@ -89,6 +94,7 @@ const widgetProps = {
     }
   },
   summitId: 13,
+  theme: themes.DARK,
   height: 400,
   defaultScope: scopes.PAGE,  //Default attendees filter scope (scopes.PAGE | scopes.SHOW)
   ...chatProps,
@@ -97,6 +103,7 @@ const widgetProps = {
 
 const TrackedPageExample = () => {
   const [loading, setLoading] = useState(true)
+  const [theme, setTheme] = useState(themes.LIGHT)
   const trackerRef = useRef()
 
   const sdcRef = useRef()
@@ -171,6 +178,12 @@ const TrackedPageExample = () => {
     trackerRef.current.unbindFromWindowLifecycle()
   }
 
+  const handleToggleThemeClick = () => {
+    const currTheme = theme === themes.LIGHT ? themes.DARK : themes.LIGHT;
+    widgetProps.theme = currTheme;
+    setTheme(currTheme);
+  }
+
   return (
     !loading && (
       <div
@@ -199,6 +212,7 @@ const TrackedPageExample = () => {
         <button onClick={startQAChat}>Start Q&A Chat</button>
         <button onClick={handleBindWindowLifecycleClick}>Bind Window Lifecycle</button>
         <button onClick={handleUnbindWindowLifecycleClick}>Unbind Window Lifecycle</button>
+        <button onClick={handleToggleThemeClick}>Toggle Theme</button>
       </div>
     )
   )

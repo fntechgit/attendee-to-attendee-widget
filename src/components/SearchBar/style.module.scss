@@ -1,0 +1,11 @@
+@import '../../styles/colors.scss';
+
+.searchBar {
+  input {
+    color: var(--color_text_light); 
+    background-color: var(--color_background_light);
+    &::placeholder {
+      color: var(--color_text_light);
+    }
+  }
+}

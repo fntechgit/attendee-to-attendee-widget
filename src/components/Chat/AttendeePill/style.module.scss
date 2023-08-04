@@ -1,10 +1,12 @@
+@import '../../../styles/colors.scss';
+
 .attendeesPill {
   width: 130px;
   height: 26px;
   display: flex;
   align-items: center;
   position: relative;
-  border: 1px solid #eee;
+  border: 1px solid var(--color_background_light);
   border-radius: 10px;
   margin: 2px;
 
@@ -13,7 +15,7 @@
     width: 25px;
     border-radius: 50%;
     float: left;
-    background-color: lightgrey;
+    background-color: var(--color_background_light);
 
     .pic {
       height: 25px;
@@ -36,6 +38,6 @@
     margin-left: auto;
     padding-right: 3px;
     text-decoration: none;
-    color: #444;
+    color: var(--color_primary_contrast);
   }
 }

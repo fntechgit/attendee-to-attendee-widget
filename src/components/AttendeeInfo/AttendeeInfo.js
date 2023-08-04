@@ -158,7 +158,7 @@ export const AttendeeInfo = ({
       onMouseLeave={onMouseLeave}
       onTouchStart={onTap}
     >
-      <div className='box'>
+      <div className={`${style.attendeeInfoBox} box`}>
         <article className='media'>
           <div className='media-left'>
             <figure className='image is-128x128'>

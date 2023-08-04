@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+import style from './style.module.scss'
+
 let charsCount = 0
 
 export const SearchBar = ({
@@ -40,7 +42,7 @@ export const SearchBar = ({
   }
 
   return (
-    <div className='field has-addons'>
+    <div className={`field has-addons ${style.searchBar}`}>
       <div className='control has-icons-left is-expanded'>
         <input
           className='input is-medium'
