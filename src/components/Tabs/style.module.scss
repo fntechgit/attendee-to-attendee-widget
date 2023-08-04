@@ -1,3 +1,5 @@
+@import '../../styles/colors.scss';
+
 .tabs {
   font-size: 1.1rem;
   a {
@@ -15,7 +17,7 @@
   }
 
   :global(li.is-active a) {
-    background-color: var(--color_secondary_contrast) !important;
-    color: white;
+    background-color: var(--color_background_light) !important;
+    color: var(--color_text_light) !important;
   }
 }

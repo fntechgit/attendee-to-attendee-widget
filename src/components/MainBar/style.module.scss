@@ -1,3 +1,5 @@
+@import '../../styles/colors.scss';
+
 .mainBarContent {
   display: flex;
   justify-content: left;
@@ -10,7 +12,7 @@
     width: 50px;
     border-radius: 50%;
     float: left;
-    background-color: lightgrey;
+    background-color: var(--color_background_dark);
     cursor: pointer;
 
     .pic {
@@ -27,7 +29,7 @@
     margin-left: 10px;
 
     .title {
-      color: #333;
+      color: var(--color_text_light);
       font-weight: bold;
       font-size: 26px;
     }
@@ -37,6 +39,10 @@
     .menuItem {
       margin-left: 10px;
       cursor: pointer;
+    }
+    .button {
+      color: var(--color_text_light) !important;;
+      background-color: var(--color_background_dark) !important;
     }
   }
 }

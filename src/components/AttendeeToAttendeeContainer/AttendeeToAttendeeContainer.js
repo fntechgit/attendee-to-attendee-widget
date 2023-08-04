@@ -75,6 +75,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     summitId,
     supabaseKey,
     supabaseUrl,
+    theme,
     user
   } = props
   props = { ...props, url: baseUrl }
@@ -395,7 +396,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
       FallbackComponent={ErrorBoundaryFallback}
       onError={ebHandleError}
     >
-      <div className={style.widgetContainer}>
+      <div className={style.widgetContainer} data-theme={theme}>
         <AttendeesNewsProvider>
           <MainBar
             user={user}
