@@ -148,7 +148,7 @@ const AttendeesList = (props) => {
         </InfiniteScroll>
         <div className='has-text-centered mt-2'>
           {showHelpButton && (
-            <button className='button is-light is-large' onClick={onHelpClick}>
+            <button className={`${style.button} button is-large`} onClick={onHelpClick}>
               <span className='icon'>
                 <i className='fa fa-question-circle'></i>
               </span>
@@ -157,7 +157,7 @@ const AttendeesList = (props) => {
           )}
           {showQAButton && (
             <button
-              className='button is-light is-large ml-4'
+              className={`${style.button} button is-large ml-4`}
               onClick={onQAClick}
             >
               <span className='icon'>

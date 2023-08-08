@@ -14,7 +14,12 @@
     }
   }
 
+  :global(li a) {
+    color: var(--color_text_dark) !important;
+  }
+
   :global(li.is-active a) {
+    border: 2px solid var(--color_gray_lighter) !important;
     background-color: var(--color_background_light) !important;
     color: var(--color_text_dark) !important;
   }

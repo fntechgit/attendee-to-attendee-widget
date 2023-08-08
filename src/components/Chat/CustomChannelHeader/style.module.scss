@@ -1,7 +1,7 @@
 .simpleHeader,
 .customRoomHeader {
   display: flex;
-  background-color: white;
+  background-color: var(--color_input_background_color);
   z-index: 1;
   padding: 10px;
 
@@ -12,6 +12,7 @@
     margin-left: 20px;
     max-width: 200px;
     .title {
+      color: var(--color_text_dark);
       font-size: 19px;
       line-height: 1.2;
       overflow: hidden;
@@ -75,7 +76,7 @@
     width: 60px;
     border-radius: 50%;
     border: 1px solid #aaa;
-    background-color: #fff;
+    background-color: var(--color_background_light);
   }
 }
 .customRoomHeader {
@@ -84,7 +85,7 @@
     .subtitle {
       margin-top: 2px;
       font-size: 14px;
-      color: #777;
+      color: var(--color_text_dark);
       cursor: pointer;
     }
   }
@@ -93,7 +94,7 @@
     width: 60px;
     border-radius: 50%;
     float: left;
-    background-color: #eee;
+    background-color: var(--color_background_light);
 
     .pic {
       height: 100%;

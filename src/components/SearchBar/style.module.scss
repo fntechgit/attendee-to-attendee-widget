@@ -12,4 +12,13 @@
     background-color: var(--color_input_background_color);
     border-color: var(--color_input_border_color);
   }
+  .dropdownMenu {
+    a {
+      color: var(--color_text_dark);
+      text-decoration: 'none';
+    }
+    color: var(--color_text_dark);
+    background-color: var(--color_input_background_color);
+    border-color: var(--color_input_border_color);
+  }
 }

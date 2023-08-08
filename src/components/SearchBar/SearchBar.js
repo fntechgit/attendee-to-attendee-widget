@@ -72,16 +72,15 @@ export const SearchBar = ({
             </button>
           </div>
           <div className='dropdown-menu' id='search-menu' role='menu'>
-            <div className='dropdown-content'>
+            <div className={`dropdown-content ${style.dropdownMenu}`}>
               {filterMenuOptions.map((item, ix) => (
                 <a
                   className='dropdown-item mt-2 pr-0'
-                  style={{ textDecoration: 'none' }}
                   key={ix}
                   href='#;'
                   onClick={() => handleMenuSelection(ix)}
                 >
-                  <span className='icon-text is-size-5 has-text-grey'>
+                  <span className='icon-text is-size-5'>
                     <span>{item}</span>
                     {selectedIndex === ix && (
                       <span className='icon'>
