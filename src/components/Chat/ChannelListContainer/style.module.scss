@@ -1,11 +1,9 @@
-@import '../../../styles/colors.scss';
-
 .channelsListWrapper {
   position: relative;
   display: flex;
   flex-flow: column;
-  border: 1px solid var(--color_background_dark);
-  background-color: var(--color_background_dark);
+  border: 1px solid var(--color_gray_lighter);
+  background-color: var(--color_background_light);
   overflow: hidden;
 
   & > div {
@@ -18,15 +16,15 @@
 }
 
 :global(.str-chat.messaging) {
-  background-color: var(--color_background_dark);
+  background-color: var(--color_background_light);
 }
 
 :global(.str-chat-channel-list) {
-  background-color: var(--color_background_dark);
+  background-color: var(--color_background_light);
 }
 
 :global(.str-chat__channel-list-messenger) {
-  background-color: var(--color_background_dark);
+  background-color: var(--color_background_light);
   min-width: unset;
 }
 
