@@ -1,13 +1,13 @@
 .channelPreview {
   position: relative;
   display: flex;
-  color: var(--color_text_dark);
 
   .pic {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     position: relative;
+    background-color: #fff;
 
     img {
       width: 50px !important;
@@ -37,12 +37,12 @@
     width: calc(100% - 66px);
     height: 50px;
     margin-right: 15px;
+    color: var(--color_text_dark);
 
     // from conversations
     .name {
       margin-right: 10px;
       font-size: 16px;
-      //display: inline-block;
       white-space: nowrap;
       overflow: hidden;
       max-width: 90%;
@@ -50,7 +50,6 @@
     }
 
     .lastMessage {
-      color: var(--color_text_light);
       font-size: 14px;
       white-space: nowrap;
       overflow: hidden;
@@ -65,7 +64,6 @@
     }
 
     .participants {
-      color: var(--color_text_light);
       font-size: 14px;
       white-space: nowrap;
       overflow: hidden;

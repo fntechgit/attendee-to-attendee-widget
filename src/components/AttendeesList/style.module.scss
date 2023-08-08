@@ -1,4 +1,10 @@
 .outerWrapper {
   position: relative;
   color: var(--color_text_dark);
+
+  .button {
+    color: var(--color_input_text_color);
+    background-color: var(--color_input_background_color);
+    border-color: var(--color_input_border_color);
+  }
 }

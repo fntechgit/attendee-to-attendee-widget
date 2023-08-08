@@ -6,7 +6,7 @@ import 'attendee-to-attendee-widget/dist/index.css'
 
 const App = () => {
   const token1 =
-    'gnHoEGBiDU9NZ3QLMn4j2Ny5FW.5QdPcIHg~1YLnORopvmr1._ycIV4x34REDgGZEIzRjhv-mp-p1m5OG3AVqi2aJOhlTyo_JFoNfozy73OyVKg_yTjWNzSNug1EZri~'
+    'epC_3lWfrTgtTa40JDvBnTwVUy3DMqUDVg7PSFlWIXp552CMhdPxAa3WRRAJjzHJq9MpXIjhD1HwMoUJtZHfHv~hGkw_f3X48dZrgZIRqRMtI02E.dy0YUu7JfrVjPU4'
   const token2 =
     'AanI.~Fom9n4ILLxu~dfWAKT9SiX0PnafkqPrX-EIlS4IbyRvuL61ukjvJlegej.XmK2gi63VQuNzD8TQ4PKHSs0.mYSXfVsqS~B7xeKrZrcB6TPjVLWP3M59A~NPuPq'
   const token3 =
@@ -23,6 +23,12 @@ const App = () => {
               to={`/attendance?accessToken=${token1}&fullName=Johnny Nimbus(Help)&email=cespin+1@gmail.com&idpUserId=6`}
             >
               Help User
+            </Link>
+            <br />
+            <Link
+              to={`/attendance?accessToken=${token1}&fullName=Me&email=roman.gutierrez@gmail.com&idpUserId=13`}
+            >
+              Me
             </Link>
             <br />
             <Link

@@ -122,7 +122,7 @@ const RoomChannelListContainer = ({
           <div className='has-text-centered mt-2'>
             {showHelpButton && (
               <button
-                className='button is-light is-large'
+                className={`${style.button} button is-large`}
                 onClick={onHelpClick}
               >
                 <span className='icon'>
@@ -133,7 +133,7 @@ const RoomChannelListContainer = ({
             )}
             {showQAButton && (
               <button
-                className='button is-light is-large ml-3'
+                className={`${style.button} button is-large ml-3`}
                 onClick={onQAClick}
               >
                 <span className='icon'>
@@ -144,7 +144,7 @@ const RoomChannelListContainer = ({
             )}
             {user.hasPermission(permissions.MANAGE_ROOMS) && (
               <button
-                className='button is-light is-large ml-3'
+                className={`${style.button} button is-large ml-3`}
                 onClick={handleRoomCreateClick}
               >
                 <span className='icon'>

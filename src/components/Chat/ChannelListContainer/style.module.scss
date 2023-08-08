@@ -15,6 +15,12 @@
   }
 }
 
+.button {
+  color: var(--color_input_text_color);
+  background-color: var(--color_input_background_color);
+  border-color: var(--color_input_border_color);
+}
+
 :global(.str-chat.messaging) {
   background-color: var(--color_background_light);
 }

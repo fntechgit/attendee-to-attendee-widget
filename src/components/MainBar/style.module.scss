@@ -5,6 +5,7 @@
   height: 50px;
   align-items: center;
 
+
   .picWrapper {
     height: 50px;
     width: 50px;
@@ -27,7 +28,7 @@
     margin-left: 10px;
 
     .title {
-      color: var(--color_text_light);
+      color: var(--color_text_dark);
       font-weight: bold;
       font-size: 26px;
     }
@@ -39,7 +40,7 @@
       cursor: pointer;
     }
     .button {
-      color: var(--color_text_light) !important;;
+      color: var(--color_text_dark) !important;
       background-color: var(--color_background_light) !important;
     }
   }
