@@ -61,7 +61,7 @@ export const SearchBar = ({
         <div className={`dropdown is-right ${isMenuOpen ? 'is-active' : ''}`}>
           <div className='dropdown-trigger'>
             <button
-              className='button is-medium'
+              className={`button is-medium ${style.filterButton}`}
               aria-haspopup='true'
               aria-controls='search-menu'
               onClick={toggleMenu}
