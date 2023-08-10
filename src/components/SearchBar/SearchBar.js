@@ -71,8 +71,8 @@ export const SearchBar = ({
               </span>
             </button>
           </div>
-          <div className='dropdown-menu' id='search-menu' role='menu'>
-            <div className={`dropdown-content ${style.dropdownMenu}`}>
+          <div className={`dropdown-menu ${style.dropdownMenu}`} id='search-menu' role='menu'>
+            <div className={`dropdown-content ${style.dropdownContent}`}>
               {filterMenuOptions.map((item, ix) => (
                 <a
                   className='dropdown-item mt-2 pr-0'
