@@ -13,12 +13,17 @@
     border-color: var(--color_input_border_color);
   }
   .dropdownMenu {
-    a {
+    .dropdownContent {
+      a {
+        color: var(--color_text_dark);
+        text-decoration: 'none';
+        &:hover {
+          background-color: var(--color_background_light);
+        }
+      }
       color: var(--color_text_dark);
-      text-decoration: 'none';
+      background-color: var(--color_input_background_color);
     }
-    color: var(--color_text_dark);
     background-color: var(--color_input_background_color);
-    border-color: var(--color_input_border_color);
   }
 }

@@ -15,8 +15,8 @@ const sbAuthProps = {
 const chatProps = {
   streamApiKey: '29gtgpyz5hht',
   apiBaseUrl: 'https://idp.dev.fnopen.com',
-  //chatApiBaseUrl: null,
-  chatApiBaseUrl: 'https://chat-api.dev.fnopen.com',
+  chatApiBaseUrl: null,
+  //chatApiBaseUrl: 'https://chat-api.dev.fnopen.com',
   getAccessToken: async () => {},
   onAuthError: (err, res) => console.log(err),
   openDir: 'left',
@@ -175,7 +175,7 @@ const TrackedPageExample = () => {
     !loading && (
       <div
         style={{
-          width: '400px',
+          width: '480px',
           margin: '20px auto',
           position: 'relative'
         }}
