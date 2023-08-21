@@ -6,7 +6,7 @@ import 'attendee-to-attendee-widget/dist/index.css'
 
 const App = () => {
   const token1 =
-    'epC_3lWfrTgtTa40JDvBnTwVUy3DMqUDVg7PSFlWIXp552CMhdPxAa3WRRAJjzHJq9MpXIjhD1HwMoUJtZHfHv~hGkw_f3X48dZrgZIRqRMtI02E.dy0YUu7JfrVjPU4'
+    'g28sqdLbVAF8t6WW2vLfUGF22QSaXKZkQv4zR457AA1qTtjMqIcpP-QuSLO9YXPlv_GOnfD~co_.K7nfEdM90m4F6IWrysbxFKj~JQeD_yGse9T-St0XgefPLg_sg05W'
   const token2 =
     'AanI.~Fom9n4ILLxu~dfWAKT9SiX0PnafkqPrX-EIlS4IbyRvuL61ukjvJlegej.XmK2gi63VQuNzD8TQ4PKHSs0.mYSXfVsqS~B7xeKrZrcB6TPjVLWP3M59A~NPuPq'
   const token3 =
