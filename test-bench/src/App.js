@@ -6,9 +6,9 @@ import 'attendee-to-attendee-widget/dist/index.css'
 
 const App = () => {
   const token1 =
-    'g28sqdLbVAF8t6WW2vLfUGF22QSaXKZkQv4zR457AA1qTtjMqIcpP-QuSLO9YXPlv_GOnfD~co_.K7nfEdM90m4F6IWrysbxFKj~JQeD_yGse9T-St0XgefPLg_sg05W'
+    'jzsc0kF-dFOaI6iQGbAIf87-sQ_~cRI89R.sGFBPEXG8CxFW6uDvpE0uz0gm5kvXY_zxc7InCX0pH4x8MYb.7StvzgafyMOnKu4CUrcXYoUF7_HvpMx8D9XSI3uA~G8x'
   const token2 =
-    'AanI.~Fom9n4ILLxu~dfWAKT9SiX0PnafkqPrX-EIlS4IbyRvuL61ukjvJlegej.XmK2gi63VQuNzD8TQ4PKHSs0.mYSXfVsqS~B7xeKrZrcB6TPjVLWP3M59A~NPuPq'
+    'jzsc0kF-dFOaI6iQGbAIf87-sQ_~cRI89R.sGFBPEXG8CxFW6uDvpE0uz0gm5kvXY_zxc7InCX0pH4x8MYb.7StvzgafyMOnKu4CUrcXYoUF7_HvpMx8D9XSI3uA~G8x'
   const token3 =
     'Z.txbiYmeZGtWj.kK1R14RMe~mAqTize~scBvfJVj2JDtWlAfIarw5P5lZaTXps4Ll.VR13c4a.htchbwtL6TmHyOxOJd6WnfNyy93DzX2UmCjAZiEKVtYjQE2w7lstx'
   // const token4 =
