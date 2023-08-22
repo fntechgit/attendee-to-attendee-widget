@@ -218,6 +218,14 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     }
   }
 
+  const handleRoomDeleteClick = () => {
+    setTimeout(() => {
+      if (chatOpened) setChatOpened(false)
+      if (chatOpened) setChatOpened(false)
+      if (qaChatOpened) setQAChatOpened(false)
+    }, 100)   
+  }
+
   const handleAttendeeClick = (att) => {
     closeAttendeeCard()
     if (att.idp_user_id == user.idpUserId) return
@@ -381,6 +389,7 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           onItemClick={handleMessageClick}
           onHelpClick={handleHelpClick}
           onQAClick={handleQAClick}
+          onRoomDeleteClick={handleRoomDeleteClick}
           height={props.height}
           openDir={props.openDir}
           showHelpButton={supportPanelSettings.help}

@@ -21,6 +21,7 @@ const RoomChannelListContainer = ({
   onHelpClick,
   onQAClick,
   onItemClick,
+  onRoomDeleteClick,
   height,
   openDir,
   showHelpButton,
@@ -86,8 +87,11 @@ const RoomChannelListContainer = ({
     setShowRoomsManager(false)
   }
 
-  const handleRoomDelete = async (channel) => {
-    await chatRepo.deleteChannel(channel.id)
+  const handleRoomDelete = (channel) => {
+    if(onRoomDeleteClick) onRoomDeleteClick();
+    setTimeout(async () => {
+      await chatRepo.deleteChannel(channel.id)
+    }, 300)
   }
 
   return (

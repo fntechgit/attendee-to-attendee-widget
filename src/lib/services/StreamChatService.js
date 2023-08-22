@@ -140,6 +140,7 @@ export default class StreamChatService {
   async deleteChannel(id) {
     const filter = { id: `${id}` }
     const channels = await this.chatClient.queryChannels(filter, {}, {})
+
     if (channels && channels.length > 0) {
       await channels[0].delete()
     }
