@@ -77,7 +77,6 @@ export const SearchBar = ({
                 <a
                   className='dropdown-item mt-2 pr-0'
                   key={ix}
-                  href='#;'
                   onClick={() => handleMenuSelection(ix)}
                 >
                   <span className='icon-text is-size-5'>
