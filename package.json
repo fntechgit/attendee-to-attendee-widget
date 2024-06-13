@@ -1,6 +1,6 @@
 {
   "name": "attendee-to-attendee-widget",
-  "version": "3.1.1-beta.0",
+  "version": "3.1.1-beta.1",
   "description": "Real time attendees tracking widget",
   "author": "romanetar",
   "license": "Apache-2.0",
@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "files": [
-    "dist"
+    "dist/"
   ],
   "source": "src/index.js",
   "scripts": {
