@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "files": [
-    "dist"
+    "dist/"
   ],
   "source": "src/index.js",
   "scripts": {
