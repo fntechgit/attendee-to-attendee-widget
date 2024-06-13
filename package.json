@@ -1,6 +1,6 @@
 {
   "name": "attendee-to-attendee-widget",
-  "version": "3.1.1-beta.4",
+  "version": "3.1.1-beta.5",
   "description": "Real time attendees tracking widget",
   "author": "romanetar",
   "license": "Apache-2.0",
@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/fntechgit/attendee-to-attendee-widget.git"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
   "files": [
     "dist/"
   ],
@@ -16,7 +16,7 @@
   "scripts": {
     "clean": "find . -name \"dist\" -type d -prune -exec rm -rf '{}' + & find . -name \"node_modules\" -type d -prune -exec rm -rf '{}' + && yarn",
     "build-dev": "./node_modules/.bin/webpack --config webpack.dev.js",
-    "build": "./node_modules/.bin/webpack --config webpack.prod.js && yarn copy-extras",
+    "build": "./node_modules/.bin/webpack --config webpack.prod.js",
     "serve": "webpack-dev-server --open --port=8888 --https --config webpack.dev.js",
     "copy-extras": "cp -rf package.json README.md dist",
     "publish-package": "yarn build && yarn publish",
