@@ -11,8 +11,9 @@
  * limitations under the License.
  **/
 
-export const extractBaseUrl = (url) => {
-  let baseUrl = url.split('?')[0]
-  if (baseUrl) baseUrl = baseUrl.split('#')[0]
-  return baseUrl
-}
+import AttendeeToAttendeeContainer from './components/AttendeeToAttendeeContainer/AttendeeToAttendeeContainer'
+import { permissions } from './models/permissions'
+import { scopes } from './models/scopes'
+import Tracker from './components/Tracker'
+
+export { AttendeeToAttendeeContainer, permissions, scopes, Tracker }
