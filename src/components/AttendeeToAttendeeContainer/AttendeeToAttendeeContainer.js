@@ -26,8 +26,6 @@ import { roles } from '../../models/userRoles'
 import { ErrorBoundary } from 'react-error-boundary'
 import { ErrorBoundaryFallback } from '../ErrorBoundaryFallback/ErrorBoundaryFallback'
 
-import 'font-awesome/css/font-awesome.min.css'
-import 'bulma/css/bulma.css'
 import 'stream-chat-react/dist/css/index.css'
 
 import style from './style.module.scss'
