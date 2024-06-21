@@ -1,4 +1,4 @@
-import AccessRepository from '../repository/accessRepository'
+import AccessRepository from '../repository/AccessRepository'
 import SupabaseClientBuilder from './supabaseClientBuilder'
 
 export default class AccessRepositoryBuilder {

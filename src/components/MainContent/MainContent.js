@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { Tabs, ActiveTabContent } from '../Tabs/Tabs'
-import { useStore } from '../../lib/store'
+import { useStore } from '../../lib/Store'
 import {
   useAttendeesNews,
   useUpdateAttendeesNews

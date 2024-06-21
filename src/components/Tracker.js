@@ -4,7 +4,7 @@ import publicIp from 'public-ip'
 import { extractBaseUrl } from '../utils/urlHelper'
 import { trackingLevel } from '../models/trackingLevel'
 import SupabaseClientBuilder from '../lib/builders/supabaseClientBuilder'
-import AccessRepository from '../lib/repository/accessRepository'
+import AccessRepository from '../lib/repository/AccessRepository'
 
 const Tracker = forwardRef((props, ref) => {
   const { supabaseUrl, supabaseKey, summitId } = props
