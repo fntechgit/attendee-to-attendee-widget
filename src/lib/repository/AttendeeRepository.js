@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { signIn, signUp } from '../auth'
+import { signIn, signUp } from '../Auth'
 import { roles } from '../../models/userRoles'
 
 const ATTTENDEES_SELECT_PROJ =

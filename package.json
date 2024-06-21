@@ -1,6 +1,6 @@
 {
   "name": "attendee-to-attendee-widget",
-  "version": "3.1.0",
+  "version": "3.1.1-beta.7",
   "description": "Real time attendees tracking widget",
   "author": "romanetar",
   "license": "MIT",
@@ -24,7 +24,8 @@
     "deploy": "gh-pages -d test-bench/build"
   },
   "peerDependencies": {
-    "react": "^16.6.3"
+    "react": "^16.6.3",
+    "bulma": "^0.9.2"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",

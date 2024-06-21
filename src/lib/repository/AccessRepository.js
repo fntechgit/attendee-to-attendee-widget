@@ -1,4 +1,4 @@
-import AttendeeRepository from './attendeeRepository'
+import AttendeeRepository from './AttendeeRepository'
 import { CHANNEL_STATES } from '../../lib/constants'
 
 export default class AccessRepository extends AttendeeRepository {
