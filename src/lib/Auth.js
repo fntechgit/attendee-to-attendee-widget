@@ -13,7 +13,7 @@ export const signUp = async (supabase, email, password) => {
     password
   })
   if (error) {
-    if (error.status === 400) { //User already registered
+    if ([400, 422].includes(error.status)) { //User already registered
       return await signIn(supabase, email, password)
     }
     throw new Error(error)
