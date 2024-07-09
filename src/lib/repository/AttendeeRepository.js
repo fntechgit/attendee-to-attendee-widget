@@ -15,8 +15,24 @@ import { DateTime } from "luxon";
 import { signIn, signUp } from "../Auth";
 import { roles } from "../../models/userRoles";
 
-const ATTTENDEES_SELECT_PROJ =
-  "attendee_id, full_name, email, company, title, pic_url, bio, idp_user_id, is_online, social_info, badges_info, public_profile_show_email, public_profile_allow_chat_with_me";
+const ATTTENDEES_SELECT_PROJ = `
+  attendee_id, 
+  full_name, 
+  email, 
+  company, 
+  title, 
+  pic_url, 
+  bio, 
+  idp_user_id, 
+  is_online, 
+  social_info, 
+  badges_info, 
+  public_profile_show_email, 
+  public_profile_show_full_name, 
+  public_profile_allow_chat_with_me, 
+  public_profile_allow_share_my_profile_pic, 
+  public_profile_allow_share_my_social_media_info
+`;
 
 const DEFAULT_PAGE_SIZE = 30;
 
@@ -47,14 +63,17 @@ export default class AttendeeRepository {
       getBadgeFeatures,
       bio,
       showEmail,
-      allowChatWithMe
+      showFullName,
+      allowChatWithMe,
+      allowShareProfilePic,
+      allowShareSocialInfo
     } = attendeeProfile;
 
     try {
       const attFetchRes = await this._client
         .from("attendees_news")
         .select(ATTTENDEES_SELECT_PROJ)
-        .eq("email", email)
+        .eq("idp_user_id", idpUserId)
         .eq("summit_id", this._summitId);
 
       if (attFetchRes.error) throw new Error(attFetchRes.error);
@@ -79,13 +98,17 @@ export default class AttendeeRepository {
             badgeFeatures,
             bio,
             showEmail,
-            allowChatWithMe
+            showFullName,
+            allowChatWithMe,
+            allowShareProfilePic,
+            allowShareSocialInfo
           )
         ) {
           // console.log('something change')
           this._updateAttendee(
             fetchedAttendee.attendee_id,
             fullName,
+            email,
             company,
             title,
             picUrl,
@@ -95,7 +118,10 @@ export default class AttendeeRepository {
             badgeFeatures,
             bio,
             showEmail,
-            allowChatWithMe
+            showFullName,
+            allowChatWithMe,
+            allowShareProfilePic,
+            allowShareSocialInfo
           );
         }
         return user;
@@ -120,7 +146,10 @@ export default class AttendeeRepository {
       getBadgeFeatures,
       bio,
       showEmail,
-      allowChatWithMe
+      showFullName,
+      allowChatWithMe,
+      allowShareProfilePic,
+      allowShareSocialInfo
     } = attendeeProfile;
 
     if (this._sbUser) return this._sbUser;
@@ -146,7 +175,10 @@ export default class AttendeeRepository {
       badgeFeatures,
       bio,
       showEmail,
-      allowChatWithMe
+      showFullName,
+      allowChatWithMe,
+      allowShareProfilePic,
+      allowShareSocialInfo
     );
     return newUser;
   }
@@ -163,7 +195,10 @@ export default class AttendeeRepository {
     badgeFeatures,
     bio,
     showEmail,
-    allowChatWithMe
+    showFullName,
+    allowChatWithMe,
+    allowShareProfilePic,
+    allowShareSocialInfo
   ) {
     let sameBadgeFeatures = true;
     if (fetchedAttendee.badges_info && badgeFeatures) {
@@ -195,7 +230,12 @@ export default class AttendeeRepository {
       !sameBadgeFeatures ||
       fetchedAttendee.bio !== bio ||
       fetchedAttendee.public_profile_show_email !== showEmail ||
-      fetchedAttendee.public_profile_allow_chat_with_me !== allowChatWithMe
+      fetchedAttendee.public_profile_show_full_name !== showFullName ||
+      fetchedAttendee.public_profile_allow_chat_with_me !== allowChatWithMe ||
+      fetchedAttendee.public_profile_allow_share_my_profile_pic !==
+        allowShareProfilePic ||
+      fetchedAttendee.public_profile_allow_share_my_social_media_info !==
+        allowShareSocialInfo
     );
   }
 
@@ -212,26 +252,34 @@ export default class AttendeeRepository {
     badgeFeatures,
     bio,
     showEmail,
-    allowChatWithMe
+    showFullName,
+    allowChatWithMe,
+    allowShareProfilePic,
+    allowShareSocialInfo
   ) {
     const { error } = await this._client.from("attendees_news").insert([
       {
         attendee_id: id,
         summit_id: this._summitId,
-        full_name: fullName && fullName !== "null" ? fullName : "Private",
-        email,
+        full_name:
+          showFullName && fullName && fullName !== "null"
+            ? fullName
+            : "Private",
+        email: showEmail ? email : "",
         company,
         title,
-        pic_url: picUrl,
+        pic_url: allowShareProfilePic ? picUrl : "",
         idp_user_id: idpUserId,
         is_online: isOnline,
-        social_info: socialInfo,
+        social_info: allowShareSocialInfo ? socialInfo : {},
         badges_info: badgeFeatures,
         bio,
         public_profile_show_email: showEmail,
+        public_profile_show_full_name: showFullName,
         public_profile_allow_chat_with_me: allowChatWithMe,
-        current_url: "",
-        attendee_ip: ""
+        public_profile_allow_share_my_profile_pic: allowShareProfilePic,
+        public_profile_allow_share_my_social_media_info: allowShareSocialInfo,
+        current_url: ""
       }
     ]);
 
@@ -244,6 +292,7 @@ export default class AttendeeRepository {
   async _updateAttendee(
     id,
     fullName,
+    email,
     company,
     title,
     picUrl,
@@ -253,23 +302,33 @@ export default class AttendeeRepository {
     badgeFeatures,
     bio,
     showEmail,
-    allowChatWithMe
+    showFullName,
+    allowChatWithMe,
+    allowShareProfilePic,
+    allowShareSocialInfo
   ) {
     const { error } = await this._client
       .from("attendees_news")
       .update([
         {
-          full_name: fullName,
+          full_name:
+            showFullName && fullName && fullName !== "null"
+              ? fullName
+              : "Private",
+          email: showEmail ? email : "",
           company,
           title,
-          pic_url: picUrl,
+          pic_url: allowShareProfilePic ? picUrl : "",
           idp_user_id: idpUserId,
           is_online: isOnline,
-          social_info: socialInfo,
+          social_info: allowShareSocialInfo ? socialInfo : {},
           badges_info: badgeFeatures,
           bio,
           public_profile_show_email: showEmail,
-          public_profile_allow_chat_with_me: allowChatWithMe
+          public_profile_show_full_name: showFullName,
+          public_profile_allow_chat_with_me: allowChatWithMe,
+          public_profile_allow_share_my_profile_pic: allowShareProfilePic,
+          public_profile_allow_share_my_social_media_info: allowShareSocialInfo
         }
       ])
       .eq("attendee_id", id)

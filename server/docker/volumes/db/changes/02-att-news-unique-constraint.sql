@@ -1,0 +1,3 @@
+DROP INDEX IF EXISTS IDX_ATTENDEE_ID;
+
+CREATE UNIQUE INDEX IDX_UNQ_ATTENDEE_SUMMIT ON public.attendees_news (attendee_id, summit_id);
