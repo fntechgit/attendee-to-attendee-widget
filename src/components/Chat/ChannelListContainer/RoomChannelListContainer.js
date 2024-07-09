@@ -1,18 +1,30 @@
-import React, { useState } from 'react'
-import { Chat } from 'stream-chat-react'
-import debounce from 'lodash.debounce'
-import { SearchBar } from '../../SearchBar/SearchBar'
-import RoomsManager from '../RoomsManager/RoomsManager'
-import ChannelListContainer from './ChannelListContainer'
-import { nameToId } from '../../../utils/stringHelper'
-import { channelTypes } from '../../../models/channelTypes'
-import { permissions } from '../../../models/permissions'
+/**
+ * Copyright 2021 OpenStack Foundation
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * */
 
-import style from './style.module.scss'
+import React, { useState } from "react";
+import { Chat } from "stream-chat-react";
+import debounce from "lodash.debounce";
+import { SearchBar } from "../../SearchBar/SearchBar";
+import RoomsManager from "../RoomsManager/RoomsManager";
+import ChannelListContainer from "./ChannelListContainer";
+import { channelTypes } from "../../../models/channelTypes";
+import { permissions } from "../../../models/permissions";
 
-let handleSearchDebounce = null
+import style from "./style.module.scss";
 
-const RoomChannelListContainer = ({
+let handleSearchDebounce = null;
+
+function RoomChannelListContainer({
   user,
   summitId,
   chatClient,
@@ -26,27 +38,29 @@ const RoomChannelListContainer = ({
   openDir,
   showHelpButton,
   showQAButton
-}) => {
-  const defaultScope = [channelTypes.ACTIVITY_ROOM, channelTypes.CUSTOM_ROOM]
+}) {
+  const defaultScope = [channelTypes.ACTIVITY_ROOM, channelTypes.CUSTOM_ROOM];
 
-  let currentScope = defaultScope
+  let currentScope = defaultScope;
 
   const defaultFilters = {
     type: {
       $in: defaultScope
     }
-  }
-  const [currFilters, setCurrFilters] = useState(defaultFilters)
-  const [showRoomsManager, setShowRoomsManager] = useState(false)
+  };
+  const [currFilters, setCurrFilters] = useState(defaultFilters);
+  const [showRoomsManager, setShowRoomsManager] = useState(false);
 
   const getScope = (mode) => {
-    if (mode === 1) return [channelTypes.ACTIVITY_ROOM]
-    if (mode === 2) return [channelTypes.CUSTOM_ROOM]
-    return defaultScope
-  }
+    const modeOne = 1;
+    const modeTwo = 2;
+    if (mode === modeOne) return [channelTypes.ACTIVITY_ROOM];
+    if (mode === modeTwo) return [channelTypes.CUSTOM_ROOM];
+    return defaultScope;
+  };
 
-  const buildFilter = (scope, name) => {
-    return name
+  const buildFilter = (scope, name) =>
+    name
       ? {
           type: {
             $in: scope
@@ -57,42 +71,43 @@ const RoomChannelListContainer = ({
           type: {
             $in: scope
           }
-        }
-  }
+        };
 
   const handleSearch = async (e) => {
-    const { value } = e.target
-    if (handleSearchDebounce) handleSearchDebounce.cancel()
+    const timeout = 300;
+    const { value } = e.target;
+    if (handleSearchDebounce) handleSearchDebounce.cancel();
     handleSearchDebounce = debounce(async () => {
-      setCurrFilters(value ? buildFilter(currentScope, value) : defaultFilters)
-    }, 300)
+      setCurrFilters(value ? buildFilter(currentScope, value) : defaultFilters);
+    }, timeout);
 
-    handleSearchDebounce()
-  }
+    handleSearchDebounce();
+  };
 
   const handleSearchClear = async () => {
-    setCurrFilters(defaultFilters)
-  }
+    setCurrFilters(defaultFilters);
+  };
 
   const handleFilterModeChange = (mode) => {
-    currentScope = getScope(mode)
-    setCurrFilters(buildFilter(currentScope, null))
-  }
+    currentScope = getScope(mode);
+    setCurrFilters(buildFilter(currentScope, null));
+  };
 
   const handleRoomCreateClick = () => {
-    setShowRoomsManager(true)
-  }
+    setShowRoomsManager(true);
+  };
 
   const handleBackClick = () => {
-    setShowRoomsManager(false)
-  }
+    setShowRoomsManager(false);
+  };
 
   const handleRoomDelete = (channel) => {
-    if(onRoomDeleteClick) onRoomDeleteClick();
+    const timeout = 300;
+    if (onRoomDeleteClick) onRoomDeleteClick();
     setTimeout(async () => {
-      await chatRepo.deleteChannel(channel.id)
-    }, 300)
-  }
+      await chatRepo.deleteChannel(channel.id);
+    }, timeout);
+  };
 
   return (
     <div>
@@ -107,9 +122,9 @@ const RoomChannelListContainer = ({
             //   'Activity Rooms',
             //   'Custom Rooms'
             // ]}
-            placeholder='Search by room name'
+            placeholder="Search by room name"
           />
-          <div className={style.channelsListWrapper} style={{ height: height }}>
+          <div className={style.channelsListWrapper} style={{ height }}>
             <Chat client={chatClient}>
               <ChannelListContainer
                 filters={currFilters}
@@ -123,14 +138,15 @@ const RoomChannelListContainer = ({
               />
             </Chat>
           </div>
-          <div className='has-text-centered mt-2'>
+          <div className="has-text-centered mt-2">
             {showHelpButton && (
               <button
                 className={`${style.button} button is-large`}
+                type="button"
                 onClick={onHelpClick}
               >
-                <span className='icon'>
-                  <i className='fa fa-question-circle'></i>
+                <span className="icon">
+                  <i className="fa fa-question-circle" />
                 </span>
                 <span>Help Desk</span>
               </button>
@@ -138,10 +154,11 @@ const RoomChannelListContainer = ({
             {showQAButton && (
               <button
                 className={`${style.button} button is-large ml-3`}
+                type="button"
                 onClick={onQAClick}
               >
-                <span className='icon'>
-                  <i className='fa fa-comments'></i>
+                <span className="icon">
+                  <i className="fa fa-comments" />
                 </span>
                 <span>Q&A</span>
               </button>
@@ -149,10 +166,11 @@ const RoomChannelListContainer = ({
             {user.hasPermission(permissions.MANAGE_ROOMS) && (
               <button
                 className={`${style.button} button is-large ml-3`}
+                type="button"
                 onClick={handleRoomCreateClick}
               >
-                <span className='icon'>
-                  <i className='fa fa-plus-square'></i>
+                <span className="icon">
+                  <i className="fa fa-plus-square" />
                 </span>
                 <span>New Room</span>
               </button>
@@ -170,7 +188,7 @@ const RoomChannelListContainer = ({
         />
       )}
     </div>
-  )
+  );
 }
 
-export default RoomChannelListContainer
+export default RoomChannelListContainer;

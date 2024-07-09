@@ -1,118 +1,136 @@
-import PropTypes from 'prop-types'
-import { forwardRef, useImperativeHandle, useCallback, useEffect } from 'react'
-import publicIp from 'public-ip'
-import { extractBaseUrl } from '../utils/urlHelper'
-import { trackingLevel } from '../models/trackingLevel'
-import SupabaseClientBuilder from '../lib/builders/supabaseClientBuilder'
-import AccessRepository from '../lib/repository/accessRepository'
+/**
+ * Copyright 2021 OpenStack Foundation
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * */
+
+import PropTypes from "prop-types";
+import { forwardRef, useImperativeHandle, useCallback, useEffect } from "react";
+import publicIp from "public-ip";
+import { extractBaseUrl } from "../utils/urlHelper";
+import { trackingLevel } from "../models/trackingLevel";
+import SupabaseClientBuilder from "../lib/builders/supabaseClientBuilder";
+import AccessRepository from "../lib/repository/AccessRepository";
 
 const Tracker = forwardRef((props, ref) => {
-  const { supabaseUrl, supabaseKey, summitId } = props
-  let accessRepo = null
-  const pendingOps = new Set()
-  let timerHandler = null
+  const { supabaseUrl, supabaseKey, summitId } = props;
+  let accessRepo = null;
+  const pendingOps = new Set();
+  let timerHandler = null;
 
   const trackAccess = async () => {
-    const clientIP = await publicIp.v4()
+    const clientIP = await publicIp.v4();
     accessRepo.trackAccess(
       props.user,
       extractBaseUrl(window.location.href),
       clientIP,
       true
-    )
-  }
+    );
+  };
 
   const startKeepAlive = () => {
-    stopKeepAlive()
+    const timeout = 300000;
+    stopKeepAlive();
     timerHandler = setInterval(() => {
-      trackAccess()
-    }, 300000)
-  }
+      trackAccess();
+    }, timeout);
+  };
 
   const stopKeepAlive = () => {
     if (timerHandler) {
-      clearInterval(timerHandler)
-      timerHandler = null
+      clearInterval(timerHandler);
+      timerHandler = null;
     }
-  }
+  };
 
   const onLeave = async () => {
-    //console.log('leaving tracked page')
-    await accessRepo.trackAccess(props.user, '', '', false)
-  }
+    // console.log('leaving tracked page')
+    await accessRepo.trackAccess(props.user, "", "", false);
+  };
 
   function addToPendingWork(promise) {
-    pendingOps.add(promise)
-    const cleanup = () => pendingOps.delete(promise)
-    promise.then(cleanup).catch(cleanup)
+    pendingOps.add(promise);
+    const cleanup = () => pendingOps.delete(promise);
+    promise.then(cleanup).catch(cleanup);
   }
 
-  const onBeforeUnload = useCallback(e => {
-    const promise = accessRepo.cleanUpAccess()
+  const onBeforeUnload = useCallback((e) => {
+    const promise = accessRepo.cleanUpAccess();
     if (promise) {
-      addToPendingWork(promise)
+      addToPendingWork(promise);
     }
     if (pendingOps.size) {
-      e.returnValue = 'Are you sure you want to leave?'
+      e.returnValue = "Are you sure you want to leave?";
     }
   }, []);
 
-  const onVisibilitychange = useCallback(_ => {
-    if (document.visibilityState === 'visible') {
-      trackAccess()
+  const onVisibilitychange = useCallback(() => {
+    if (document.visibilityState === "visible") {
+      trackAccess();
     } else {
-      onLeave()
+      onLeave();
     }
   }, []);
 
-  const switchOff = (e) => {
-    if (props.keepAliveEnabled) stopKeepAlive()
-    if (typeof window !== 'undefined') {
-      const pageScopeTracking = props.trackingLevel === trackingLevel.PAGE_SCOPED_PRESENCE
-      window.removeEventListener('beforeunload', onBeforeUnload)
-      if (pageScopeTracking) document.removeEventListener('visibilitychange', onVisibilitychange)
+  const switchOff = () => {
+    if (props.keepAliveEnabled) stopKeepAlive();
+    if (typeof window !== "undefined") {
+      const pageScopeTracking =
+        props.trackingLevel === trackingLevel.PAGE_SCOPED_PRESENCE;
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      if (pageScopeTracking)
+        document.removeEventListener("visibilitychange", onVisibilitychange);
     }
-  }
+  };
 
   useEffect(() => {
     accessRepo = new AccessRepository(
       SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
       false,
       summitId
-    )
-    const pageScopeTracking = props.trackingLevel === trackingLevel.PAGE_SCOPED_PRESENCE
-    trackAccess()
-    if (props.keepAliveEnabled) startKeepAlive()
-    if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', onBeforeUnload)
-      if (pageScopeTracking) document.addEventListener('visibilitychange', onVisibilitychange)
+    );
+    const pageScopeTracking =
+      props.trackingLevel === trackingLevel.PAGE_SCOPED_PRESENCE;
+    trackAccess();
+    if (props.keepAliveEnabled) startKeepAlive();
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", onBeforeUnload);
+      if (pageScopeTracking)
+        document.addEventListener("visibilitychange", onVisibilitychange);
     }
     return () => {
-      onLeave()
-      switchOff()
-    }
-  }, [])
+      onLeave();
+      switchOff();
+    };
+  }, []);
 
   useImperativeHandle(ref, () => ({
     signOut() {
-      switchOff()
-      accessRepo?.signOut()
+      switchOff();
+      accessRepo?.signOut();
     },
     bindToWindowLifecycle() {
-      console.log('bindToWindowLifecycle');
-      if (typeof window !== 'undefined') {
-        window.addEventListener('beforeunload', onBeforeUnload)
+      console.log("bindToWindowLifecycle");
+      if (typeof window !== "undefined") {
+        window.addEventListener("beforeunload", onBeforeUnload);
       }
     },
     unbindFromWindowLifecycle() {
-      console.log('unbindFromWindowLifecycle');
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('beforeunload', onBeforeUnload)
+      console.log("unbindFromWindowLifecycle");
+      if (typeof window !== "undefined") {
+        window.removeEventListener("beforeunload", onBeforeUnload);
       }
     }
-  }))
-  return null
-})
+  }));
+  return null;
+});
 
 Tracker.propTypes = {
   supabaseUrl: PropTypes.string.isRequired,
@@ -135,11 +153,11 @@ Tracker.propTypes = {
   }).isRequired,
   trackingLevel: PropTypes.string,
   keepAliveEnabled: PropTypes.bool
-}
+};
 
 Tracker.defaultProps = {
   trackingLevel: trackingLevel.PAGE_SCOPED_PRESENCE,
   keepAliveEnabled: true
-}
+};
 
-export default Tracker
+export default Tracker;
