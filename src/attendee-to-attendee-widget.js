@@ -11,9 +11,9 @@
  * limitations under the License.
  * */
 
-export const roles = {
-  ADMIN: "admin",
-  QA: "qa",
-  HELP: "help",
-  USER: "user"
-};
+import AttendeeToAttendeeContainer from "./components/AttendeeToAttendeeContainer/AttendeeToAttendeeContainer";
+import { permissions } from "./models/permissions";
+import { scopes } from "./models/scopes";
+import Tracker from "./components/Tracker";
+
+export { AttendeeToAttendeeContainer, permissions, scopes, Tracker };

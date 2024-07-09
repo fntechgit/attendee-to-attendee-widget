@@ -1,21 +1,36 @@
-import { DateTime } from 'luxon'
-import { signIn, signUp } from '../Auth'
-import { roles } from '../../models/userRoles'
+/**
+ * Copyright 2021 OpenStack Foundation
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * */
+
+import { DateTime } from "luxon";
+import { signIn, signUp } from "../Auth";
+import { roles } from "../../models/userRoles";
 
 const ATTTENDEES_SELECT_PROJ =
-  'attendee_id, full_name, email, company, title, pic_url, bio, idp_user_id, is_online, social_info, badges_info, public_profile_show_email, public_profile_allow_chat_with_me'
+  "attendee_id, full_name, email, company, title, pic_url, bio, idp_user_id, is_online, social_info, badges_info, public_profile_show_email, public_profile_allow_chat_with_me";
 
-const DEFAULT_PAGE_SIZE = 30
+const DEFAULT_PAGE_SIZE = 30;
 
-export const DEFAULT_MIN_BACKWARD = 15
+export const DEFAULT_MIN_BACKWARD = 15;
 
 export default class AttendeeRepository {
   constructor(supabaseService, user, summitId) {
-    this._summitId = summitId
-    this._client = supabaseService
-    this._sbUser = null
+    this._summitId = summitId;
+    this._client = supabaseService;
+    this._sbUser = null;
     if (user) {
-      this._fetchExistingAttendeeUser(user).then((u) => (this._sbUser = u))
+      this._fetchExistingAttendeeUser(user).then((u) => {
+        this._sbUser = u;
+      });
     }
   }
 
@@ -33,23 +48,23 @@ export default class AttendeeRepository {
       bio,
       showEmail,
       allowChatWithMe
-    } = attendeeProfile
+    } = attendeeProfile;
 
     try {
       const attFetchRes = await this._client
-        .from('attendees_news')
+        .from("attendees_news")
         .select(ATTTENDEES_SELECT_PROJ)
-        .eq('email', email)
-        .eq('summit_id', this._summitId)
+        .eq("email", email)
+        .eq("summit_id", this._summitId);
 
-      if (attFetchRes.error) throw new Error(attFetchRes.error)
+      if (attFetchRes.error) throw new Error(attFetchRes.error);
 
       if (attFetchRes.data && attFetchRes.data.length > 0) {
-        const fetchedAttendee = attFetchRes.data[0]
+        const fetchedAttendee = attFetchRes.data[0];
 
-        const user = await signIn(this._client, email, email)
+        const user = await signIn(this._client, email, email);
 
-        const badgeFeatures = getBadgeFeatures()
+        const badgeFeatures = getBadgeFeatures();
 
         if (
           this._somethigChange(
@@ -67,7 +82,7 @@ export default class AttendeeRepository {
             allowChatWithMe
           )
         ) {
-          //console.log('something change')
+          // console.log('something change')
           this._updateAttendee(
             fetchedAttendee.attendee_id,
             fullName,
@@ -81,14 +96,14 @@ export default class AttendeeRepository {
             bio,
             showEmail,
             allowChatWithMe
-          )
+          );
         }
-        return user
+        return user;
       }
-      return null
+      return null;
     } catch (error) {
-      console.log('error', error)
-      return null
+      console.log("error", error);
+      return null;
     }
   }
 
@@ -106,17 +121,17 @@ export default class AttendeeRepository {
       bio,
       showEmail,
       allowChatWithMe
-    } = attendeeProfile
+    } = attendeeProfile;
 
-    if (this._sbUser) return this._sbUser
+    if (this._sbUser) return this._sbUser;
 
-    this._sbUser = await this._fetchExistingAttendeeUser(attendeeProfile)
+    this._sbUser = await this._fetchExistingAttendeeUser(attendeeProfile);
 
-    if (this._sbUser) return this._sbUser
+    if (this._sbUser) return this._sbUser;
 
-    const newUser = await signUp(this._client, email, email)
+    const newUser = await signUp(this._client, email, email);
 
-    const badgeFeatures = getBadgeFeatures()
+    const badgeFeatures = getBadgeFeatures();
 
     await this._addAttendee(
       newUser.id,
@@ -132,8 +147,8 @@ export default class AttendeeRepository {
       bio,
       showEmail,
       allowChatWithMe
-    )
-    return newUser
+    );
+    return newUser;
   }
 
   _somethigChange(
@@ -150,23 +165,23 @@ export default class AttendeeRepository {
     showEmail,
     allowChatWithMe
   ) {
-    let sameBadgeFeatures = true
+    let sameBadgeFeatures = true;
     if (fetchedAttendee.badges_info && badgeFeatures) {
       sameBadgeFeatures =
         fetchedAttendee.badges_info.length === badgeFeatures.length &&
         fetchedAttendee.badges_info.every(
           (value, index) => value === badgeFeatures[index]
-        )
+        );
     }
 
-    let sameSocialInfo = true
+    let sameSocialInfo = true;
     if (fetchedAttendee.social_info && socialInfo) {
       sameSocialInfo =
         fetchedAttendee.social_info.github_user === socialInfo.githubUser &&
         fetchedAttendee.social_info.linked_in_profile ===
           socialInfo.linkedInProfile &&
         fetchedAttendee.social_info.twitter_name === socialInfo.twitterName &&
-        fetchedAttendee.social_info.wechat_user === socialInfo.wechatUser
+        fetchedAttendee.social_info.wechat_user === socialInfo.wechatUser;
     }
 
     return (
@@ -181,7 +196,7 @@ export default class AttendeeRepository {
       fetchedAttendee.bio !== bio ||
       fetchedAttendee.public_profile_show_email !== showEmail ||
       fetchedAttendee.public_profile_allow_chat_with_me !== allowChatWithMe
-    )
+    );
   }
 
   async _addAttendee(
@@ -199,11 +214,11 @@ export default class AttendeeRepository {
     showEmail,
     allowChatWithMe
   ) {
-    const { error } = await this._client.from('attendees_news').insert([
+    const { error } = await this._client.from("attendees_news").insert([
       {
         attendee_id: id,
         summit_id: this._summitId,
-        full_name: fullName && fullName != 'null' ? fullName : 'Private',
+        full_name: fullName && fullName !== "null" ? fullName : "Private",
         email,
         company,
         title,
@@ -215,14 +230,14 @@ export default class AttendeeRepository {
         bio,
         public_profile_show_email: showEmail,
         public_profile_allow_chat_with_me: allowChatWithMe,
-        current_url: '',
-        attendee_ip: ''
+        current_url: "",
+        attendee_ip: ""
       }
-    ])
+    ]);
 
     if (error) {
-      console.log('_addAttendee', error)
-      throw new Error(error)
+      console.log("_addAttendee", error);
+      throw new Error(error);
     }
   }
 
@@ -241,7 +256,7 @@ export default class AttendeeRepository {
     allowChatWithMe
   ) {
     const { error } = await this._client
-      .from('attendees_news')
+      .from("attendees_news")
       .update([
         {
           full_name: fullName,
@@ -257,10 +272,10 @@ export default class AttendeeRepository {
           public_profile_allow_chat_with_me: allowChatWithMe
         }
       ])
-      .eq('attendee_id', id)
-      .eq('summit_id', this._summitId)
-      
-    if (error) console.log('_updateAttendee error', error)
+      .eq("attendee_id", id)
+      .eq("summit_id", this._summitId);
+
+    if (error) console.log("_updateAttendee error", error);
   }
 
   async findByNameOrCompany(
@@ -271,42 +286,42 @@ export default class AttendeeRepository {
     try {
       const ageTreshold = DateTime.utc()
         .minus({ minutes: ageMinutesBackward })
-        .toString()
+        .toString();
       const { scopeFieldName, scopeFieldVal } = url
-        ? { scopeFieldName: 'current_url', scopeFieldVal: url }
-        : { scopeFieldName: 'summit_id', scopeFieldVal: this._summitId }
+        ? { scopeFieldName: "current_url", scopeFieldVal: url }
+        : { scopeFieldName: "summit_id", scopeFieldVal: this._summitId };
 
       const byNameRes = await this._client
-        .from('attendees_news')
-        .select('*')
+        .from("attendees_news")
+        .select("*")
         .eq(scopeFieldName, scopeFieldVal)
-        .eq('is_online', true)
-        .gt('updated_at', ageTreshold)
-        .ilike('full_name', `%${filter}%`)
-      if (byNameRes.error) throw new Error(byNameRes.error)
+        .eq("is_online", true)
+        .gt("updated_at", ageTreshold)
+        .ilike("full_name", `%${filter}%`);
+      if (byNameRes.error) throw new Error(byNameRes.error);
 
       const byCompanyRes = await this._client
-        .from('attendees_news')
-        .select('*')
+        .from("attendees_news")
+        .select("*")
         .eq(scopeFieldName, scopeFieldVal)
-        .eq('is_online', true)
-        .gt('updated_at', ageTreshold)
-        .ilike('company', `%${filter}%`)
-      if (byCompanyRes.error) throw new Error(byCompanyRes.error)
+        .eq("is_online", true)
+        .gt("updated_at", ageTreshold)
+        .ilike("company", `%${filter}%`);
+      if (byCompanyRes.error) throw new Error(byCompanyRes.error);
 
-      const attByName = byNameRes.data.filter((el) => el)
-      const attByCompany = byCompanyRes.data.filter((el) => el)
+      const attByName = byNameRes.data.filter((el) => el);
+      const attByCompany = byCompanyRes.data.filter((el) => el);
 
-      const seen = new Set()
+      const seen = new Set();
       const res = [...attByName, ...attByCompany].filter((el) => {
-        const duplicate = seen.has(el.id)
-        seen.add(el.id)
-        return !duplicate
-      })
-      return res
+        const duplicate = seen.has(el.id);
+        seen.add(el.id);
+        return !duplicate;
+      });
+      return res;
     } catch (error) {
-      console.error('error', error)
-      return []
+      console.error("error", error);
+      return [];
     }
   }
 
@@ -314,12 +329,12 @@ export default class AttendeeRepository {
     const attByName = list.filter(
       (a) =>
         a.full_name && a.full_name.toLowerCase().includes(filter.toLowerCase())
-    )
+    );
     const attByCompany = list.filter(
       (a) => a.company && a.company.toLowerCase().includes(filter.toLowerCase())
-    )
-    const res = [...attByName, ...attByCompany]
-    return url ? res.filter((a) => a.current_url === url) : res
+    );
+    const res = [...attByName, ...attByCompany];
+    return url ? res.filter((a) => a.current_url === url) : res;
   }
 
   async fetchCurrentPageAttendees(
@@ -331,25 +346,26 @@ export default class AttendeeRepository {
     try {
       const ageTreshold = DateTime.utc()
         .minus({ minutes: ageMinutesBackward })
-        .toString()
+        .toString();
 
-      const lowerIx = pageIx * pageSize
-      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
+      const lowerIx = pageIx * pageSize;
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize);
       const { data, error } = await this._client
-        .from('attendees_news')
-        .select('*')
-        .eq('current_url', url)
-        .eq('is_online', true)
-        .neq('full_name', null)
-        .gt('updated_at', ageTreshold)
-        //.order('updated_at', { ascending: false })
-        .order('full_name')
-        .range(lowerIx, upperIx)
+        .from("attendees_news")
+        .select("*")
+        .eq("current_url", url)
+        .eq("is_online", true)
+        .neq("full_name", null)
+        .gt("updated_at", ageTreshold)
+        // .order('updated_at', { ascending: false })
+        .order("full_name")
+        .range(lowerIx, upperIx);
 
-      if (error) throw new Error(error)
-      return data
+      if (error) throw new Error(error);
+      return data;
     } catch (error) {
-      console.error('error', error)
+      console.error("error", error);
+      return null;
     }
   }
 
@@ -361,42 +377,43 @@ export default class AttendeeRepository {
     try {
       const ageTreshold = DateTime.utc()
         .minus({ minutes: ageMinutesBackward })
-        .toString()
-      const lowerIx = pageIx * pageSize
-      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize)
+        .toString();
+      const lowerIx = pageIx * pageSize;
+      const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize);
       const { data, error } = await this._client
-        .from('attendees_news')
-        .select('*')
-        .eq('summit_id', this._summitId)
-        .eq('is_online', true)
-        .neq('full_name', null)
-        .gt('updated_at', ageTreshold)
-        //.order('updated_at', { ascending: false })
-        .order('full_name')
-        .range(lowerIx, upperIx)
+        .from("attendees_news")
+        .select("*")
+        .eq("summit_id", this._summitId)
+        .eq("is_online", true)
+        .neq("full_name", null)
+        .gt("updated_at", ageTreshold)
+        // .order('updated_at', { ascending: false })
+        .order("full_name")
+        .range(lowerIx, upperIx);
 
-      if (error) throw new Error(error)
-      return data
+      if (error) throw new Error(error);
+      return data;
     } catch (error) {
-      console.error('error', error)
+      console.error("error", error);
+      return null;
     }
   }
 
   async getRole(idpUserId) {
     try {
       const { data, error } = await this._client
-        .from('summit_attendee_roles')
-        .select('summit_id, summit_event_id')
-        .eq('summit_id', this._summitId)
-        .eq('idp_user_id', idpUserId)
-      if (error) throw new Error(error)
-      if (data.length === 0) return roles.USER
-      const roleItem = data[0]
-      if (roleItem.summit_event_id > 0) return roles.QA
-      return roles.HELP
+        .from("summit_attendee_roles")
+        .select("summit_id, summit_event_id")
+        .eq("summit_id", this._summitId)
+        .eq("idp_user_id", idpUserId);
+      if (error) throw new Error(error);
+      if (data.length === 0) return roles.USER;
+      const roleItem = data[0];
+      if (roleItem.summit_event_id > 0) return roles.QA;
+      return roles.HELP;
     } catch (error) {
-      console.log('error', error)
-      return null
+      console.log("error", error);
+      return null;
     }
   }
 
@@ -404,22 +421,22 @@ export default class AttendeeRepository {
     try {
       if (this._sbUser) {
         // await signOut(this._client)
-        return this._client
-          .from('attendees_news')
+        this._client
+          .from("attendees_news")
           .update([{ is_online: false }])
-          .eq('attendee_id', this._sbUser.id)
-          .eq('summit_id', this._summitId)
-          .then((data) => {
-            //console.log(data)
-            this._sbUser = null
-          })
+          .eq("attendee_id", this._sbUser.id)
+          .eq("summit_id", this._summitId)
+          .then(() => {
+            // console.log(data)
+            this._sbUser = null;
+          });
       }
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
   }
 
   me() {
-    return this._sbUser
+    return this._sbUser;
   }
 }
