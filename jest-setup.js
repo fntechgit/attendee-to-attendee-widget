@@ -1,3 +1,3 @@
-import 'regenerator-runtime/runtime'
+import "regenerator-runtime/runtime";
 
 jest.setTimeout(10000); // in milliseconds

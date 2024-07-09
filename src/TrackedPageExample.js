@@ -9,121 +9,116 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from "react";
 
-import AttendeeToAttendeeContainer from './components/AttendeeToAttendeeContainer/AttendeeToAttendeeContainer'
-import { permissions } from './models/permissions'
-import { scopes } from './models/scopes'
-import Tracker from './components/Tracker'
-
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
+import AttendeeToAttendeeContainer from "./components/AttendeeToAttendeeContainer/AttendeeToAttendeeContainer";
+import { permissions } from "./models/permissions";
+import { scopes } from "./models/scopes";
+import Tracker from "./components/Tracker";
 
 const sbAuthProps = {
   supabaseUrl: process.env.REACT_APP_SUPABASE_URL,
   supabaseKey: process.env.REACT_APP_SUPABASE_KEY
-}
+};
 
 const chatProps = {
-  streamApiKey: '29gtgpyz5hht',
-  apiBaseUrl: 'https://idp.dev.fnopen.com',
+  streamApiKey: "29gtgpyz5hht",
+  apiBaseUrl: "https://idp.dev.fnopen.com",
   chatApiBaseUrl: null,
-  //chatApiBaseUrl: 'https://chat-api.dev.fnopen.com',
+  // chatApiBaseUrl: 'https://chat-api.dev.fnopen.com',
   getAccessToken: async () => {},
-  onAuthError: (err, res) => console.log(err),
-  openDir: 'left',
+  onAuthError: (err) => console.log(err),
+  openDir: "left",
   activity: {
     id: 206,
-    name:
-      'Global Collaboration Driving Innovation in a Multi-Billion Dollar Market',
-    imgUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83'
+    name: "Global Collaboration Driving Innovation in a Multi-Billion Dollar Market",
+    imgUrl: "https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83"
   }
-}
+};
 
 const widgetProps = {
   user: {
     id: null,
-    fullName: '',
-    email: '',
+    fullName: "",
+    email: "",
     showEmail: false,
     allowChatWithMe: true,
-    company: '',
-    title: '',
-    picUrl: 'https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83',
+    company: "",
+    title: "",
+    picUrl: "https://www.gravatar.com/avatar/ed3aa6518abef1c091b9a891b8f43e83",
     socialInfo: {
-      githubUser: 'romanetar',
+      githubUser: "romanetar",
       linkedInProfile:
-        'https://www.linkedin.com/in/rom%C3%A1n-gutierrez-pmp-7a001b6/',
-      twitterName: 'romanetar',
-      wechatUser: ''
+        "https://www.linkedin.com/in/rom%C3%A1n-gutierrez-pmp-7a001b6/",
+      twitterName: "romanetar",
+      wechatUser: ""
     },
-    bio: '# This is my bio, *in MD*!', //bio: '<p><span>This is my bio in HTML</span></p>'
-    getBadgeFeatures: () => {
-      return [
-        {
-          name: 'Feat A',
-          image:
-            'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-        },
-        {
-          name: 'Feat B',
-          image:
-            'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-        },
-        {
-          name: 'Feat C',
-          image:
-            'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-        },
-        {
-          name: 'Feat D',
-          image:
-            'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-        }
-        ,
-        {
-          name: 'Feat E',
-          image:
-            'https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png'
-        }
-      ] //attendee.ticket.badge.features
-    },
+    bio: "# This is my bio, *in MD*!", // bio: '<p><span>This is my bio in HTML</span></p>'
+    getBadgeFeatures: () => [
+      {
+        name: "Feat A",
+        image:
+          "https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png"
+      },
+      {
+        name: "Feat B",
+        image:
+          "https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png"
+      },
+      {
+        name: "Feat C",
+        image:
+          "https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png"
+      },
+      {
+        name: "Feat D",
+        image:
+          "https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png"
+      },
+      {
+        name: "Feat E",
+        image:
+          "https://www.instituteofexcellence.com/wp-content/uploads/check-mark-badge.png"
+      }
+    ], // attendee.ticket.badge.features
     hasPermission: (permission) => {
       switch (permission) {
         case permissions.MANAGE_ROOMS:
-          //return user.groups && (user.groups.includes('admins') || user.groups.includes('super-admins'))
-          return true
+          // return user.groups && (user.groups.includes('admins') || user.groups.includes('super-admins'))
+          return true;
         case permissions.CHAT:
-          return true //based on badge features
+          return true; // based on badge features
         default:
-          return false
+          return false;
       }
     }
   },
   summitId: 13,
   height: 400,
-  defaultScope: scopes.PAGE,  //Default attendees filter scope (scopes.PAGE | scopes.SHOW)
+  defaultScope: scopes.PAGE, // Default attendees filter scope (scopes.PAGE | scopes.SHOW)
   ...chatProps,
   ...sbAuthProps
-}
+};
 
-const TrackedPageExample = () => {
-  const [loading, setLoading] = useState(true)
-  const trackerRef = useRef()
+function TrackedPageExample() {
+  const [loading, setLoading] = useState(true);
+  const trackerRef = useRef();
 
-  const sdcRef = useRef()
-  const shcRef = useRef()
-  const sqacRef = useRef()
-  const ocrRef = useRef()
+  const sdcRef = useRef();
+  const shcRef = useRef();
+  const sqacRef = useRef();
+  const ocrRef = useRef();
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
 
-    const accessToken = findGetParameter('accessToken')
-    const fullName = findGetParameter('fullName')
-    const email = findGetParameter('email')
-    const idpUserId = findGetParameter('idpUserId')
+    const accessToken = findGetParameter("accessToken");
+    const fullName = findGetParameter("fullName");
+    const email = findGetParameter("email");
+    const idpUserId = findGetParameter("idpUserId");
     // const rnd = Math.floor(Math.random() * 5) + 1
     // widgetProps.user.fullName = `Test User ${rnd}`
     // widgetProps.user.email = `test${rnd}@nomail.com`
@@ -131,71 +126,69 @@ const TrackedPageExample = () => {
     // widgetProps.user.title = `Title ${rnd}`
     // widgetProps.user.idpUserId = 13
 
-    widgetProps.user.fullName = fullName
-    widgetProps.user.email = email
-    widgetProps.user.company = `Tipit`
-    widgetProps.user.title = `Full stack developer`
-    widgetProps.user.id = idpUserId
-    widgetProps.user.idpUserId = idpUserId
-    widgetProps.getAccessToken = async () => accessToken
+    widgetProps.user.fullName = fullName;
+    widgetProps.user.email = email;
+    widgetProps.user.company = "Tipit";
+    widgetProps.user.title = "Full stack developer";
+    widgetProps.user.id = idpUserId;
+    widgetProps.user.idpUserId = idpUserId;
+    widgetProps.getAccessToken = async () => accessToken;
 
-    setLoading(false)
-  }, [])
+    setLoading(false);
+  }, []);
 
   const findGetParameter = (parameterName) => {
-    var result = null,
-      tmp = []
+    let result = null;
+    let tmp = [];
     window.location.search
       .substr(1)
-      .split('&')
-      .forEach(function (item) {
-        tmp = item.split('=')
-        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1])
-      })
-    return result
-  }
+      .split("&")
+      .forEach((item) => {
+        tmp = item.split("=");
+        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+      });
+    return result;
+  };
 
-  //From INVITE LINK
+  // From INVITE LINK
   const openChatRoom = (roomId) => {
-    ocrRef.current.openChatRoom(roomId)
-  }
+    ocrRef.current.openChatRoom(roomId);
+  };
 
   const startHelpChat = () => {
-    shcRef.current.startHelpChat()
-  }
+    shcRef.current.startHelpChat();
+  };
 
   const startQAChat = () => {
-    sqacRef.current.startQAChat()
-  }
+    sqacRef.current.startQAChat();
+  };
 
   const startDirectChat = (partnerId) => {
-    sdcRef.current.startDirectChat(partnerId)
-  }
+    sdcRef.current.startDirectChat(partnerId);
+  };
 
   const handleSignOutClick = () => {
-    trackerRef.current.signOut()
-  }
+    trackerRef.current.signOut();
+  };
 
   const handleBindWindowLifecycleClick = () => {
-    trackerRef.current.bindToWindowLifecycle()
-  }
+    trackerRef.current.bindToWindowLifecycle();
+  };
 
   const handleUnbindWindowLifecycleClick = () => {
-    trackerRef.current.unbindFromWindowLifecycle()
-  }
+    trackerRef.current.unbindFromWindowLifecycle();
+  };
 
   return (
     !loading && (
       <div
         style={{
-          width: '480px',
-          margin: '20px auto',
-          position: 'relative'
+          width: "480px",
+          margin: "20px auto",
+          position: "relative"
         }}
       >
-        <Link to={'/'}>
-          Back
-        </Link>
+        <Link to="/">Back</Link>
         <AttendeeToAttendeeContainer
           {...widgetProps}
           ref={{ sdcRef, shcRef, sqacRef, ocrRef }}
@@ -203,18 +196,30 @@ const TrackedPageExample = () => {
         <Tracker {...widgetProps} ref={trackerRef} />
         <br />
         <hr />
-        <button onClick={handleSignOutClick}>SignOut</button>
-        <button onClick={() => startDirectChat('7')}>Start Direct Chat</button>
-        <button onClick={() => openChatRoom('578133244')}>
+        <button type="button" onClick={handleSignOutClick}>
+          SignOut
+        </button>
+        <button type="button" onClick={() => startDirectChat("7")}>
+          Start Direct Chat
+        </button>
+        <button type="button" onClick={() => openChatRoom("578133244")}>
           Open Chat Room
         </button>
-        <button onClick={startHelpChat}>Start Help Chat</button>
-        <button onClick={startQAChat}>Start Q&A Chat</button>
-        <button onClick={handleBindWindowLifecycleClick}>Bind Window Lifecycle</button>
-        <button onClick={handleUnbindWindowLifecycleClick}>Unbind Window Lifecycle</button>
+        <button type="button" onClick={startHelpChat}>
+          Start Help Chat
+        </button>
+        <button type="button" onClick={startQAChat}>
+          Start Q&A Chat
+        </button>
+        <button type="button" onClick={handleBindWindowLifecycleClick}>
+          Bind Window Lifecycle
+        </button>
+        <button type="button" onClick={handleUnbindWindowLifecycleClick}>
+          Unbind Window Lifecycle
+        </button>
       </div>
     )
-  )
+  );
 }
 
-export default TrackedPageExample
+export default TrackedPageExample;

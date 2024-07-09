@@ -1,8 +1,11 @@
 .DS_Store
 lib
-dist
+dist/
 node_modules
 coverage
+package-lock.json
+.editorconfig
 *.log
 .idea/
 .env
+.vscode/

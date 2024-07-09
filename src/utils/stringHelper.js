@@ -9,14 +9,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
 const hashCode = (s) =>
-  s.split('').reduce((a, b) => {
-    a = (a << 5) - a + b.charCodeAt(0)
-    return a & a
-  }, 0)
+  s.split("").reduce((a, b) => {
+    const shift = 5;
+    a = (a << shift) - a + b.charCodeAt(0);
+    return a & a;
+  }, 0);
 
-export const nameToId = (name) => {
-  return hashCode(name)
-}
+export const nameToId = (name) => hashCode(name);

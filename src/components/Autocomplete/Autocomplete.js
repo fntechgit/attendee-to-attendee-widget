@@ -9,148 +9,150 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import React from 'react'
-import debounce from 'lodash.debounce'
+import React from "react";
+import debounce from "lodash.debounce";
 
-import style from './style.module.scss'
+import style from "./style.module.scss";
+import { ENTER_KEY, UP_ARROW_KEY, DOWN_ARROW_KEY } from "../../lib/constants";
 
 class Autocomplete extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       activeIndex: 0,
       matches: [],
-      query: '',
+      query: "",
       selected: false
-    }
+    };
 
-    this.handleSearchDebounce = null
+    this.handleSearchDebounce = null;
 
-    this.handleKeyPress = this.handleKeyPress.bind(this)
-    this.handleSelection = this.handleSelection.bind(this)
-    this.updateQuery = this.updateQuery.bind(this)
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.handleSelection = this.handleSelection.bind(this);
+    this.updateQuery = this.updateQuery.bind(this);
   }
 
   handleKeyPress(event) {
-    const { activeIndex, matches } = this.state
+    const { activeIndex, matches } = this.state;
 
     switch (event.which) {
-      case 13: // Enter key
+      case ENTER_KEY:
         if (matches.length) {
           this.setState({
             activeIndex: 0,
             matches: [],
             query: matches[activeIndex],
             selected: true
-          })
+          });
         }
-        break
-      case 38: // Up arrow
+        break;
+      case UP_ARROW_KEY:
         this.setState({
           activeIndex: activeIndex >= 1 ? activeIndex - 1 : 0
-        })
-        break
-      case 40: // Down arrow
+        });
+        break;
+      case DOWN_ARROW_KEY:
         this.setState({
           activeIndex:
             activeIndex < matches.length - 1
               ? activeIndex + 1
               : matches.length - 1
-        })
-        break
+        });
+        break;
       default:
-        break
+        break;
     }
   }
 
   handleSelection(event, selection) {
-    const { onSelect } = this.props
-    event.preventDefault()
+    const { onSelect } = this.props;
+    event.preventDefault();
 
     this.setState({
       activeIndex: 0,
       query: selection.text,
       matches: [],
       selected: true
-    })
+    });
 
-    if (onSelect) onSelect(selection)
+    if (onSelect) onSelect(selection);
 
-    this.resetState()
+    this.resetState();
   }
 
   resetState() {
     this.setState({
       matches: [],
-      query: '',
+      query: "",
       selected: false
-    })
+    });
   }
 
   async updateQuery(e) {
-    const { dataSource } = this.props
+    const { dataSource } = this.props;
+    const { selected } = this.state;
 
-    if (!this.state.selected) {
-      const query = e.target.value
+    if (!selected) {
+      const query = e.target.value;
 
       this.setState({
         matches: [],
         query
-      })
+      });
 
-      if (this.handleSearchDebounce) this.handleSearchDebounce.cancel()
+      const timeout = 300;
+      if (this.handleSearchDebounce) this.handleSearchDebounce.cancel();
       this.handleSearchDebounce = debounce(async () => {
-        const res = await dataSource(query)
+        const minQueryLength = 2;
+        await dataSource(query);
         this.setState({
-          matches: query.length >= 2 ? await dataSource(query) : []
-        })
-      }, 300)
-      this.handleSearchDebounce()
-    } else {
-      if (e.nativeEvent.inputType === 'deleteContentBackward') {
-        this.resetState()
-      }
+          matches: query.length >= minQueryLength ? await dataSource(query) : []
+        });
+      }, timeout);
+      this.handleSearchDebounce();
+    } else if (e.nativeEvent.inputType === "deleteContentBackward") {
+      this.resetState();
     }
   }
 
   render() {
-    const { name, placeholder } = this.props
-    const { activeIndex, matches, query } = this.state
+    const { name, placeholder } = this.props;
+    const { matches, query } = this.state;
 
     return (
       <div
         className={`${style.dropdown} dropdown ${
-          matches.length > 0 ? 'is-active' : ''
+          matches.length > 0 ? "is-active" : ""
         }`}
       >
-        <div className='dropdown-trigger'>
-          <div className='control has-icons-right is-expanded'>
+        <div className="dropdown-trigger">
+          <div className="control has-icons-right is-expanded">
             <input
-              className='input is-large'
-              type='text'
+              className="input is-large"
+              type="text"
               name={name}
               value={query}
               onChange={this.updateQuery}
               onKeyDown={this.handleKeyPress}
               placeholder={placeholder}
             />
-            <span className='icon is-right'>
-              <span className='icon'>
-                <i className='fa fa-search' aria-hidden='true'></i>
+            <span className="icon is-right">
+              <span className="icon">
+                <i className="fa fa-search" aria-hidden="true" />
               </span>
             </span>
           </div>
         </div>
-        <div className='dropdown-menu'>
+        <div className="dropdown-menu">
           {matches.length > 0 && (
-            <div className='dropdown-content'>
-              {matches.map((match, index) => (
+            <div className="dropdown-content">
+              {matches.map((match) => (
                 <a
                   className={`dropdown-item ${style.autocompleteItem}`}
-                  href='/'
+                  href="/"
                   key={match.value}
                   onClick={(event) => this.handleSelection(event, match)}
                 >
@@ -178,8 +180,8 @@ class Autocomplete extends React.Component {
           )}
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default Autocomplete
+export default Autocomplete;

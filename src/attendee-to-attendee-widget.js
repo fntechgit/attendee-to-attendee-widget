@@ -9,11 +9,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import AttendeeToAttendeeContainer from './components/AttendeeToAttendeeContainer/AttendeeToAttendeeContainer'
-import { permissions } from './models/permissions'
-import { scopes } from './models/scopes'
-import Tracker from './components/Tracker'
+import AttendeeToAttendeeContainer from "./components/AttendeeToAttendeeContainer/AttendeeToAttendeeContainer";
+import { permissions } from "./models/permissions";
+import { scopes } from "./models/scopes";
+import Tracker from "./components/Tracker";
 
-export { AttendeeToAttendeeContainer, permissions, scopes, Tracker }
+export { AttendeeToAttendeeContainer, permissions, scopes, Tracker };

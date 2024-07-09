@@ -9,12 +9,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
 export const channelTypes = {
-  ACTIVITY_ROOM: 'activity_room',
-  CUSTOM_ROOM: 'custom_room',
-  QA_ROOM: 'qa_room',
-  HELP_ROOM: 'help_room',
-  MESSAGING: 'messaging'
-}
+  ACTIVITY_ROOM: "activity_room",
+  CUSTOM_ROOM: "custom_room",
+  QA_ROOM: "qa_room",
+  HELP_ROOM: "help_room",
+  MESSAGING: "messaging"
+};

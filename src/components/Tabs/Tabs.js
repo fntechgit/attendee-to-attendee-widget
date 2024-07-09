@@ -9,26 +9,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import React from 'react'
-import style from './style.module.scss'
+import React from "react";
+import style from "./style.module.scss";
 
-const Tab = ({ activeTab, changeActiveTab, tab: { name, showNewsBadge } }) => {
+function Tab({ activeTab, changeActiveTab, tab: { name, showNewsBadge } }) {
   return (
     <li
-      className={name === activeTab ? 'is-active' : ''}
+      className={name === activeTab ? "is-active" : ""}
       onClick={() => changeActiveTab(name)}
     >
-      <a style={{ textDecoration: 'none' }}>
+      <a style={{ textDecoration: "none" }}>
         <span>{name}</span>
-        {showNewsBadge && <span className={style.unreadMessagesBadge}></span>}
+        {showNewsBadge && <span className={style.unreadMessagesBadge} />}
       </a>
     </li>
-  )
+  );
 }
 
-const Tabs = ({ tabList, activeTab, changeActiveTab }) => {
+function Tabs({ tabList, activeTab, changeActiveTab }) {
   return (
     <div className={`${style.tabs} tabs is-boxed is-fullwidth`}>
       <ul>
@@ -42,9 +42,11 @@ const Tabs = ({ tabList, activeTab, changeActiveTab }) => {
         ))}
       </ul>
     </div>
-  )
+  );
 }
 
-const ActiveTabContent = (props) => <div>{props.content}</div>
+function ActiveTabContent({ content }) {
+  return <div>{content}</div>;
+}
 
-export { Tabs, ActiveTabContent }
+export { Tabs, ActiveTabContent };

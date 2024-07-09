@@ -1,10 +1,10 @@
 :root {
-  --color_primary: #6D6E71;
-  --color_primary50: #6D6E7150;
-  --color_secondary: #1EAAA3;
-  --color_secondary50: #1EAAA350;
-  --color_accent: #FF5E32;
-  --color_accent50: #FF5E3250;
+  --color_primary: #6d6e71;
+  --color_primary50: #6d6e7150;
+  --color_secondary: #1eaaa3;
+  --color_secondary50: #1eaaa350;
+  --color_accent: #ff5e32;
+  --color_accent50: #ff5e3250;
   /* LIGHT MODE */
   /*--color_background_light: #FFFFFF;
   --color_background_dark: #000000;
@@ -22,25 +22,25 @@
   /* END LIGHT MODE */
   /* DARK MODE */
   --color_background_light: #000000;
-  --color_background_dark: #FFFFFF;
-  --color_text_dark: #FFFFFF;
+  --color_background_dark: #ffffff;
+  --color_text_dark: #ffffff;
   --color_text_med: #828282;
-  --color_text_light: #4A4A4A;
-  --color_gray_darker: #F2F2F2;
-  --color_gray_dark: #DFDFDF;
+  --color_text_light: #4a4a4a;
+  --color_gray_darker: #f2f2f2;
+  --color_gray_dark: #dfdfdf;
   --color_gray_light: #999999;
-  --color_gray_lighter: #4A4A4A;
-  --color_input_text_color: #FFFFFF !important;
+  --color_gray_lighter: #4a4a4a;
+  --color_input_text_color: #ffffff !important;
   --color_input_background_color: rgb(24, 26, 27) !important;
-  --color_input_border_color:  rgb(58, 63, 65) !important;
+  --color_input_border_color: rgb(58, 63, 65) !important;
   /* END DARK MODE */
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -49,6 +49,6 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }

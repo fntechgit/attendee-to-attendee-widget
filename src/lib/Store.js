@@ -9,21 +9,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from "react";
 
 export const useStore = (props) => {
-  const [attendeesNews, setAttendeesNews] = useState({})
-  const [accessNews, handleAccessNews] = useState(null)
-  const [accessListener, setAccessListener] = useState(null)
+  const [attendeesNews, setAttendeesNews] = useState({});
+  const [accessNews, handleAccessNews] = useState(null);
+  const [accessListener, setAccessListener] = useState(null);
   const mounted = useRef(false);
 
   useEffect(() => {
     if (accessNews) {
-      setAttendeesNews(accessNews)
+      setAttendeesNews(accessNews);
     }
-  }, [accessNews, props.url])
+  }, [accessNews, props.url]);
 
   useEffect(() => {
     mounted.current = true;
@@ -31,15 +31,15 @@ export const useStore = (props) => {
       setAccessListener(
         props.accessRepository.subscribe((payload) => {
           if (props.summitId === payload.summit_id && mounted.current) {
-            handleAccessNews(payload)
+            handleAccessNews(payload);
           }
         })
-      )
+      );
     }
     return () => {
       mounted.current = false;
-    }
-  }, [accessListener])
+    };
+  }, [accessListener]);
 
-  return { attendeesNews }
-}
+  return { attendeesNews };
+};

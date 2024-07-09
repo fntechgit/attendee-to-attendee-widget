@@ -1,39 +1,60 @@
 {
-  "parser": "babel-eslint",
-  "extends": [
-    "standard",
-    "standard-react",
-    "plugin:prettier/recommended",
-    "prettier/standard",
-    "prettier/react"
-  ],
   "env": {
-    "node": true
+    "browser": true,
+    "es2021": true
   },
+  "extends": ["plugin:react/recommended", "airbnb", "prettier"],
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
-    "ecmaVersion": 2020,
     "ecmaFeatures": {
-      "legacyDecorators": true,
       "jsx": true
-    }
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
   },
-  "settings": {
-    "react": {
-      "version": "16"
-    }
-  },
+  "plugins": ["react"],
   "rules": {
-    "space-before-function-paren": 0,
-    "react/prop-types": 0,
-    "react/jsx-handler-names": 0,
-    "react/jsx-fragments": 0,
-    "react/no-unused-prop-types": 0,
-    "import/export": 0
+    "quotes": ["error", "double"],
+    "react/jsx-filename-extension": ["warn", { "extensions": [".js", ".jsx"] }],
+    "import/extensions": "warn",
+    "import/no-extraneous-dependencies": "warn",
+    "react/no-unused-class-component-methods": "warn",
+    "class-methods-use-this": "warn",
+    "import/no-unresolved": "warn",
+    "no-underscore-dangle": "warn",
+    "camelcase": "warn",
+    "eqeqeq": "warn",
+    "react/forbid-prop-types": "warn",
+    "react/jsx-props-no-spreading": "warn",
+    "react/no-unstable-nested-components": "warn",
+    "no-magic-numbers": [
+      "error",
+      {
+        "ignoreArrayIndexes": true,
+        "ignore": [-1, 0, 1]
+      }
+    ],
+    "import/no-dynamic-require": "warn",
+    "no-shadow": "warn",
+    "global-require": "warn",
+    "no-param-reassign": "warn",
+    "react/require-default-props": "warn",
+    "react/prop-types": "warn",
+    "react/jsx-no-useless-fragment": "warn",
+    "import/prefer-default-export": "warn",
+    "no-plusplus": "off",
+    "no-continue": "off",
+    "no-bitwise": "off",
+    "no-return-await": "off",
+    "no-use-before-define": "off",
+    "no-lonely-if": "off",
+    "prefer-destructuring": "warn",
+    "jsx-a11y/no-noninteractive-element-interactions": "warn",
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "jsx-a11y/anchor-is-valid": "warn",
+    "jsx-a11y/control-has-associated-label": "warn",
+    "jsx-a11y/label-has-associated-control": "warn"
   },
-  "prettier/prettier": [
-    "error",
-    {
-      "endOfLine": "auto"
-    }
-  ]
+  "ignorePatterns": ["src/__mocks__", "jest-setup.js"]
 }

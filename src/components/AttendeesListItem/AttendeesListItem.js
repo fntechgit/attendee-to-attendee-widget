@@ -9,32 +9,31 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import { isMobile } from 'react-device-detect'
-import style from './style.module.scss'
+import React from "react";
+import PropTypes from "prop-types";
+import { isMobile } from "react-device-detect";
+import style from "./style.module.scss";
 
-const AttendeesListItem = (props) => {
-  if (!props.item) return null
-
-  const {
-    item,
-    onItemClick,
-    onItemPicMouseEnter,
-    onItemPicMouseLeave,
-    onItemPicTouch
-  } = props
+function AttendeesListItem({
+  item,
+  onItemClick,
+  onItemPicMouseEnter,
+  onItemPicMouseLeave,
+  onItemPicTouch
+}) {
+  if (!item) return null;
 
   const attendee = {
     ...item,
-    fullName: item.full_name && item.full_name != 'null' ? item.full_name : 'Private',
+    fullName:
+      item.full_name && item.full_name != "null" ? item.full_name : "Private",
     picUrl: item.pic_url,
     socialInfo: item.social_info,
     badgeFeatures: item.badges_info,
     bio: item.bio
-  }
+  };
 
   return (
     attendee && (
@@ -47,7 +46,11 @@ const AttendeesListItem = (props) => {
         >
           <div
             className={style.picWrapper}
-            onClick={isMobile ? () => onItemPicTouch(attendee) : () => onItemClick(attendee)}
+            onClick={
+              isMobile
+                ? () => onItemPicTouch(attendee)
+                : () => onItemClick(attendee)
+            }
           >
             <div
               className={style.pic}
@@ -61,7 +64,7 @@ const AttendeesListItem = (props) => {
             <div className={style.title}>{attendee.fullName}</div>
             {attendee.company && (
               <div className={style.subtitle}>
-                {attendee.title ? `${attendee.title} at ` : ''}
+                {attendee.title ? `${attendee.title} at ` : ""}
                 {attendee.company}
               </div>
             )}
@@ -69,11 +72,11 @@ const AttendeesListItem = (props) => {
         </div>
       </li>
     )
-  )
+  );
 }
 
 AttendeesListItem.propTypes = {
   item: PropTypes.any.isRequired
-}
+};
 
-export default AttendeesListItem
+export default AttendeesListItem;

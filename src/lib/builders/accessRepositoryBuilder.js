@@ -9,13 +9,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import AccessRepository from '../repository/AccessRepository'
-import SupabaseClientBuilder from './supabaseClientBuilder'
+import AccessRepository from "../repository/AccessRepository";
+import SupabaseClientBuilder from "./supabaseClientBuilder";
 
 export default class AccessRepositoryBuilder {
-  static repo
+  static repo;
 
   static getRepository(
     supabaseUrl,
@@ -28,8 +28,8 @@ export default class AccessRepositoryBuilder {
         SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
         subscribeToRealTime,
         summitId
-      )
+      );
     }
-    return this.repo
+    return this.repo;
   }
 }

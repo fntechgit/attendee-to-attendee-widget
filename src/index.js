@@ -9,29 +9,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
-import TrackedPageExample from './TrackedPageExample'
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import TrackedPageExample from "./TrackedPageExample";
 
-import './index.css'
+import "./index.css";
 
-const App = () => {
+function App() {
   const token1 =
-    'JrYPsjBELq9SjKFNPCB902X8w0vcDfvrG1ThUKB3yKmOwAKlUvseGAcFQ3vQ21U-tJXR74WFMTn_qkMNE9J08i6yUY-zU3b2G3I6~NOcpHYNrhPIpNMzakuOkpkmmxFi'
+    "JrYPsjBELq9SjKFNPCB902X8w0vcDfvrG1ThUKB3yKmOwAKlUvseGAcFQ3vQ21U-tJXR74WFMTn_qkMNE9J08i6yUY-zU3b2G3I6~NOcpHYNrhPIpNMzakuOkpkmmxFi";
   const token2 =
-    'JrYPsjBELq9SjKFNPCB902X8w0vcDfvrG1ThUKB3yKmOwAKlUvseGAcFQ3vQ21U-tJXR74WFMTn_qkMNE9J08i6yUY-zU3b2G3I6~NOcpHYNrhPIpNMzakuOkpkmmxFi'
+    "JrYPsjBELq9SjKFNPCB902X8w0vcDfvrG1ThUKB3yKmOwAKlUvseGAcFQ3vQ21U-tJXR74WFMTn_qkMNE9J08i6yUY-zU3b2G3I6~NOcpHYNrhPIpNMzakuOkpkmmxFi";
   const token3 =
-    'JrYPsjBELq9SjKFNPCB902X8w0vcDfvrG1ThUKB3yKmOwAKlUvseGAcFQ3vQ21U-tJXR74WFMTn_qkMNE9J08i6yUY-zU3b2G3I6~NOcpHYNrhPIpNMzakuOkpkmmxFi'
+    "JrYPsjBELq9SjKFNPCB902X8w0vcDfvrG1ThUKB3yKmOwAKlUvseGAcFQ3vQ21U-tJXR74WFMTn_qkMNE9J08i6yUY-zU3b2G3I6~NOcpHYNrhPIpNMzakuOkpkmmxFi";
   // const token4 =
   //   'l~23GCO2zSh9Dix.6iTQbLOPzaC97o_ifhQeCJDkDWEsZz6OmMiCi1W3lCU4_hXLzOVKB00n1XV6wFuw67T9XHfYM7AUBwkOSRr1r9ktMTDr~JwqYa.SsZqBoZe1PYkq'
 
   return (
     <Router>
       <Switch>
-        <Route exact path='/'>
+        <Route exact path="/">
           <div>
             <Link
               to={`/attendance?accessToken=${token1}&fullName=Johnny Nimbus(Help)&email=cespin+1@gmail.com&idpUserId=6`}
@@ -70,13 +70,13 @@ const App = () => {
             </Link>
           </div>
         </Route>
-        <Route path='/attendance' component={TrackedPageExample} />
-        <Route exact path='/untracked'>
+        <Route path="/attendance" component={TrackedPageExample} />
+        <Route exact path="/untracked">
           <div>Untracked page</div>
         </Route>
       </Switch>
     </Router>
-  )
+  );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById("root"));

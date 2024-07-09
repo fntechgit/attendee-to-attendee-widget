@@ -9,17 +9,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
 export default class SupabaseClientBuilder {
-  static client
+  static client;
 
   static getClient(supabaseUrl, supabaseKey) {
     if (!this.client) {
-      this.client = createClient(supabaseUrl, supabaseKey, { autoRefreshToken: true })
+      this.client = createClient(supabaseUrl, supabaseKey, {
+        autoRefreshToken: true
+      });
     }
-    return this.client
+    return this.client;
   }
 }

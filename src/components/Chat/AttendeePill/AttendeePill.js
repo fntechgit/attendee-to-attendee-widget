@@ -9,12 +9,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import React from 'react'
-import style from './style.module.scss'
+import React from "react";
+import style from "./style.module.scss";
 
-const AttendeePill = ({ attendee, onClose }) => {
+function AttendeePill({ attendee, onClose }) {
   return (
     attendee && (
       <div className={style.attendeesPill}>
@@ -25,10 +25,12 @@ const AttendeePill = ({ attendee, onClose }) => {
           />
         </div>
         <div className={style.textWrapper}>{attendee.full_name}</div>
-        <a className={style.clear} onClick={() => onClose(attendee.id)}>x</a>
+        <a className={style.clear} onClick={() => onClose(attendee.id)}>
+          x
+        </a>
       </div>
     )
-  )
+  );
 }
 
-export default AttendeePill
+export default AttendeePill;

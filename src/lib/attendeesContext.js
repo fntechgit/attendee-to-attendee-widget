@@ -9,33 +9,33 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from "react";
 
-const AttendeesNewsContext = React.createContext()
-const AttendeesNewsUpdateContext = React.createContext()
+const AttendeesNewsContext = React.createContext();
+const AttendeesNewsUpdateContext = React.createContext();
 
 export function useAttendeesNews() {
-    return useContext(AttendeesNewsContext)
+  return useContext(AttendeesNewsContext);
 }
 
 export function useUpdateAttendeesNews() {
-    return useContext(AttendeesNewsUpdateContext)
+  return useContext(AttendeesNewsUpdateContext);
 }
 
-export const AttendeesNewsProvider = ({children}) => {
-    const [attendeesList, setAttendeesList] = useState([])
+export function AttendeesNewsProvider({ children }) {
+  const [attendeesList, setAttendeesList] = useState([]);
 
-    const updateAttendeesList = (list) => {
-        setAttendeesList(list)
-    }
+  const updateAttendeesList = useCallback((list) => {
+    setAttendeesList(list);
+  }, []);
 
-    return (
-        <AttendeesNewsContext.Provider value={attendeesList}>
-            <AttendeesNewsUpdateContext.Provider value={updateAttendeesList}>
-                {children}
-            </AttendeesNewsUpdateContext.Provider>
-        </AttendeesNewsContext.Provider>
-    )
+  return (
+    <AttendeesNewsContext.Provider value={attendeesList}>
+      <AttendeesNewsUpdateContext.Provider value={updateAttendeesList}>
+        {children}
+      </AttendeesNewsUpdateContext.Provider>
+    </AttendeesNewsContext.Provider>
+  );
 }

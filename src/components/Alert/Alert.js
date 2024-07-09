@@ -9,25 +9,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-import React from 'react'
+import React from "react";
 
-import style from './style.module.scss'
+import style from "./style.module.scss";
 
-const Alert = ({
-  message,
-  onClick
-}) => {
- 
+function Alert({ message, onClick }) {
   return (
-    <div
-      className={style.alertContainer}
-      onClick={onClick}
-    >
-      <div className='is-size-4'>{message}</div>
+    <div className={style.alertContainer} onClick={onClick}>
+      <div className="is-size-4">{message}</div>
     </div>
-  )
+  );
 }
 
-export default Alert
+export default Alert;

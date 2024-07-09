@@ -9,14 +9,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
+ * */
 
-export const ATTENDEES_LIST_PAGE_SIZE = 10
+export const ATTENDEES_LIST_PAGE_SIZE = 10;
 
 export const CHANNEL_STATES = {
-    closed: 'closed',
-    errored: 'errored',
-    joined: 'joined',
-    joining: 'joining',
-    leaving: 'leaving',
-}
+  closed: "closed",
+  errored: "errored",
+  joined: "joined",
+  joining: "joining",
+  leaving: "leaving"
+};
+
+export const HTTP_200 = 200;
+export const HTTP_201 = 201;
+export const HTTP_400 = 400;
+export const HTTP_422 = 422;
+
+export const ENTER_KEY = 13;
+export const UP_ARROW_KEY = 38;
+export const DOWN_ARROW_KEY = 40;
