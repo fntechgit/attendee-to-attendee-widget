@@ -36,20 +36,6 @@ create trigger handle_updated_at before update on public.attendees_news
 -- Send "previous data" on change 
 alter table public.attendees_news replica identity full; 
 
--- alter table public.attendees_news enable row level security;
-
--- create policy "Public profiles are viewable by the owner."
---   on public.attendees_news for select
---   using ( auth.uid() = attendee_id );
-
--- create policy "Attendees can insert news."
---   on public.attendees_news for insert
---   with check ( auth.uid() = attendee_id );
-
--- create policy "Attendees can update news."
---   on public.attendees_news for update
---   using ( auth.uid() = attendee_id );
-
 -- Set up Realtime
 begin;
   drop publication if exists supabase_realtime;
