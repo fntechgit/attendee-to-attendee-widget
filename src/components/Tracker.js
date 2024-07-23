@@ -146,7 +146,12 @@ Tracker.propTypes = {
       wechatUser: PropTypes.string
     }),
     bio: PropTypes.string,
-    public_profile_show_email: PropTypes.bool
+    showEmail: PropTypes.bool,
+    showFullName: PropTypes.bool,
+    allowChatWithMe: PropTypes.bool,
+    showProfilePic: PropTypes.bool,
+    showSocialInfo: PropTypes.bool,
+    showBio: PropTypes.bool
   }).isRequired,
   trackingLevel: PropTypes.string,
   keepAliveEnabled: PropTypes.bool
