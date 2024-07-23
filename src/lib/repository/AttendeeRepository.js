@@ -265,32 +265,37 @@ export default class AttendeeRepository {
     showSocialInfo,
     showBio
   ) {
-    const { error } = await this._client.from("attendees_news").insert([
-      {
-        attendee_id: id,
-        summit_id: this._summitId,
-        full_name:
-          showFullName && fullName && fullName !== "null"
-            ? fullName
-            : "Private",
-        email: showEmail ? email : "",
-        company,
-        title,
-        pic_url: showProfilePic ? picUrl : "",
-        idp_user_id: idpUserId,
-        is_online: isOnline,
-        social_info: showSocialInfo ? socialInfo : {},
-        badges_info: badgeFeatures,
-        bio: showBio ? bio : "",
-        public_profile_show_email: showEmail,
-        public_profile_show_full_name: showFullName,
-        public_profile_allow_chat_with_me: allowChatWithMe,
-        public_profile_show_photo: showProfilePic,
-        public_profile_show_social_media_info: showSocialInfo,
-        public_profile_show_bio: showBio,
-        current_url: ""
-      }
-    ]);
+    const { data, error } = await this._client
+      .from("attendees_news")
+      .upsert([
+        {
+          attendee_id: id,
+          summit_id: this._summitId,
+          full_name:
+            showFullName && fullName && fullName !== "null"
+              ? fullName
+              : "Private",
+          email: showEmail ? email : "",
+          company: showBio ? company : "",
+          title: showBio ? title : "",
+          pic_url: showProfilePic ? picUrl : "",
+          idp_user_id: idpUserId,
+          is_online: isOnline,
+          social_info: showSocialInfo ? socialInfo : {},
+          badges_info: badgeFeatures,
+          bio: showBio ? bio : "",
+          public_profile_show_email: showEmail,
+          public_profile_show_full_name: showFullName,
+          public_profile_allow_chat_with_me: allowChatWithMe,
+          public_profile_show_photo: showProfilePic,
+          public_profile_show_social_media_info: showSocialInfo,
+          public_profile_show_bio: showBio,
+          current_url: ""
+        }
+      ])
+      .select();
+
+    console.log("_addAttendee", data);
 
     if (error) {
       console.log("_addAttendee", error);
@@ -326,8 +331,8 @@ export default class AttendeeRepository {
               ? fullName
               : "Private",
           email: showEmail ? email : "",
-          company,
-          title,
+          company: showBio ? company : "",
+          title: showBio ? title : "",
           pic_url: showProfilePic ? picUrl : "",
           idp_user_id: idpUserId,
           is_online: isOnline,
