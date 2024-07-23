@@ -1,3 +1,4 @@
+--schedule the cron job
 select cron.schedule (
     'attendees-cleanup',
     '00 1 * * 6', -- Saturday at 1:00am (GMT)

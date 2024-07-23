@@ -30,8 +30,9 @@ const ATTTENDEES_SELECT_PROJ = `
   public_profile_show_email, 
   public_profile_show_full_name, 
   public_profile_allow_chat_with_me, 
-  public_profile_allow_share_my_profile_pic, 
-  public_profile_allow_share_my_social_media_info
+  public_profile_show_photo, 
+  public_profile_show_social_media_info,
+  public_profile_show_bio
 `;
 
 const DEFAULT_PAGE_SIZE = 30;
@@ -65,8 +66,9 @@ export default class AttendeeRepository {
       showEmail,
       showFullName,
       allowChatWithMe,
-      allowShareProfilePic,
-      allowShareSocialInfo
+      showProfilePic,
+      showSocialInfo,
+      showBio
     } = attendeeProfile;
 
     try {
@@ -100,8 +102,9 @@ export default class AttendeeRepository {
             showEmail,
             showFullName,
             allowChatWithMe,
-            allowShareProfilePic,
-            allowShareSocialInfo
+            showProfilePic,
+            showSocialInfo,
+            showBio
           )
         ) {
           // console.log('something change')
@@ -120,8 +123,9 @@ export default class AttendeeRepository {
             showEmail,
             showFullName,
             allowChatWithMe,
-            allowShareProfilePic,
-            allowShareSocialInfo
+            showProfilePic,
+            showSocialInfo,
+            showBio
           );
         }
         return user;
@@ -148,8 +152,9 @@ export default class AttendeeRepository {
       showEmail,
       showFullName,
       allowChatWithMe,
-      allowShareProfilePic,
-      allowShareSocialInfo
+      showProfilePic,
+      showSocialInfo,
+      showBio
     } = attendeeProfile;
 
     if (this._sbUser) return this._sbUser;
@@ -177,8 +182,9 @@ export default class AttendeeRepository {
       showEmail,
       showFullName,
       allowChatWithMe,
-      allowShareProfilePic,
-      allowShareSocialInfo
+      showProfilePic,
+      showSocialInfo,
+      showBio
     );
     return newUser;
   }
@@ -197,8 +203,9 @@ export default class AttendeeRepository {
     showEmail,
     showFullName,
     allowChatWithMe,
-    allowShareProfilePic,
-    allowShareSocialInfo
+    showProfilePic,
+    showSocialInfo,
+    showBio
   ) {
     let sameBadgeFeatures = true;
     if (fetchedAttendee.badges_info && badgeFeatures) {
@@ -232,10 +239,10 @@ export default class AttendeeRepository {
       fetchedAttendee.public_profile_show_email !== showEmail ||
       fetchedAttendee.public_profile_show_full_name !== showFullName ||
       fetchedAttendee.public_profile_allow_chat_with_me !== allowChatWithMe ||
-      fetchedAttendee.public_profile_allow_share_my_profile_pic !==
-        allowShareProfilePic ||
-      fetchedAttendee.public_profile_allow_share_my_social_media_info !==
-        allowShareSocialInfo
+      fetchedAttendee.public_profile_show_photo !== showProfilePic ||
+      fetchedAttendee.public_profile_show_social_media_info !==
+        showSocialInfo ||
+      fetchedAttendee.public_profile_show_bio != showBio
     );
   }
 
@@ -254,8 +261,9 @@ export default class AttendeeRepository {
     showEmail,
     showFullName,
     allowChatWithMe,
-    allowShareProfilePic,
-    allowShareSocialInfo
+    showProfilePic,
+    showSocialInfo,
+    showBio
   ) {
     const { error } = await this._client.from("attendees_news").insert([
       {
@@ -268,17 +276,18 @@ export default class AttendeeRepository {
         email: showEmail ? email : "",
         company,
         title,
-        pic_url: allowShareProfilePic ? picUrl : "",
+        pic_url: showProfilePic ? picUrl : "",
         idp_user_id: idpUserId,
         is_online: isOnline,
-        social_info: allowShareSocialInfo ? socialInfo : {},
+        social_info: showSocialInfo ? socialInfo : {},
         badges_info: badgeFeatures,
-        bio,
+        bio: showBio ? bio : "",
         public_profile_show_email: showEmail,
         public_profile_show_full_name: showFullName,
         public_profile_allow_chat_with_me: allowChatWithMe,
-        public_profile_allow_share_my_profile_pic: allowShareProfilePic,
-        public_profile_allow_share_my_social_media_info: allowShareSocialInfo,
+        public_profile_show_photo: showProfilePic,
+        public_profile_show_social_media_info: showSocialInfo,
+        public_profile_show_bio: showBio,
         current_url: ""
       }
     ]);
@@ -304,8 +313,9 @@ export default class AttendeeRepository {
     showEmail,
     showFullName,
     allowChatWithMe,
-    allowShareProfilePic,
-    allowShareSocialInfo
+    showProfilePic,
+    showSocialInfo,
+    showBio
   ) {
     const { error } = await this._client
       .from("attendees_news")
@@ -318,17 +328,18 @@ export default class AttendeeRepository {
           email: showEmail ? email : "",
           company,
           title,
-          pic_url: allowShareProfilePic ? picUrl : "",
+          pic_url: showProfilePic ? picUrl : "",
           idp_user_id: idpUserId,
           is_online: isOnline,
-          social_info: allowShareSocialInfo ? socialInfo : {},
+          social_info: showSocialInfo ? socialInfo : {},
           badges_info: badgeFeatures,
-          bio,
+          bio: showBio ? bio : "",
           public_profile_show_email: showEmail,
           public_profile_show_full_name: showFullName,
           public_profile_allow_chat_with_me: allowChatWithMe,
-          public_profile_allow_share_my_profile_pic: allowShareProfilePic,
-          public_profile_allow_share_my_social_media_info: allowShareSocialInfo
+          public_profile_show_photo: showProfilePic,
+          public_profile_show_social_media_info: showSocialInfo,
+          public_profile_show_bio: showBio
         }
       ])
       .eq("attendee_id", id)
@@ -479,7 +490,6 @@ export default class AttendeeRepository {
   signOut() {
     try {
       if (this._sbUser) {
-        // await signOut(this._client)
         this._client
           .from("attendees_news")
           .update([{ is_online: false }])
