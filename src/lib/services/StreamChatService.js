@@ -13,7 +13,7 @@
 
 /* eslint-disable no-undef */
 import { StreamChat } from "stream-chat";
-import { HTTP_200 } from "../constants";
+import { HTTP_200, HTTP_201 } from "../constants";
 
 export default class StreamChatService {
   constructor(streamApiKey) {
