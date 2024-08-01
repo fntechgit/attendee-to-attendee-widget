@@ -28,12 +28,24 @@ function AttendeesListItem({
   const attendee = {
     ...item,
     fullName:
-      item.full_name && item.full_name != "null" ? item.full_name : "Private",
-    picUrl: item.pic_url,
+      item.full_name && item.full_name != "null" ? item.full_name : "Anonymous",
     socialInfo: item.social_info,
     badgeFeatures: item.badges_info,
-    bio: item.bio
+    bio: item.bio,
+    picUrl: item.pic_url
   };
+
+  const buildUserIcon = (attendee) =>
+    attendee.public_profile_show_photo ? (
+      <div
+        className={style.pic}
+        style={{ backgroundImage: `url(${attendee.picUrl})` }}
+      />
+    ) : (
+      <div>
+        <i className="fa fa-user fa-3x" aria-hidden="true" />
+      </div>
+    );
 
   return (
     attendee && (
@@ -52,10 +64,7 @@ function AttendeesListItem({
                 : () => onItemClick(attendee)
             }
           >
-            <div
-              className={style.pic}
-              style={{ backgroundImage: `url(${attendee.pic_url})` }}
-            />
+            {buildUserIcon(attendee)}
           </div>
           <div
             className={style.textWrapper}
