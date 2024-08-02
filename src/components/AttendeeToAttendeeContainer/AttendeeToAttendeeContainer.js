@@ -92,6 +92,9 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   } = props;
   props = { ...props, url: baseUrl };
 
+  const { showBio, showEmail, showFullName, showProfilePic, showSocialInfo } =
+    user;
+
   useEffect(() => {
     const init = async () => {
       accessRepo = AccessRepositoryBuilder.getRepository(
@@ -146,7 +149,8 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         summitId,
         accessToken,
         () => {},
-        () => {}
+        (err) => console.error(err),
+        (err, res) => console.log(err, res)
       );
 
       const enableHelpBtn = await chatRepo.availableHelpAgents(summitId);
@@ -157,7 +161,14 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     if (accessToken) {
       init();
     }
-  }, [accessToken]);
+  }, [
+    accessToken,
+    showBio,
+    showEmail,
+    showFullName,
+    showProfilePic,
+    showSocialInfo
+  ]);
 
   useEffect(() => {
     getAccessToken().then((token) => {

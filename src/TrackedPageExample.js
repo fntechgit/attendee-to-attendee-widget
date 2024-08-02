@@ -25,10 +25,10 @@ const sbAuthProps = {
 };
 
 const chatProps = {
-  streamApiKey: "29gtgpyz5hht",
+  streamApiKey: "64cud9v45xua",
   apiBaseUrl: "https://idp.dev.fnopen.com",
-  chatApiBaseUrl: null,
-  // chatApiBaseUrl: 'https://chat-api.dev.fnopen.com',
+  // chatApiBaseUrl: null,
+  chatApiBaseUrl: "https://chat-api.dev.fnopen.com",
   getAccessToken: async () => {},
   onAuthError: (err) => console.log(err),
   openDir: "left",
@@ -100,7 +100,7 @@ const widgetProps = {
       }
     }
   },
-  summitId: 13,
+  summitId: 63,
   height: 400,
   defaultScope: scopes.PAGE, // Default attendees filter scope (scopes.PAGE | scopes.SHOW)
   ...chatProps,

@@ -42,9 +42,7 @@ function AttendeesListItem({
         style={{ backgroundImage: `url(${attendee.picUrl})` }}
       />
     ) : (
-      <div>
-        <i className="fa fa-user fa-3x" aria-hidden="true" />
-      </div>
+      <i className="fa fa-user fa-3x" aria-hidden="true" />
     );
 
   return (

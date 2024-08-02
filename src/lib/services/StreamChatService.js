@@ -21,12 +21,37 @@ export default class StreamChatService {
     this.flag = `${streamApiKey}_chat`;
   }
 
+  connectChatUser = async (user, streamServerInfo, onSuccess, onError) => {
+    try {
+      await this.chatClient.disconnectUser();
+      this.chatClient.connectUser(
+        {
+          id: streamServerInfo.id,
+          name: streamServerInfo.name,
+          image: streamServerInfo.image,
+          local_role: user.role // local_role: streamServerInfo.role
+        },
+        streamServerInfo.token
+      );
+      onSuccess(this.chatClient, { ...streamServerInfo });
+    } catch (e) {
+      onError(e);
+    }
+  };
+
+  needs2SyncChatAPI = (user, streamServerInfo) =>
+    user.showBio !== streamServerInfo.show_bio ||
+    user.showEmail !== streamServerInfo.show_email ||
+    user.showFullName !== streamServerInfo.show_fullname ||
+    user.showProfilePic !== streamServerInfo.show_photo ||
+    user.showSocialInfo !== streamServerInfo.show_social_media;
+
   initializeClient = async (
     user,
     chatApiBaseUrl,
     accessToken,
     summitId,
-    callback,
+    onSuccess,
     onError,
     onAuthError
   ) => {
@@ -36,36 +61,45 @@ export default class StreamChatService {
     };
 
     if (chatApiBaseUrl) {
-      fetch(
-        `${chatApiBaseUrl}/api/v1/sso?access_token=${accessToken}&summit_id=${summitId}`,
-        requestOptions
-      ).then(async (response) => {
-        const streamServerInfo = await response.json();
+      const savedStreamServerInfo = JSON.parse(localStorage.getItem(this.flag));
 
-        if (response.status === HTTP_200 || response.status === HTTP_201) {
-          localStorage.setItem(this.flag, JSON.stringify(streamServerInfo));
-          try {
-            await this.chatClient.disconnectUser();
-            this.chatClient.connectUser(
-              {
-                id: streamServerInfo.id,
-                name: streamServerInfo.name,
-                image: streamServerInfo.image,
-                local_role: user.role // local_role: streamServerInfo.role
-              },
-              streamServerInfo.token
-            );
-            callback(this.chatClient, { ...streamServerInfo });
-          } catch (e) {
-            onError(e);
-          }
-        } else {
-          onAuthError(streamServerInfo, response);
-        }
-      });
+      if (
+        savedStreamServerInfo &&
+        !this.needs2SyncChatAPI(user, savedStreamServerInfo)
+      ) {
+        await this.connectChatUser(
+          user,
+          savedStreamServerInfo,
+          onSuccess,
+          onError
+        );
+      } else {
+        fetch(
+          `${chatApiBaseUrl}/api/v1/sso?access_token=${accessToken}&summit_id=${summitId}`,
+          requestOptions
+        )
+          .then(async (response) => {
+            const streamServerInfo = await response.json();
+
+            if (response.status === HTTP_200 || response.status === HTTP_201) {
+              localStorage.setItem(this.flag, JSON.stringify(streamServerInfo));
+              await this.connectChatUser(
+                user,
+                streamServerInfo,
+                onSuccess,
+                onError
+              );
+            } else {
+              onAuthError(streamServerInfo, response);
+            }
+          })
+          .catch((error) => {
+            onError(error);
+          });
+      }
     } else {
       console.log("Test mode - chat api disconnected");
-      callback(this.chatClient, {});
+      onSuccess(this.chatClient, {});
     }
   };
 
@@ -73,7 +107,8 @@ export default class StreamChatService {
     chatApiBaseUrl,
     summitId,
     accessToken,
-    callback,
+    onSuccess,
+    onError,
     onAuthError
   ) => {
     const requestOptions = {
@@ -82,20 +117,34 @@ export default class StreamChatService {
     };
 
     if (chatApiBaseUrl) {
+      const savedStreamServerInfo = JSON.parse(localStorage.getItem(this.flag));
+
+      if (
+        savedStreamServerInfo &&
+        !this.needs2SyncChatAPI(user, savedStreamServerInfo)
+      ) {
+        onSuccess(null);
+        return;
+      }
+
       fetch(
         `${chatApiBaseUrl}/api/v1/channel-types/seed?access_token=${accessToken}&summit_id=${summitId}`,
         requestOptions
-      ).then(async (response) => {
-        const res = await response.json();
-        if (response.status === HTTP_200) {
-          callback(res);
-        } else {
-          onAuthError(res, response);
-        }
-      });
+      )
+        .then(async (response) => {
+          const res = await response.json();
+          if (response.status === HTTP_200) {
+            onSuccess(res);
+          } else {
+            onAuthError(res, response);
+          }
+        })
+        .catch((error) => {
+          onError(error);
+        });
     } else {
       console.log("Test mode - chat api disconnected");
-      callback(null);
+      onSuccess(null);
     }
   };
 
