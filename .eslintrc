@@ -35,6 +35,7 @@
     ],
     "camelcase": "warn",
     "eqeqeq": "warn",
+    "radix": "warn",
     "react/forbid-prop-types": "warn",
     "react/jsx-props-no-spreading": "warn",
     "react/no-unstable-nested-components": "warn",

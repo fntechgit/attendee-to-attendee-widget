@@ -58,17 +58,20 @@ export default class ChatRepository {
     chatApiBaseUrl,
     accessToken,
     summitId,
+    needs2SyncChatAPI,
     callback,
     onError,
     onAuthError
   ) {
     const role = await accessRepo.getRole(user.id);
     user.role = role;
+
     await this._streamChatService.initializeClient(
       user,
       chatApiBaseUrl,
       accessToken,
       summitId,
+      needs2SyncChatAPI,
       callback,
       onError,
       onAuthError
@@ -79,14 +82,18 @@ export default class ChatRepository {
     chatApiBaseUrl,
     summitId,
     accessToken,
+    needs2SyncChatAPI,
     callback,
+    onError,
     onAuthError
   ) {
     await this._streamChatService.seedChannelTypes(
       chatApiBaseUrl,
       summitId,
       accessToken,
+      needs2SyncChatAPI,
       callback,
+      onError,
       onAuthError
     );
   }

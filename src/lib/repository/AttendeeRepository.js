@@ -71,66 +71,56 @@ export default class AttendeeRepository {
       showBio
     } = attendeeProfile;
 
+    const fetchedAttendee = await this._get(idpUserId);
+    if (!fetchedAttendee) return null;
+
     try {
-      const attFetchRes = await this._client
-        .from("attendees_news")
-        .select(ATTTENDEES_SELECT_PROJ)
-        .eq("idp_user_id", idpUserId)
-        .eq("summit_id", this._summitId);
+      const user = await signIn(this._client, email, email);
 
-      if (attFetchRes.error) throw new Error(attFetchRes.error);
+      const badgeFeatures = getBadgeFeatures();
 
-      if (attFetchRes.data && attFetchRes.data.length > 0) {
-        const fetchedAttendee = attFetchRes.data[0];
-
-        const user = await signIn(this._client, email, email);
-
-        const badgeFeatures = getBadgeFeatures();
-
-        if (
-          this._somethigChange(
-            fetchedAttendee,
-            fullName,
-            company,
-            title,
-            picUrl,
-            idpUserId,
-            isOnline,
-            socialInfo,
-            badgeFeatures,
-            bio,
-            showEmail,
-            showFullName,
-            allowChatWithMe,
-            showProfilePic,
-            showSocialInfo,
-            showBio
-          )
-        ) {
-          // console.log('something change')
-          this._updateAttendee(
-            fetchedAttendee.attendee_id,
-            fullName,
-            email,
-            company,
-            title,
-            picUrl,
-            idpUserId,
-            isOnline,
-            socialInfo,
-            badgeFeatures,
-            bio,
-            showEmail,
-            showFullName,
-            allowChatWithMe,
-            showProfilePic,
-            showSocialInfo,
-            showBio
-          );
-        }
-        return user;
+      if (
+        this._somethigChange(
+          fetchedAttendee,
+          fullName,
+          company,
+          title,
+          picUrl,
+          idpUserId,
+          isOnline,
+          socialInfo,
+          badgeFeatures,
+          bio,
+          showEmail,
+          showFullName,
+          allowChatWithMe,
+          showProfilePic,
+          showSocialInfo,
+          showBio
+        )
+      ) {
+        // console.log('something change')
+        this._updateAttendee(
+          fetchedAttendee.attendee_id,
+          fullName,
+          email,
+          company,
+          title,
+          picUrl,
+          idpUserId,
+          isOnline,
+          socialInfo,
+          badgeFeatures,
+          bio,
+          showEmail,
+          showFullName,
+          allowChatWithMe,
+          showProfilePic,
+          showSocialInfo,
+          showBio
+        );
       }
-      return null;
+      return user;
     } catch (error) {
       console.log("error", error);
       return null;
@@ -208,22 +198,23 @@ export default class AttendeeRepository {
     showBio
   ) {
     let sameBadgeFeatures = true;
-    if (fetchedAttendee.badges_info && badgeFeatures) {
+    if (badgeFeatures && fetchedAttendee.badges_info) {
       sameBadgeFeatures =
         fetchedAttendee.badges_info.length === badgeFeatures.length &&
         fetchedAttendee.badges_info.every(
-          (value, index) => value === badgeFeatures[index]
+          (value, index) =>
+            JSON.stringify(value) === JSON.stringify(badgeFeatures[index])
         );
     }
 
     let sameSocialInfo = true;
-    if (fetchedAttendee.social_info && socialInfo) {
+    if (socialInfo && fetchedAttendee.social_info) {
       sameSocialInfo =
-        fetchedAttendee.social_info.github_user === socialInfo.githubUser &&
-        fetchedAttendee.social_info.linked_in_profile ===
+        fetchedAttendee.social_info.githubUser === socialInfo.githubUser &&
+        fetchedAttendee.social_info.linkedInProfile ===
           socialInfo.linkedInProfile &&
-        fetchedAttendee.social_info.twitter_name === socialInfo.twitterName &&
-        fetchedAttendee.social_info.wechat_user === socialInfo.wechatUser;
+        fetchedAttendee.social_info.twitterName === socialInfo.twitterName &&
+        fetchedAttendee.social_info.wechatUser === socialInfo.wechatUser;
     }
 
     return (
@@ -351,6 +342,69 @@ export default class AttendeeRepository {
       .eq("summit_id", this._summitId);
 
     if (error) console.log("_updateAttendee error", error);
+  }
+
+  async _get(id) {
+    try {
+      const attFetchRes = await this._client
+        .from("attendees_news")
+        .select(ATTTENDEES_SELECT_PROJ)
+        .eq("idp_user_id", id)
+        .eq("summit_id", this._summitId);
+
+      if (attFetchRes.error) throw new Error(attFetchRes.error);
+
+      if (attFetchRes.data && attFetchRes.data.length > 0) {
+        return attFetchRes.data[0];
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+    return null;
+  }
+
+  somethigChange(localAttendee, remoteAttendee) {
+    if (!localAttendee || !remoteAttendee) return false;
+    const {
+      id,
+      bio,
+      company,
+      fullName,
+      picUrl,
+      allowChatWithMe,
+      showBio,
+      showEmail,
+      showFullName,
+      showProfilePic,
+      showSocialInfo,
+      socialInfo,
+      title
+    } = localAttendee;
+
+    const badgeFeatures = localAttendee.getBadgeFeatures();
+
+    return this._somethigChange(
+      remoteAttendee,
+      fullName,
+      company,
+      title,
+      picUrl,
+      parseInt(id),
+      true, // isOnline
+      socialInfo,
+      badgeFeatures,
+      bio,
+      showEmail,
+      showFullName,
+      allowChatWithMe,
+      showProfilePic,
+      showSocialInfo,
+      showBio
+    );
+  }
+
+  async findAttendeeByIdpUserId(idpUserId) {
+    return this._get(idpUserId);
   }
 
   async findByNameOrCompany(
