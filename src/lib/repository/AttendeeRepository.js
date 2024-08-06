@@ -37,6 +37,8 @@ const ATTTENDEES_SELECT_PROJ = `
 
 const DEFAULT_PAGE_SIZE = 30;
 
+const ANONYMOUS_USER_NAME = "Anonymous";
+
 export const DEFAULT_MIN_BACKWARD = 15;
 
 export default class AttendeeRepository {
@@ -265,7 +267,7 @@ export default class AttendeeRepository {
           full_name:
             showFullName && fullName && fullName !== "null"
               ? fullName
-              : "Private",
+              : ANONYMOUS_USER_NAME,
           email: showEmail ? email : "",
           company: showBio ? company : "",
           title: showBio ? title : "",
@@ -320,7 +322,7 @@ export default class AttendeeRepository {
           full_name:
             showFullName && fullName && fullName !== "null"
               ? fullName
-              : "Private",
+              : ANONYMOUS_USER_NAME,
           email: showEmail ? email : "",
           company: showBio ? company : "",
           title: showBio ? title : "",
