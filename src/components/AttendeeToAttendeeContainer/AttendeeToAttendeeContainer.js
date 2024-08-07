@@ -92,6 +92,21 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
   } = props;
   props = { ...props, url: baseUrl };
 
+  const {
+    bio,
+    company,
+    fullName,
+    email,
+    picUrl,
+    showBio,
+    showEmail,
+    showFullName,
+    showProfilePic,
+    showSocialInfo,
+    socialInfo,
+    title
+  } = user;
+
   useEffect(() => {
     const init = async () => {
       accessRepo = AccessRepositoryBuilder.getRepository(
@@ -107,12 +122,17 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
         );
       }
 
+      const remoteAttendee = await accessRepo.findAttendeeByIdpUserId(user.id);
+
+      const needs2SyncChatAPI = accessRepo.somethigChange(user, remoteAttendee);
+
       await chatRepo.initializeClient(
         user,
         accessRepo,
         chatApiBaseUrl,
         accessToken,
         summitId,
+        needs2SyncChatAPI,
         (client) => {
           setChatClient(client);
           // if (activity) chatRepo.setUpActivityRoom(activity, user)
@@ -138,15 +158,17 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
           }
         },
         (err) => console.error(err),
-        (err, res) => console.log(err, res)
+        (err, res) => console.error(err)
       );
 
       await chatRepo.seedChannelTypes(
         chatApiBaseUrl,
         summitId,
         accessToken,
+        needs2SyncChatAPI,
         () => {},
-        () => {}
+        (err) => console.error(err),
+        (err, res) => console.error(err)
       );
 
       const enableHelpBtn = await chatRepo.availableHelpAgents(summitId);
@@ -157,7 +179,21 @@ const AttendeeToAttendeeContainer = forwardRef((props, ref) => {
     if (accessToken) {
       init();
     }
-  }, [accessToken]);
+  }, [
+    accessToken,
+    bio,
+    company,
+    fullName,
+    email,
+    picUrl,
+    showBio,
+    showEmail,
+    showFullName,
+    showProfilePic,
+    showSocialInfo,
+    socialInfo,
+    title
+  ]);
 
   useEffect(() => {
     getAccessToken().then((token) => {

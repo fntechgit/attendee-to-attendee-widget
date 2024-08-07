@@ -15,10 +15,30 @@ import { DateTime } from "luxon";
 import { signIn, signUp } from "../Auth";
 import { roles } from "../../models/userRoles";
 
-const ATTTENDEES_SELECT_PROJ =
-  "attendee_id, full_name, email, company, title, pic_url, bio, idp_user_id, is_online, social_info, badges_info, public_profile_show_email, public_profile_allow_chat_with_me";
+const ATTTENDEES_SELECT_PROJ = `
+  attendee_id, 
+  full_name, 
+  email, 
+  company, 
+  title, 
+  pic_url, 
+  bio, 
+  idp_user_id, 
+  is_online, 
+  social_info, 
+  badges_info, 
+  public_profile_show_email, 
+  public_profile_show_full_name, 
+  public_profile_allow_chat_with_me, 
+  public_profile_show_photo, 
+  public_profile_show_social_media_info,
+  public_profile_show_bio
+`;
 
 const DEFAULT_PAGE_SIZE = 30;
+
+const ANONYMOUS_USER_NAME = "Anonymous";
+const ANONYMOUS_USER_EMAIL = "anonymous@nomail.com";
 
 export const DEFAULT_MIN_BACKWARD = 15;
 
@@ -47,60 +67,63 @@ export default class AttendeeRepository {
       getBadgeFeatures,
       bio,
       showEmail,
-      allowChatWithMe
+      showFullName,
+      allowChatWithMe,
+      showProfilePic,
+      showSocialInfo,
+      showBio
     } = attendeeProfile;
 
+    const fetchedAttendee = await this._get(idpUserId);
+    if (!fetchedAttendee) return null;
+
     try {
-      const attFetchRes = await this._client
-        .from("attendees_news")
-        .select(ATTTENDEES_SELECT_PROJ)
-        .eq("email", email)
-        .eq("summit_id", this._summitId);
+      const user = await signIn(this._client, email, email);
 
-      if (attFetchRes.error) throw new Error(attFetchRes.error);
+      const badgeFeatures = getBadgeFeatures();
 
-      if (attFetchRes.data && attFetchRes.data.length > 0) {
-        const fetchedAttendee = attFetchRes.data[0];
-
-        const user = await signIn(this._client, email, email);
-
-        const badgeFeatures = getBadgeFeatures();
-
-        if (
-          this._somethigChange(
-            fetchedAttendee,
-            fullName,
-            company,
-            title,
-            picUrl,
-            idpUserId,
-            isOnline,
-            socialInfo,
-            badgeFeatures,
-            bio,
-            showEmail,
-            allowChatWithMe
-          )
-        ) {
-          // console.log('something change')
-          this._updateAttendee(
-            fetchedAttendee.attendee_id,
-            fullName,
-            company,
-            title,
-            picUrl,
-            idpUserId,
-            isOnline,
-            socialInfo,
-            badgeFeatures,
-            bio,
-            showEmail,
-            allowChatWithMe
-          );
-        }
-        return user;
+      if (
+        this._somethigChange(
+          fetchedAttendee,
+          fullName,
+          company,
+          title,
+          picUrl,
+          idpUserId,
+          isOnline,
+          socialInfo,
+          badgeFeatures,
+          bio,
+          showEmail,
+          showFullName,
+          allowChatWithMe,
+          showProfilePic,
+          showSocialInfo,
+          showBio
+        )
+      ) {
+        // console.log('something change')
+        this._updateAttendee(
+          fetchedAttendee.attendee_id,
+          fullName,
+          email,
+          company,
+          title,
+          picUrl,
+          idpUserId,
+          isOnline,
+          socialInfo,
+          badgeFeatures,
+          bio,
+          showEmail,
+          showFullName,
+          allowChatWithMe,
+          showProfilePic,
+          showSocialInfo,
+          showBio
+        );
       }
-      return null;
+      return user;
     } catch (error) {
       console.log("error", error);
       return null;
@@ -120,7 +143,11 @@ export default class AttendeeRepository {
       getBadgeFeatures,
       bio,
       showEmail,
-      allowChatWithMe
+      showFullName,
+      allowChatWithMe,
+      showProfilePic,
+      showSocialInfo,
+      showBio
     } = attendeeProfile;
 
     if (this._sbUser) return this._sbUser;
@@ -146,7 +173,11 @@ export default class AttendeeRepository {
       badgeFeatures,
       bio,
       showEmail,
-      allowChatWithMe
+      showFullName,
+      allowChatWithMe,
+      showProfilePic,
+      showSocialInfo,
+      showBio
     );
     return newUser;
   }
@@ -163,25 +194,30 @@ export default class AttendeeRepository {
     badgeFeatures,
     bio,
     showEmail,
-    allowChatWithMe
+    showFullName,
+    allowChatWithMe,
+    showProfilePic,
+    showSocialInfo,
+    showBio
   ) {
     let sameBadgeFeatures = true;
-    if (fetchedAttendee.badges_info && badgeFeatures) {
+    if (badgeFeatures && fetchedAttendee.badges_info) {
       sameBadgeFeatures =
         fetchedAttendee.badges_info.length === badgeFeatures.length &&
         fetchedAttendee.badges_info.every(
-          (value, index) => value === badgeFeatures[index]
+          (value, index) =>
+            JSON.stringify(value) === JSON.stringify(badgeFeatures[index])
         );
     }
 
     let sameSocialInfo = true;
-    if (fetchedAttendee.social_info && socialInfo) {
+    if (socialInfo && fetchedAttendee.social_info) {
       sameSocialInfo =
-        fetchedAttendee.social_info.github_user === socialInfo.githubUser &&
-        fetchedAttendee.social_info.linked_in_profile ===
+        fetchedAttendee.social_info.githubUser === socialInfo.githubUser &&
+        fetchedAttendee.social_info.linkedInProfile ===
           socialInfo.linkedInProfile &&
-        fetchedAttendee.social_info.twitter_name === socialInfo.twitterName &&
-        fetchedAttendee.social_info.wechat_user === socialInfo.wechatUser;
+        fetchedAttendee.social_info.twitterName === socialInfo.twitterName &&
+        fetchedAttendee.social_info.wechatUser === socialInfo.wechatUser;
     }
 
     return (
@@ -195,7 +231,12 @@ export default class AttendeeRepository {
       !sameBadgeFeatures ||
       fetchedAttendee.bio !== bio ||
       fetchedAttendee.public_profile_show_email !== showEmail ||
-      fetchedAttendee.public_profile_allow_chat_with_me !== allowChatWithMe
+      fetchedAttendee.public_profile_show_full_name !== showFullName ||
+      fetchedAttendee.public_profile_allow_chat_with_me !== allowChatWithMe ||
+      fetchedAttendee.public_profile_show_photo !== showProfilePic ||
+      fetchedAttendee.public_profile_show_social_media_info !==
+        showSocialInfo ||
+      fetchedAttendee.public_profile_show_bio != showBio
     );
   }
 
@@ -212,28 +253,43 @@ export default class AttendeeRepository {
     badgeFeatures,
     bio,
     showEmail,
-    allowChatWithMe
+    showFullName,
+    allowChatWithMe,
+    showProfilePic,
+    showSocialInfo,
+    showBio
   ) {
-    const { error } = await this._client.from("attendees_news").insert([
-      {
-        attendee_id: id,
-        summit_id: this._summitId,
-        full_name: fullName && fullName !== "null" ? fullName : "Private",
-        email,
-        company,
-        title,
-        pic_url: picUrl,
-        idp_user_id: idpUserId,
-        is_online: isOnline,
-        social_info: socialInfo,
-        badges_info: badgeFeatures,
-        bio,
-        public_profile_show_email: showEmail,
-        public_profile_allow_chat_with_me: allowChatWithMe,
-        current_url: "",
-        attendee_ip: ""
-      }
-    ]);
+    const { data, error } = await this._client
+      .from("attendees_news")
+      .upsert([
+        {
+          attendee_id: id,
+          summit_id: this._summitId,
+          full_name:
+            showFullName && fullName && fullName !== "null"
+              ? fullName
+              : ANONYMOUS_USER_NAME,
+          email: showEmail ? email : ANONYMOUS_USER_EMAIL,
+          company: showBio ? company : "",
+          title: showBio ? title : "",
+          pic_url: showProfilePic ? picUrl : "",
+          idp_user_id: idpUserId,
+          is_online: isOnline,
+          social_info: showSocialInfo ? socialInfo : {},
+          badges_info: badgeFeatures,
+          bio: showBio ? bio : "",
+          public_profile_show_email: showEmail,
+          public_profile_show_full_name: showFullName,
+          public_profile_allow_chat_with_me: allowChatWithMe,
+          public_profile_show_photo: showProfilePic,
+          public_profile_show_social_media_info: showSocialInfo,
+          public_profile_show_bio: showBio,
+          current_url: ""
+        }
+      ])
+      .select();
+
+    console.log("_addAttendee", data);
 
     if (error) {
       console.log("_addAttendee", error);
@@ -244,6 +300,7 @@ export default class AttendeeRepository {
   async _updateAttendee(
     id,
     fullName,
+    email,
     company,
     title,
     picUrl,
@@ -253,29 +310,104 @@ export default class AttendeeRepository {
     badgeFeatures,
     bio,
     showEmail,
-    allowChatWithMe
+    showFullName,
+    allowChatWithMe,
+    showProfilePic,
+    showSocialInfo,
+    showBio
   ) {
     const { error } = await this._client
       .from("attendees_news")
       .update([
         {
-          full_name: fullName,
-          company,
-          title,
-          pic_url: picUrl,
+          full_name:
+            showFullName && fullName && fullName !== "null"
+              ? fullName
+              : ANONYMOUS_USER_NAME,
+          email: showEmail ? email : ANONYMOUS_USER_EMAIL,
+          company: showBio ? company : "",
+          title: showBio ? title : "",
+          pic_url: showProfilePic ? picUrl : "",
           idp_user_id: idpUserId,
           is_online: isOnline,
-          social_info: socialInfo,
+          social_info: showSocialInfo ? socialInfo : {},
           badges_info: badgeFeatures,
-          bio,
+          bio: showBio ? bio : "",
           public_profile_show_email: showEmail,
-          public_profile_allow_chat_with_me: allowChatWithMe
+          public_profile_show_full_name: showFullName,
+          public_profile_allow_chat_with_me: allowChatWithMe,
+          public_profile_show_photo: showProfilePic,
+          public_profile_show_social_media_info: showSocialInfo,
+          public_profile_show_bio: showBio
         }
       ])
       .eq("attendee_id", id)
       .eq("summit_id", this._summitId);
 
     if (error) console.log("_updateAttendee error", error);
+  }
+
+  async _get(id) {
+    try {
+      const attFetchRes = await this._client
+        .from("attendees_news")
+        .select(ATTTENDEES_SELECT_PROJ)
+        .eq("idp_user_id", id)
+        .eq("summit_id", this._summitId);
+
+      if (attFetchRes.error) throw new Error(attFetchRes.error);
+
+      if (attFetchRes.data && attFetchRes.data.length > 0) {
+        return attFetchRes.data[0];
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+    return null;
+  }
+
+  somethigChange(localAttendee, remoteAttendee) {
+    if (!localAttendee || !remoteAttendee) return false;
+    const {
+      id,
+      bio,
+      company,
+      fullName,
+      picUrl,
+      allowChatWithMe,
+      showBio,
+      showEmail,
+      showFullName,
+      showProfilePic,
+      showSocialInfo,
+      socialInfo,
+      title
+    } = localAttendee;
+
+    const badgeFeatures = localAttendee.getBadgeFeatures();
+
+    return this._somethigChange(
+      remoteAttendee,
+      fullName,
+      company,
+      title,
+      picUrl,
+      parseInt(id),
+      true, // isOnline
+      socialInfo,
+      badgeFeatures,
+      bio,
+      showEmail,
+      showFullName,
+      allowChatWithMe,
+      showProfilePic,
+      showSocialInfo,
+      showBio
+    );
+  }
+
+  async findAttendeeByIdpUserId(idpUserId) {
+    return this._get(idpUserId);
   }
 
   async findByNameOrCompany(
@@ -420,7 +552,6 @@ export default class AttendeeRepository {
   signOut() {
     try {
       if (this._sbUser) {
-        // await signOut(this._client)
         this._client
           .from("attendees_news")
           .update([{ is_online: false }])

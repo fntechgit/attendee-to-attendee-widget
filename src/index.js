@@ -12,7 +12,7 @@
  * */
 
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import TrackedPageExample from "./TrackedPageExample";
 
@@ -20,13 +20,11 @@ import "./index.css";
 
 function App() {
   const token1 =
-    "JrYPsjBELq9SjKFNPCB902X8w0vcDfvrG1ThUKB3yKmOwAKlUvseGAcFQ3vQ21U-tJXR74WFMTn_qkMNE9J08i6yUY-zU3b2G3I6~NOcpHYNrhPIpNMzakuOkpkmmxFi";
+    "aiqUSUzvFT56G5ypD40rbFrqlwZNWVPOXu1iWdzGRlBwxsVpgCjNO9nEjrd49Xzs474ga5uR-WU3hbp1OM4pyPv_knMY4EyqWmvsivC-psafwXvxUfSe_~NcDV-p~b7O";
   const token2 =
     "JrYPsjBELq9SjKFNPCB902X8w0vcDfvrG1ThUKB3yKmOwAKlUvseGAcFQ3vQ21U-tJXR74WFMTn_qkMNE9J08i6yUY-zU3b2G3I6~NOcpHYNrhPIpNMzakuOkpkmmxFi";
   const token3 =
     "JrYPsjBELq9SjKFNPCB902X8w0vcDfvrG1ThUKB3yKmOwAKlUvseGAcFQ3vQ21U-tJXR74WFMTn_qkMNE9J08i6yUY-zU3b2G3I6~NOcpHYNrhPIpNMzakuOkpkmmxFi";
-  // const token4 =
-  //   'l~23GCO2zSh9Dix.6iTQbLOPzaC97o_ifhQeCJDkDWEsZz6OmMiCi1W3lCU4_hXLzOVKB00n1XV6wFuw67T9XHfYM7AUBwkOSRr1r9ktMTDr~JwqYa.SsZqBoZe1PYkq'
 
   return (
     <Router>
@@ -79,4 +77,6 @@ function App() {
   );
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));
+const container = document.getElementById("root");
+const root = createRoot(container);
+root.render(<App />);

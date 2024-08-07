@@ -31,13 +31,14 @@ export function AttendeeInfo({
     title,
     email,
     company,
-    picUrl,
     socialInfo,
     badgeFeatures,
     getBadgeFeatures,
     bio,
+    picUrl,
     public_profile_show_email,
-    public_profile_allow_chat_with_me
+    public_profile_allow_chat_with_me,
+    public_profile_show_photo
   } = user;
 
   const buildSocialSection = (socialInfo) => {
@@ -172,6 +173,17 @@ export function AttendeeInfo({
     );
   };
 
+  const buildUserIcon = (public_profile_show_photo, fullName, picUrl) =>
+    public_profile_show_photo !== false ? (
+      <figure className="image is-128x128">
+        <img className="is-rounded" alt={fullName} src={picUrl} />
+      </figure>
+    ) : (
+      <div className="image is-64x64">
+        <i className="fa fa-user fa-4x" aria-hidden="true" />
+      </div>
+    );
+
   return (
     <div
       className={style.attendeeInfoContainer}
@@ -182,9 +194,7 @@ export function AttendeeInfo({
       <div className={`${style.attendeeInfoBox} box`}>
         <article className="media">
           <div className="media-left">
-            <figure className="image is-128x128">
-              <img className="is-rounded" alt={fullName} src={picUrl} />
-            </figure>
+            {buildUserIcon(public_profile_show_photo, fullName, picUrl)}
           </div>
           <div className="media-content">
             <div className="content">

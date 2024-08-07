@@ -6,8 +6,13 @@
 
 ## PUBLISH TO NPM
 
-1. npm version patch / npm version minor / npm version major
-2. npm publish
+1. yarn version --patch / yarn version --minor / yarn version --major
+2. yarn publish
+
+### PUBLISH BETA VERSION
+
+1. yarn version --prerelease --preid beta
+2. yarn publish --tag beta
 
 ## Usage
 
@@ -36,7 +41,7 @@ const widgetProps = {
       twitterName: TWITTER_USER_NAME,
       wechatUser: WECHAT_USER_NAME
     },
-    getBadgeFeatures: () => { 
+    getBadgeFeatures: () => {
       return [
         {
           name: BADGE_TITLE,
@@ -45,7 +50,23 @@ const widgetProps = {
         ...
       ] //attendee.ticket.badge.features
     },
+    hasPermission: (permission) => {
+      switch (permission) {
+        case permissions.MANAGE_ROOMS:
+          return true|false;
+        case permissions.CHAT:
+          return true|false;
+        default:
+          return true|false;
+      }
+    },
     bio: BIO, //Could be in Markdown format or HTML
+    showEmail: true|false,
+    showFullName: true|false,
+    allowChatWithMe: true|false,
+    showProfilePic: true|false,
+    showSocialInfo: true|false,
+    showBio: true|false,
   },
   summitId: 8,
   ...sbAuthProps

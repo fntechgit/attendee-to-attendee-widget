@@ -13,7 +13,6 @@
 
 import PropTypes from "prop-types";
 import { forwardRef, useImperativeHandle, useCallback, useEffect } from "react";
-import publicIp from "public-ip";
 import { extractBaseUrl } from "../utils/urlHelper";
 import { trackingLevel } from "../models/trackingLevel";
 import SupabaseClientBuilder from "../lib/builders/supabaseClientBuilder";
@@ -26,11 +25,9 @@ const Tracker = forwardRef((props, ref) => {
   let timerHandler = null;
 
   const trackAccess = async () => {
-    const clientIP = await publicIp.v4();
     accessRepo.trackAccess(
       props.user,
       extractBaseUrl(window.location.href),
-      clientIP,
       true
     );
   };
@@ -149,7 +146,12 @@ Tracker.propTypes = {
       wechatUser: PropTypes.string
     }),
     bio: PropTypes.string,
-    public_profile_show_email: PropTypes.bool
+    showEmail: PropTypes.bool,
+    showFullName: PropTypes.bool,
+    allowChatWithMe: PropTypes.bool,
+    showProfilePic: PropTypes.bool,
+    showSocialInfo: PropTypes.bool,
+    showBio: PropTypes.bool
   }).isRequired,
   trackingLevel: PropTypes.string,
   keepAliveEnabled: PropTypes.bool

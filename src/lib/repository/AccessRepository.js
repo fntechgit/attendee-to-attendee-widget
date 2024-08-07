@@ -27,8 +27,7 @@ export default class AccessRepository extends AttendeeRepository {
       {
         atendee_news_id: accessEntry.id,
         summit_id: accessEntry.summit_id,
-        url: accessEntry.current_url,
-        attendee_ip: accessEntry.attendee_ip
+        url: accessEntry.current_url
       }
     ]);
 
@@ -86,7 +85,7 @@ export default class AccessRepository extends AttendeeRepository {
     });
   }
 
-  async trackAccess(attendeeProfile, url, fromIP, mustLogAccess) {
+  async trackAccess(attendeeProfile, url, mustLogAccess) {
     try {
       attendeeProfile.isOnline = true;
 
@@ -103,8 +102,7 @@ export default class AccessRepository extends AttendeeRepository {
         .from("attendees_news")
         .update([
           {
-            current_url: url,
-            attendee_ip: fromIP
+            current_url: url
           }
         ])
         .eq("attendee_id", this._sbUser.id)
