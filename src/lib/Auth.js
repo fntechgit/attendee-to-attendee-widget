@@ -23,7 +23,7 @@ export const signIn = async (supabase, email, password) => {
   const hasErrors = validate(email, password);
   if (hasErrors) throw new Error(hasErrors);
 
-  const { data } = await supabase.auth.signIn({
+  const { data } = await supabase.auth.signInWithPassword({
     email,
     password
   });

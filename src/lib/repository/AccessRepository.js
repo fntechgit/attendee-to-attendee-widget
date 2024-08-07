@@ -63,9 +63,21 @@ export default class AccessRepository extends AttendeeRepository {
     if (this._subscription) this._client.removeSubscription(this._subscription);
 
     this._subscription = this._client
-      .from("attendees_news")
-      .on("INSERT", (payload) => this._handleRTSubscriptionNews(payload.new))
-      .on("UPDATE", (payload) => this._handleRTSubscriptionNews(payload.new))
+      .channel("attendees_news")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "attendees_news" },
+        (payload) => {
+          this._handleRTSubscriptionNews(payload.new);
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "attendees_news" },
+        (payload) => {
+          this._handleRTSubscriptionNews(payload.new);
+        }
+      )
       .subscribe();
 
     // console.log('subscriptions count', this._client.getSubscriptions()?.length)
@@ -106,7 +118,9 @@ export default class AccessRepository extends AttendeeRepository {
           }
         ])
         .eq("attendee_id", this._sbUser.id)
-        .eq("summit_id", this._summitId);
+        .eq("summit_id", this._summitId)
+        .select();
+
       if (error) throw new Error(error);
       if (mustLogAccess) {
         await this._logAccess(data[0]);
@@ -123,7 +137,7 @@ export default class AccessRepository extends AttendeeRepository {
         this.signOut();
         this._client
           .from("attendees_news")
-          .update([{ current_url: "", attendee_ip: "" }])
+          .update([{ current_url: "" }])
           .match({ attendee_id: this._sbUser.id, summit_id: this._summitId });
       }
     } catch (error) {
@@ -132,7 +146,6 @@ export default class AccessRepository extends AttendeeRepository {
   }
 
   mergeChanges(attendeesListLocal, attendeesNews) {
-    let oldItem = null;
     let res = null;
 
     const oldItemVerOccurrences = attendeesListLocal.filter(
@@ -141,13 +154,10 @@ export default class AccessRepository extends AttendeeRepository {
     // already exists locally
     if (oldItemVerOccurrences.length > 0) {
       // console.log('merge with an existing element')
-      oldItem = oldItemVerOccurrences[0];
-      oldItem.notification_status = attendeesNews.notification_status;
-
       res = attendeesListLocal.filter((item) => item.id !== attendeesNews.id);
 
       if (attendeesNews.is_online) {
-        res.unshift(oldItem);
+        res.unshift(attendeesNews);
       }
     } else {
       // console.log('merge with a new element')
