@@ -146,7 +146,6 @@ export default class AccessRepository extends AttendeeRepository {
     } catch (error) {
       console.error("A2A::AccessRepository::trackAccess - error", error);
     }
-    
   }
 
   cleanUpAccess() {
