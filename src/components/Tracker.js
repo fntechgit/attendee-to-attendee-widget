@@ -19,16 +19,17 @@ import SupabaseClientBuilder from "../lib/builders/supabaseClientBuilder";
 import AccessRepository from "../lib/repository/AccessRepository";
 
 const Tracker = forwardRef((props, ref) => {
-  const { supabaseUrl, supabaseKey, summitId } = props;
+  const { supabaseUrl, supabaseKey, summitId, user, fullUpdate } = props;
   let accessRepo = null;
   const pendingOps = new Set();
   let timerHandler = null;
 
   const trackAccess = async () => {
     accessRepo.trackAccess(
-      props.user,
+      user,
       extractBaseUrl(window.location.href),
-      true
+      true,
+      fullUpdate
     );
   };
 
@@ -49,7 +50,7 @@ const Tracker = forwardRef((props, ref) => {
 
   const onLeave = async () => {
     // console.log('leaving tracked page')
-    await accessRepo.trackAccess(props.user, "", "", false);
+    await accessRepo.trackAccess(props.user, "", false, false);
   };
 
   function addToPendingWork(promise) {

@@ -108,16 +108,17 @@ export default class AccessRepository extends AttendeeRepository {
     });
   }
 
-  async trackAccess(attendeeProfile, url, mustLogAccess) {
+  async trackAccess(attendeeProfile, url, mustLogAccess, fullUpdate) {
     try {
       attendeeProfile.isOnline = true;
 
       if (
         !this._sbUser ||
         this._sbUser.email !== attendeeProfile.email ||
-        this._sbUser.is_online !== attendeeProfile.isOnline
+        this._sbUser.is_online !== attendeeProfile.isOnline ||
+        fullUpdate
       ) {
-        this._sbUser = await this._initializeAttendeeUser(attendeeProfile);
+        await this._initializeAttendeeUser(attendeeProfile);
       }
 
       if (!this._sbUser) {

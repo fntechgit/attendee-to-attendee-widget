@@ -12,7 +12,7 @@
  * */
 
 import { DateTime } from "luxon";
-import { signIn, signUp } from "../Auth";
+import { signUp } from "../Auth";
 import { roles } from "../../models/userRoles";
 
 const ATTTENDEES_SELECT_PROJ = `
@@ -49,85 +49,7 @@ export default class AttendeeRepository {
     this._client = supabaseService;
     this._sbUser = null;
     if (user) {
-      this._fetchExistingAttendeeUser(user).then((u) => {
-        this._sbUser = u;
-      });
-    }
-  }
-
-  async _fetchExistingAttendeeUser(attendeeProfile) {
-    const {
-      email,
-      fullName,
-      company,
-      title,
-      picUrl,
-      idpUserId,
-      isOnline,
-      socialInfo,
-      getBadgeFeatures,
-      bio,
-      showEmail,
-      showFullName,
-      allowChatWithMe,
-      showProfilePic,
-      showSocialInfo,
-      showBio
-    } = attendeeProfile;
-
-    const fetchedAttendee = await this._get(idpUserId);
-    if (!fetchedAttendee) return null;
-
-    try {
-      const user = await signIn(this._client, email, email);
-
-      const badgeFeatures = getBadgeFeatures();
-
-      if (
-        this._somethigChange(
-          fetchedAttendee,
-          fullName,
-          company,
-          title,
-          picUrl,
-          idpUserId,
-          isOnline,
-          socialInfo,
-          badgeFeatures,
-          bio,
-          showEmail,
-          showFullName,
-          allowChatWithMe,
-          showProfilePic,
-          showSocialInfo,
-          showBio
-        )
-      ) {
-        // console.log('something change')
-        this._updateAttendee(
-          fetchedAttendee.attendee_id,
-          fullName,
-          email,
-          company,
-          title,
-          picUrl,
-          idpUserId,
-          isOnline,
-          socialInfo,
-          badgeFeatures,
-          bio,
-          showEmail,
-          showFullName,
-          allowChatWithMe,
-          showProfilePic,
-          showSocialInfo,
-          showBio
-        );
-      }
-      return user;
-    } catch (error) {
-      console.log("error", error);
-      return null;
+      this._initializeAttendeeUser(user);
     }
   }
 
@@ -153,16 +75,12 @@ export default class AttendeeRepository {
 
     if (this._sbUser) return this._sbUser;
 
-    this._sbUser = await this._fetchExistingAttendeeUser(attendeeProfile);
-
-    if (this._sbUser) return this._sbUser;
-
-    const newUser = await signUp(this._client, email, email);
+    this._sbUser = await signUp(this._client, email, email);
 
     const badgeFeatures = getBadgeFeatures();
 
-    await this._addAttendee(
-      newUser.id,
+    return await this._addOrUpdateAttendee(
+      this._sbUser.id,
       fullName,
       email,
       company,
@@ -180,68 +98,9 @@ export default class AttendeeRepository {
       showSocialInfo,
       showBio
     );
-    return newUser;
   }
 
-  _somethigChange(
-    fetchedAttendee,
-    fullName,
-    company,
-    title,
-    picUrl,
-    idpUserId,
-    isOnline,
-    socialInfo,
-    badgeFeatures,
-    bio,
-    showEmail,
-    showFullName,
-    allowChatWithMe,
-    showProfilePic,
-    showSocialInfo,
-    showBio
-  ) {
-    let sameBadgeFeatures = true;
-    if (badgeFeatures && fetchedAttendee.badges_info) {
-      sameBadgeFeatures =
-        fetchedAttendee.badges_info.length === badgeFeatures.length &&
-        fetchedAttendee.badges_info.every(
-          (value, index) =>
-            JSON.stringify(value) === JSON.stringify(badgeFeatures[index])
-        );
-    }
-
-    let sameSocialInfo = true;
-    if (socialInfo && fetchedAttendee.social_info) {
-      sameSocialInfo =
-        fetchedAttendee.social_info.githubUser === socialInfo.githubUser &&
-        fetchedAttendee.social_info.linkedInProfile ===
-          socialInfo.linkedInProfile &&
-        fetchedAttendee.social_info.twitterName === socialInfo.twitterName &&
-        fetchedAttendee.social_info.wechatUser === socialInfo.wechatUser;
-    }
-
-    return (
-      fetchedAttendee.full_name !== fullName ||
-      fetchedAttendee.company !== company ||
-      fetchedAttendee.title !== title ||
-      fetchedAttendee.pic_url !== picUrl ||
-      fetchedAttendee.idp_user_id !== idpUserId ||
-      fetchedAttendee.is_online !== isOnline ||
-      !sameSocialInfo ||
-      !sameBadgeFeatures ||
-      fetchedAttendee.bio !== bio ||
-      fetchedAttendee.public_profile_show_email !== showEmail ||
-      fetchedAttendee.public_profile_show_full_name !== showFullName ||
-      fetchedAttendee.public_profile_allow_chat_with_me !== allowChatWithMe ||
-      fetchedAttendee.public_profile_show_photo !== showProfilePic ||
-      fetchedAttendee.public_profile_show_social_media_info !==
-        showSocialInfo ||
-      fetchedAttendee.public_profile_show_bio != showBio
-    );
-  }
-
-  async _addAttendee(
+  async _addOrUpdateAttendee(
     id,
     fullName,
     email,
@@ -260,7 +119,7 @@ export default class AttendeeRepository {
     showSocialInfo,
     showBio
   ) {
-    const { error } = await this._client
+    const { data, error } = await this._client
       .from(ATTENDEES_TABLE_NAME)
       .upsert(
         [
@@ -296,59 +155,10 @@ export default class AttendeeRepository {
       .select();
 
     if (error) {
-      console.log("_addAttendee", error);
+      console.log("_addOrUpdateAttendee", error);
       throw new Error(error);
     }
-  }
-
-  async _updateAttendee(
-    id,
-    fullName,
-    email,
-    company,
-    title,
-    picUrl,
-    idpUserId,
-    isOnline,
-    socialInfo,
-    badgeFeatures,
-    bio,
-    showEmail,
-    showFullName,
-    allowChatWithMe,
-    showProfilePic,
-    showSocialInfo,
-    showBio
-  ) {
-    const { error } = await this._client
-      .from(ATTENDEES_TABLE_NAME)
-      .update([
-        {
-          full_name:
-            showFullName && fullName && fullName !== "null"
-              ? fullName
-              : ANONYMOUS_USER_NAME,
-          email: showEmail ? email : "",
-          company: showBio ? company : "",
-          title: showBio ? title : "",
-          pic_url: showProfilePic ? picUrl : "",
-          idp_user_id: idpUserId,
-          is_online: isOnline,
-          social_info: showSocialInfo ? socialInfo : {},
-          badges_info: badgeFeatures,
-          bio: showBio ? bio : "",
-          public_profile_show_email: showEmail,
-          public_profile_show_full_name: showFullName,
-          public_profile_allow_chat_with_me: allowChatWithMe,
-          public_profile_show_photo: showProfilePic,
-          public_profile_show_social_media_info: showSocialInfo,
-          public_profile_show_bio: showBio
-        }
-      ])
-      .eq("attendee_id", id)
-      .eq("summit_id", this._summitId);
-
-    if (error) console.log("_updateAttendee error", error);
+    return data[0];
   }
 
   async _get(id) {
@@ -390,23 +200,41 @@ export default class AttendeeRepository {
 
     const badgeFeatures = localAttendee.getBadgeFeatures();
 
-    return this._somethigChange(
-      remoteAttendee,
-      fullName,
-      company,
-      title,
-      picUrl,
-      parseInt(id),
-      true, // isOnline
-      socialInfo,
-      badgeFeatures,
-      bio,
-      showEmail,
-      showFullName,
-      allowChatWithMe,
-      showProfilePic,
-      showSocialInfo,
-      showBio
+    let sameBadgeFeatures = true;
+    if (badgeFeatures && remoteAttendee.badges_info) {
+      sameBadgeFeatures =
+        remoteAttendee.badges_info.length === badgeFeatures.length &&
+        remoteAttendee.badges_info.every(
+          (value, index) =>
+            JSON.stringify(value) === JSON.stringify(badgeFeatures[index])
+        );
+    }
+
+    let sameSocialInfo = true;
+    if (socialInfo && remoteAttendee.social_info) {
+      sameSocialInfo =
+        remoteAttendee.social_info.githubUser === socialInfo.githubUser &&
+        remoteAttendee.social_info.linkedInProfile ===
+          socialInfo.linkedInProfile &&
+        remoteAttendee.social_info.twitterName === socialInfo.twitterName &&
+        remoteAttendee.social_info.wechatUser === socialInfo.wechatUser;
+    }
+
+    return (
+      remoteAttendee.full_name !== fullName ||
+      remoteAttendee.company !== company ||
+      remoteAttendee.title !== title ||
+      remoteAttendee.pic_url !== picUrl ||
+      remoteAttendee.idp_user_id !== parseInt(id) ||
+      !sameSocialInfo ||
+      !sameBadgeFeatures ||
+      remoteAttendee.bio !== bio ||
+      remoteAttendee.public_profile_show_email !== showEmail ||
+      remoteAttendee.public_profile_show_full_name !== showFullName ||
+      remoteAttendee.public_profile_allow_chat_with_me !== allowChatWithMe ||
+      remoteAttendee.public_profile_show_photo !== showProfilePic ||
+      remoteAttendee.public_profile_show_social_media_info !== showSocialInfo ||
+      remoteAttendee.public_profile_show_bio != showBio
     );
   }
 
