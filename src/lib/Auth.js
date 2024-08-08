@@ -38,6 +38,7 @@ export const signUp = async (supabase, email, password) => {
     email,
     password
   });
+
   if (error) {
     if ([HTTP_400, HTTP_422].includes(error.status)) {
       // User already registered

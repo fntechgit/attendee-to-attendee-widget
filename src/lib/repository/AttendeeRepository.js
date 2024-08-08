@@ -39,6 +39,8 @@ const DEFAULT_PAGE_SIZE = 30;
 
 const ANONYMOUS_USER_NAME = "Anonymous";
 
+export const ATTENDEES_TABLE_NAME = "attendees_news";
+
 export const DEFAULT_MIN_BACKWARD = 15;
 
 export default class AttendeeRepository {
@@ -258,37 +260,40 @@ export default class AttendeeRepository {
     showSocialInfo,
     showBio
   ) {
-    const { data, error } = await this._client
-      .from("attendees_news")
-      .upsert([
+    const { error } = await this._client
+      .from(ATTENDEES_TABLE_NAME)
+      .upsert(
+        [
+          {
+            attendee_id: id,
+            summit_id: this._summitId,
+            full_name:
+              showFullName && fullName && fullName !== "null"
+                ? fullName
+                : ANONYMOUS_USER_NAME,
+            email: showEmail ? email : "",
+            company: showBio ? company : "",
+            title: showBio ? title : "",
+            pic_url: showProfilePic ? picUrl : "",
+            idp_user_id: idpUserId,
+            is_online: isOnline,
+            social_info: showSocialInfo ? socialInfo : {},
+            badges_info: badgeFeatures,
+            bio: showBio ? bio : "",
+            public_profile_show_email: showEmail,
+            public_profile_show_full_name: showFullName,
+            public_profile_allow_chat_with_me: allowChatWithMe,
+            public_profile_show_photo: showProfilePic,
+            public_profile_show_social_media_info: showSocialInfo,
+            public_profile_show_bio: showBio,
+            current_url: ""
+          }
+        ],
         {
-          attendee_id: id,
-          summit_id: this._summitId,
-          full_name:
-            showFullName && fullName && fullName !== "null"
-              ? fullName
-              : ANONYMOUS_USER_NAME,
-          email: showEmail ? email : "",
-          company: showBio ? company : "",
-          title: showBio ? title : "",
-          pic_url: showProfilePic ? picUrl : "",
-          idp_user_id: idpUserId,
-          is_online: isOnline,
-          social_info: showSocialInfo ? socialInfo : {},
-          badges_info: badgeFeatures,
-          bio: showBio ? bio : "",
-          public_profile_show_email: showEmail,
-          public_profile_show_full_name: showFullName,
-          public_profile_allow_chat_with_me: allowChatWithMe,
-          public_profile_show_photo: showProfilePic,
-          public_profile_show_social_media_info: showSocialInfo,
-          public_profile_show_bio: showBio,
-          current_url: ""
+          onConflict: ["attendee_id", "summit_id"]
         }
-      ])
+      )
       .select();
-
-    console.log("_addAttendee", data);
 
     if (error) {
       console.log("_addAttendee", error);
@@ -316,7 +321,7 @@ export default class AttendeeRepository {
     showBio
   ) {
     const { error } = await this._client
-      .from("attendees_news")
+      .from(ATTENDEES_TABLE_NAME)
       .update([
         {
           full_name:
@@ -349,7 +354,7 @@ export default class AttendeeRepository {
   async _get(id) {
     try {
       const attFetchRes = await this._client
-        .from("attendees_news")
+        .from(ATTENDEES_TABLE_NAME)
         .select(ATTTENDEES_SELECT_PROJ)
         .eq("idp_user_id", id)
         .eq("summit_id", this._summitId);
@@ -423,7 +428,7 @@ export default class AttendeeRepository {
         : { scopeFieldName: "summit_id", scopeFieldVal: this._summitId };
 
       const byNameRes = await this._client
-        .from("attendees_news")
+        .from(ATTENDEES_TABLE_NAME)
         .select("*")
         .eq(scopeFieldName, scopeFieldVal)
         .eq("is_online", true)
@@ -432,7 +437,7 @@ export default class AttendeeRepository {
       if (byNameRes.error) throw new Error(byNameRes.error);
 
       const byCompanyRes = await this._client
-        .from("attendees_news")
+        .from(ATTENDEES_TABLE_NAME)
         .select("*")
         .eq(scopeFieldName, scopeFieldVal)
         .eq("is_online", true)
@@ -482,7 +487,7 @@ export default class AttendeeRepository {
       const lowerIx = pageIx * pageSize;
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize);
       const { data, error } = await this._client
-        .from("attendees_news")
+        .from(ATTENDEES_TABLE_NAME)
         .select("*")
         .eq("current_url", url)
         .eq("is_online", true)
@@ -512,7 +517,7 @@ export default class AttendeeRepository {
       const lowerIx = pageIx * pageSize;
       const upperIx = lowerIx + (pageSize > 0 ? pageSize - 1 : pageSize);
       const { data, error } = await this._client
-        .from("attendees_news")
+        .from(ATTENDEES_TABLE_NAME)
         .select("*")
         .eq("summit_id", this._summitId)
         .eq("is_online", true)
@@ -552,7 +557,7 @@ export default class AttendeeRepository {
     try {
       if (this._sbUser) {
         this._client
-          .from("attendees_news")
+          .from(ATTENDEES_TABLE_NAME)
           .update([{ is_online: false }])
           .eq("attendee_id", this._sbUser.id)
           .eq("summit_id", this._summitId)

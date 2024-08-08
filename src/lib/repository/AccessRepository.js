@@ -11,8 +11,12 @@
  * limitations under the License.
  * */
 
-import AttendeeRepository from "./AttendeeRepository";
+import AttendeeRepository, { ATTENDEES_TABLE_NAME } from "./AttendeeRepository";
 import { CHANNEL_STATES } from "../constants";
+
+const ATTENDEES_CHANNEL_NAME = "attendees_news";
+const TRACKING_TABLE_NAME = "access_tracking";
+const DEFAULT_SCHEMA = "public";
 
 export default class AccessRepository extends AttendeeRepository {
   constructor(supabaseService, subscribeToRealtime, summitId) {
@@ -23,7 +27,7 @@ export default class AccessRepository extends AttendeeRepository {
 
   async _logAccess(accessEntry) {
     // console.log('_logAccess: ', accessEntry)
-    const { error } = await this._client.from("access_tracking").insert([
+    const { error } = await this._client.from(TRACKING_TABLE_NAME).insert([
       {
         atendee_news_id: accessEntry.id,
         summit_id: accessEntry.summit_id,
@@ -56,24 +60,31 @@ export default class AccessRepository extends AttendeeRepository {
     if (this._isJoined() || this._isJoining()) return;
 
     console.log(
-      "A2A::AccessRepository::refreshRealtimeSubscription - re-subscribing to realtime...",
-      this._subscription?.state
+      "A2A::AccessRepository::refreshRealtimeSubscription - re-subscribing to realtime..."
     );
 
     if (this._subscription) this._client.removeSubscription(this._subscription);
 
     this._subscription = this._client
-      .channel("attendees_news")
+      .channel(ATTENDEES_CHANNEL_NAME)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "attendees_news" },
+        {
+          event: "INSERT",
+          schema: DEFAULT_SCHEMA,
+          table: ATTENDEES_TABLE_NAME
+        },
         (payload) => {
           this._handleRTSubscriptionNews(payload.new);
         }
       )
       .on(
         "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "attendees_news" },
+        {
+          event: "UPDATE",
+          schema: DEFAULT_SCHEMA,
+          table: ATTENDEES_TABLE_NAME
+        },
         (payload) => {
           this._handleRTSubscriptionNews(payload.new);
         }
@@ -82,7 +93,7 @@ export default class AccessRepository extends AttendeeRepository {
 
     // console.log('subscriptions count', this._client.getSubscriptions()?.length)
     console.log(
-      "A2A::AccessRepository::refreshRealtimeSubscription - re-subscribed to realtime...",
+      "A2A::AccessRepository::refreshRealtimeSubscription - re-subscribed to realtime:",
       this._subscription?.state
     );
   }
@@ -108,10 +119,14 @@ export default class AccessRepository extends AttendeeRepository {
       ) {
         this._sbUser = await this._initializeAttendeeUser(attendeeProfile);
       }
-      if (!this._sbUser) throw new Error("User not found");
+
+      if (!this._sbUser) {
+        console.error("user not found");
+        return;
+      }
 
       const { data, error } = await this._client
-        .from("attendees_news")
+        .from(ATTENDEES_TABLE_NAME)
         .update([
           {
             current_url: url
@@ -121,14 +136,17 @@ export default class AccessRepository extends AttendeeRepository {
         .eq("summit_id", this._summitId)
         .select();
 
-      if (error) throw new Error(error);
+      if (error) {
+        console.error("error updating attendees news", error);
+        return;
+      }
       if (mustLogAccess) {
         await this._logAccess(data[0]);
       }
-      return;
     } catch (error) {
       console.error("A2A::AccessRepository::trackAccess - error", error);
     }
+    
   }
 
   cleanUpAccess() {
@@ -136,7 +154,7 @@ export default class AccessRepository extends AttendeeRepository {
       if (this._sbUser) {
         this.signOut();
         this._client
-          .from("attendees_news")
+          .from(ATTENDEES_TABLE_NAME)
           .update([{ current_url: "" }])
           .match({ attendee_id: this._sbUser.id, summit_id: this._summitId });
       }
