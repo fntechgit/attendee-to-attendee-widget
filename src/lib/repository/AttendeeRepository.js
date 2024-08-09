@@ -363,6 +363,49 @@ export default class AttendeeRepository {
     }
   }
 
+  async updateAttendeeProfile(user) {
+    if (!this._sbUser) return null;
+
+    const {
+      id,
+      bio,
+      company,
+      fullName,
+      email,
+      picUrl,
+      allowChatWithMe,
+      showBio,
+      showEmail,
+      showFullName,
+      showProfilePic,
+      showSocialInfo,
+      socialInfo,
+      title
+    } = user;
+
+    const badgeFeatures = user.getBadgeFeatures();
+
+    return await this._addOrUpdateAttendee(
+      this._sbUser.id,
+      fullName,
+      email,
+      company,
+      title,
+      picUrl,
+      id,
+      true,
+      socialInfo,
+      badgeFeatures,
+      bio,
+      showEmail,
+      showFullName,
+      allowChatWithMe,
+      showProfilePic,
+      showSocialInfo,
+      showBio
+    );
+  }
+
   async getRole(idpUserId) {
     try {
       const { data, error } = await this._client

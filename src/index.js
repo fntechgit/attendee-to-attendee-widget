@@ -15,6 +15,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import TrackedPageExample from "./TrackedPageExample";
+import TrackedOnlyPageExample from "./TrackedOnlyPageExample";
 
 import "./index.css";
 
@@ -66,12 +67,19 @@ function App() {
             >
               QA User
             </Link>
+            <br />
+            <Link
+              to={`/tracked?accessToken=${token1}&fullName=Me&email=roman.gutierrez@gmail.com&idpUserId=13`}
+            >
+              Tracker only
+            </Link>
           </div>
         </Route>
         <Route path="/attendance" component={TrackedPageExample} />
         <Route exact path="/untracked">
           <div>Untracked page</div>
         </Route>
+        <Route path="/tracked" component={TrackedOnlyPageExample} />
       </Switch>
     </Router>
   );

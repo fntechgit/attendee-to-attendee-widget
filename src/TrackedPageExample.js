@@ -103,7 +103,6 @@ const widgetProps = {
   summitId: 63,
   height: 400,
   defaultScope: scopes.SHOW, // Default attendees filter scope (scopes.PAGE | scopes.SHOW)
-  fullUpdate: false, // true: Tracker updates all attendee news properties, false: only updates current_url
   ...chatProps,
   ...sbAuthProps
 };

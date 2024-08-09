@@ -108,15 +108,14 @@ export default class AccessRepository extends AttendeeRepository {
     });
   }
 
-  async trackAccess(attendeeProfile, url, mustLogAccess, fullUpdate) {
+  async trackAccess(attendeeProfile, url, mustLogAccess) {
     try {
       attendeeProfile.isOnline = true;
 
       if (
         !this._sbUser ||
         this._sbUser.email !== attendeeProfile.email ||
-        this._sbUser.is_online !== attendeeProfile.isOnline ||
-        fullUpdate
+        this._sbUser.is_online !== attendeeProfile.isOnline
       ) {
         await this._initializeAttendeeUser(attendeeProfile);
       }
