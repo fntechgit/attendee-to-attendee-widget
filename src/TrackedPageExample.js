@@ -102,7 +102,7 @@ const widgetProps = {
   },
   summitId: 63,
   height: 400,
-  defaultScope: scopes.PAGE, // Default attendees filter scope (scopes.PAGE | scopes.SHOW)
+  defaultScope: scopes.SHOW, // Default attendees filter scope (scopes.PAGE | scopes.SHOW)
   ...chatProps,
   ...sbAuthProps
 };

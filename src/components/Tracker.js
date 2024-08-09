@@ -12,21 +12,53 @@
  * */
 
 import PropTypes from "prop-types";
-import { forwardRef, useImperativeHandle, useCallback, useEffect } from "react";
+import {
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+  useEffect,
+  useRef
+} from "react";
 import { extractBaseUrl } from "../utils/urlHelper";
 import { trackingLevel } from "../models/trackingLevel";
 import SupabaseClientBuilder from "../lib/builders/supabaseClientBuilder";
 import AccessRepository from "../lib/repository/AccessRepository";
 
 const Tracker = forwardRef((props, ref) => {
-  const { supabaseUrl, supabaseKey, summitId } = props;
-  let accessRepo = null;
+  const { supabaseUrl, supabaseKey, summitId, user } = props;
   const pendingOps = new Set();
   let timerHandler = null;
+  const accessRepoRef = useRef(null);
+
+  const {
+    bio,
+    company,
+    fullName,
+    email,
+    picUrl,
+    showBio,
+    showEmail,
+    showFullName,
+    showProfilePic,
+    showSocialInfo,
+    socialInfo,
+    title
+  } = user;
+
+  const getAccessRepo = () => {
+    if (accessRepoRef.current === null) {
+      accessRepoRef.current = new AccessRepository(
+        SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
+        false,
+        summitId
+      );
+    }
+    return accessRepoRef.current;
+  };
 
   const trackAccess = async () => {
-    accessRepo.trackAccess(
-      props.user,
+    getAccessRepo().trackAccess(
+      user,
       extractBaseUrl(window.location.href),
       true
     );
@@ -49,7 +81,7 @@ const Tracker = forwardRef((props, ref) => {
 
   const onLeave = async () => {
     // console.log('leaving tracked page')
-    await accessRepo.trackAccess(props.user, "", "", false);
+    await getAccessRepo().trackAccess(props.user, "", false);
   };
 
   function addToPendingWork(promise) {
@@ -59,7 +91,7 @@ const Tracker = forwardRef((props, ref) => {
   }
 
   const onBeforeUnload = useCallback((e) => {
-    const promise = accessRepo.cleanUpAccess();
+    const promise = getAccessRepo().cleanUpAccess();
     if (promise) {
       addToPendingWork(promise);
     }
@@ -88,11 +120,6 @@ const Tracker = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    accessRepo = new AccessRepository(
-      SupabaseClientBuilder.getClient(supabaseUrl, supabaseKey),
-      false,
-      summitId
-    );
     const pageScopeTracking =
       props.trackingLevel === trackingLevel.PAGE_SCOPED_PRESENCE;
     trackAccess();
@@ -108,10 +135,34 @@ const Tracker = forwardRef((props, ref) => {
     };
   }, []);
 
+  useEffect(() => {
+    const init = async () => {
+      const accessRepo = getAccessRepo();
+      const remoteAttendee = await accessRepo.findAttendeeByIdpUserId(user.id);
+      if (accessRepo.somethigChange(user, remoteAttendee)) {
+        accessRepo.updateAttendeeProfile(user);
+      }
+    };
+    init();
+  }, [
+    bio,
+    company,
+    fullName,
+    email,
+    picUrl,
+    showBio,
+    showEmail,
+    showFullName,
+    showProfilePic,
+    showSocialInfo,
+    socialInfo,
+    title
+  ]);
+
   useImperativeHandle(ref, () => ({
     signOut() {
       switchOff();
-      accessRepo?.signOut();
+      getAccessRepo().signOut();
     },
     bindToWindowLifecycle() {
       console.log("bindToWindowLifecycle");

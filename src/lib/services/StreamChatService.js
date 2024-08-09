@@ -57,6 +57,7 @@ export default class StreamChatService {
     if (!chatApiBaseUrl) {
       console.log("Test mode - chat api disconnected");
       onSuccess(this.chatClient, {});
+      return;
     }
 
     if (!syncChatAPI) {
@@ -110,6 +111,7 @@ export default class StreamChatService {
     if (!chatApiBaseUrl) {
       console.log("Test mode - chat api disconnected");
       onSuccess(null);
+      return;
     }
 
     if (!syncChatAPI) {

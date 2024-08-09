@@ -23,7 +23,7 @@ export const signIn = async (supabase, email, password) => {
   const hasErrors = validate(email, password);
   if (hasErrors) throw new Error(hasErrors);
 
-  const { data } = await supabase.auth.signIn({
+  const { data } = await supabase.auth.signInWithPassword({
     email,
     password
   });
@@ -38,6 +38,7 @@ export const signUp = async (supabase, email, password) => {
     email,
     password
   });
+
   if (error) {
     if ([HTTP_400, HTTP_422].includes(error.status)) {
       // User already registered
